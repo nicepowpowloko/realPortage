@@ -718,6 +718,14 @@ body{font-family:'DM Sans',sans-serif;background:#eae4d8;color:var(--text);min-h
             <optgroup label="Journée"><option>9h - 17h</option><option>9h - 17h30</option><option>8h - 18h</option></optgroup>
             <optgroup label="Court"><option>9h - 10h</option><option>10h - 12h</option><option>14h - 15h</option><option>14h - 16h</option><option>15h - 17h</option></optgroup>
           </select>
+          <select class="adm-inp" id="adm-quick-formateur" style="margin-bottom:8px">
+            <option value="">👤 — Formateur assigné —</option>
+            <option>Thomas H.</option>
+            <option>Sophie M.</option>
+            <option>Marc D.</option>
+            <option>Nathan L.</option>
+            <option>Julie P.</option>
+          </select>
           <select class="adm-inp" id="adm-quick-visibilite" style="margin-bottom:8px">
             <option value="tous">👥 Visible par les apprenants</option>
             <option value="interne">🔒 Réunion interne (non visible apprenants)</option>
@@ -1442,7 +1450,7 @@ function admRenderSide(evts) {
       <div class="adm-evt-dot type-${e.type||'cours'}"></div>
       <div class="adm-evt-body">
         <div class="adm-evt-title">${esc(e.titre)}<span class="adm-auteur">${esc(e.auteur||'')}</span>${e.visibilite==='interne'?'<span style="display:inline-block;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px;background:#fff3e0;color:#b85c00;margin-left:4px;text-transform:uppercase">🔒 Interne</span>':''}</div>
-        <div class="adm-evt-meta">${ADM_TYPE_LABELS[e.type||'cours']}${e.heure?' · '+esc(e.heure):''}${e.formation?' · '+esc(e.formation):''}</div>
+        <div class="adm-evt-meta">${ADM_TYPE_LABELS[e.type||'cours']}${e.heure?' · '+esc(e.heure):''}${e.formateur?'<span style="display:inline-block;background:var(--cream-d);color:var(--navy);font-weight:600;font-size:8px;padding:1px 6px;border-radius:10px;margin-left:4px">👤 '+esc(e.formateur)+'</span>':''}${e.formation?' · '+esc(e.formation):''}</div>
       </div>
       <button class="adm-evt-del" onclick="admDeleteEvent(${e.id})" title="Supprimer">×</button>
     </div>`).join('');
@@ -1460,11 +1468,13 @@ function admQuickAdd() {
   if (!titre) { document.getElementById('adm-quick-titre').focus(); return; }
   const heure = document.getElementById('adm-quick-heure').value.trim();
   const visibilite = document.getElementById('adm-quick-visibilite').value;
+  const formateur = document.getElementById('adm-quick-formateur').value;
   const evts = admLoadCalendar();
-  evts.push({ id: Date.now(), titre, date: admSelDate, heure, type: admCurType, formation:'', notes:'', auteur:'Admin', visibilite });
+  evts.push({ id: Date.now(), titre, date: admSelDate, heure, type: admCurType, formation:'', notes:'', auteur:'Admin', visibilite, formateur });
   admSaveCalendar(evts);
   document.getElementById('adm-quick-titre').value = '';
   document.getElementById('adm-quick-heure').value = '';
+  document.getElementById('adm-quick-formateur').value = '';
   admRenderCalendar();
   showToast('Événement ajouté ✓');
 }

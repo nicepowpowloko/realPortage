@@ -938,6 +938,14 @@ input[type=file]{display:none}
                 <option>15h - 17h</option>
               </optgroup>
             </select>
+            <select class="quick-input" id="quick-formateur" style="margin-bottom:8px">
+              <option value="">👤 — Formateur assigné —</option>
+              <option>Thomas H.</option>
+              <option>Sophie M.</option>
+              <option>Marc D.</option>
+              <option>Nathan L.</option>
+              <option>Julie P.</option>
+            </select>
             <select class="quick-input" id="quick-visibilite" style="margin-bottom:8px">
               <option value="tous">👥 Visible par les apprenants</option>
               <option value="interne">🔒 Réunion interne (non visible apprenants)</option>
@@ -1852,7 +1860,7 @@ function renderSessions() {
       <div class="event-type-dot type-${s.type||'cours'}"></div>
       <div class="event-item-body">
         <div class="event-item-title">${esc(s.titre)}${s.visibilite==='interne'?'<span style="display:inline-block;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px;background:#fff3e0;color:#b85c00;margin-left:5px;text-transform:uppercase">🔒 Interne</span>':''}</div>
-        <div class="event-item-meta">${TYPE_LABELS[s.type||'cours']}${s.heure?' · '+esc(s.heure):''}${s.auteur?' · '+esc(s.auteur):''}</div>
+        <div class="event-item-meta">${TYPE_LABELS[s.type||'cours']}${s.heure?' · '+esc(s.heure):''}${s.formateur?'<span style="display:inline-block;background:var(--cream-d);color:var(--navy);font-weight:600;font-size:8px;padding:1px 6px;border-radius:10px;margin-left:4px">👤 '+esc(s.formateur)+'</span>':''}</div>
       </div>
       <button class="event-item-del" onclick="deleteEvent(${s.id})" title="Supprimer">×</button>
     </div>`).join('');
@@ -1872,15 +1880,17 @@ function quickAddEvent() {
   if(!titre) { document.getElementById('quick-titre').focus(); return; }
   const heure = document.getElementById('quick-heure').value.trim();
   const visibilite = document.getElementById('quick-visibilite').value;
+  const formateur = document.getElementById('quick-formateur').value;
   sessions = loadCalendar();
   sessions.push({
     id: Date.now(), titre, date: selectedDate, heure,
     type: currentType, formation: '', notes: '',
     color: currentType==='cours'?'bordeaux':currentType==='reunion'?'navy':currentType==='visio'?'green':'warn',
-    auteur: 'Formateur', visibilite
+    auteur: 'Formateur', visibilite, formateur
   });
   document.getElementById('quick-titre').value = '';
   document.getElementById('quick-heure').value = '';
+  document.getElementById('quick-formateur').value = '';
   saveCalendar();
   renderCalendar();
   renderDashboard();

@@ -1203,7 +1203,7 @@ function appRenderSide(evts) {
       <div class="app-evt-dot type-${e.type||'cours'}"></div>
       <div class="app-evt-body">
         <div class="app-evt-title">${esc(e.titre)}</div>
-        <div class="app-evt-meta">${APP_TYPE_LABELS[e.type||'cours']}${e.heure?' · '+esc(e.heure):''}${e.formation?' · '+esc(e.formation):''}${e.auteur?' · par '+esc(e.auteur):''}</div>
+        <div class="app-evt-meta">${APP_TYPE_LABELS[e.type||'cours']}${e.heure?' · '+esc(e.heure):''}${e.formateur?'<span style="display:inline-block;background:rgba(29,52,104,.1);color:#1D3468;font-weight:600;font-size:8px;padding:1px 6px;border-radius:10px;margin-left:4px">👤 '+esc(e.formateur)+'</span>':''}${e.formation?' · '+esc(e.formation):''}</div>
       </div>
     </div>`).join('');
 }
