@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Générateur Plaquette — Real Portage</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap');
+
+:root {
+  --bx:#7B1E3A; --bx-d:#5a1529; --bx-l:#a8294f;
+  --navy:#1a2744; --navy-l:#243460;
+  --cream:#f5f0e8; --cream-d:#e8e0d0; --beige:#f9f6f0;
+  --text:#1a1a1a; --muted:#6b6b6b; --light:#9a9a9a;
+  --white:#fff; --border:#ddd8cc;
+  --ok:#2d7a4f; --warn:#b85c00;
+  --r:8px; --sh:0 2px 12px rgba(0,0,0,.08); --sh-lg:0 8px 32px rgba(0,0,0,.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:#f0ebe0;color:var(--text);min-height:100vh}
+
+/* ── NAV ── */
+.nav{background:var(--navy);height:54px;display:flex;align-items:center;padding:0 24px;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.2)}
+.nav-logo{display:flex;align-items:center;gap:9px;font-family:'DM Serif Display',serif;font-size:18px;color:#fff}
+.nav-logo .dot{width:27px;height:27px;border-radius:50%;background:var(--bx-l);display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;color:#fff}
+.nav-logo span{color:#e8a0b0}
+.nav-tabs{display:flex;gap:5px}
+.ntab{padding:6px 15px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:none;background:transparent;color:rgba(255,255,255,.55);transition:all .15s;font-family:'DM Sans',sans-serif}
+.ntab.on{background:rgba(255,255,255,.15);color:#fff}
+.ntab:hover:not(.on){color:rgba(255,255,255,.85)}
+.btn-export{display:flex;align-items:center;gap:6px;padding:7px 18px;background:var(--bx);color:#fff;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(123,30,58,.3);transition:all .15s}
+.btn-export:hover{background:var(--bx-d);transform:translateY(-1px)}
+.btn-publish-cat{display:flex;align-items:center;gap:6px;padding:7px 18px;background:var(--ok);color:#fff;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;box-shadow:0 2px 8px rgba(45,122,79,.3);transition:all .15s}
+.btn-publish-cat:hover{background:#1e6e41;transform:translateY(-1px)}
+.pub-toast{position:fixed;bottom:24px;right:24px;z-index:9999;background:var(--ok);color:#fff;padding:13px 20px;border-radius:10px;font-size:12px;font-weight:500;display:none;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.2);animation:tIn .3s ease}
+.pub-toast.show{display:flex}
+@keyframes tIn{from{transform:translateY(8px);opacity:0}to{opacity:1;transform:none}}
+
+/* ── LAYOUT ── */
+.app{display:grid;grid-template-columns:420px 1fr;height:calc(100vh - 54px);overflow:hidden}
+
+/* ── PANNEAU GAUCHE ── */
+.left{background:#fff;border-right:1px solid var(--border);overflow-y:auto;display:flex;flex-direction:column}
+.left::-webkit-scrollbar{width:4px}
+.left::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+.tab-pane{display:none}
+.tab-pane.on{display:block}
+
+.fsec{border-bottom:1px solid var(--cream-d);padding:18px 22px}
+.fsec:last-child{border-bottom:none}
+.fsec-hd{display:flex;align-items:center;gap:7px;margin-bottom:14px}
+.fsec-badge{width:19px;height:19px;background:var(--bx);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.fsec-badge svg{width:11px;height:11px;fill:#fff}
+.fsec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bx)}
+
+/* Champs */
+.f{margin-bottom:10px}
+.f:last-child{margin-bottom:0}
+.f label{display:block;font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.f input,.f select,.f textarea{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:var(--beige);outline:none;transition:border-color .15s,box-shadow .15s}
+.f input:focus,.f select:focus,.f textarea:focus{border-color:var(--bx);box-shadow:0 0 0 3px rgba(123,30,58,.07);background:#fff}
+.f textarea{resize:vertical;min-height:58px;line-height:1.5}
+.f2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* Items dynamiques */
+.ilist{display:flex;flex-direction:column;gap:5px}
+.irow{display:flex;align-items:center;gap:5px}
+.irow input{flex:1;padding:6px 9px;border:1.5px solid var(--border);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:12px;background:var(--beige);outline:none;transition:border-color .15s}
+.irow input:focus{border-color:var(--bx);background:#fff}
+.btn-rm{width:26px;height:26px;border:none;border-radius:5px;cursor:pointer;background:#fce8ed;color:#c0394f;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .1s;line-height:1}
+.btn-rm:hover{background:#f9c4cf}
+.btn-add{display:flex;align-items:center;gap:5px;background:none;border:1.5px dashed var(--bx);color:var(--bx);border-radius:var(--r);padding:6px 11px;font-size:10px;font-weight:700;cursor:pointer;width:100%;margin-top:5px;text-transform:uppercase;letter-spacing:.5px;transition:background .1s;font-family:'DM Sans',sans-serif}
+.btn-add:hover{background:#fce8ed}
+
+/* Qualiopi mini */
+.qcheck{background:var(--cream);border-radius:var(--r);padding:13px}
+.qcheck-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bx);margin-bottom:9px}
+.crit{display:flex;align-items:flex-start;gap:7px;padding:4px 0;border-bottom:1px solid var(--cream-d);font-size:10px}
+.crit:last-child{border-bottom:none}
+.cdot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:2px;transition:background .2s}
+.cdot.ok{background:var(--ok)}
+.cdot.ko{background:#ccc}
+.ctext{color:var(--muted)}
+.ctext.ok{color:var(--ok)}
+
+/* Qualiopi full */
+.qfull{padding:18px 22px}
+.qfull p{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+.qgroup{margin-bottom:18px}
+.qgroup-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--navy);margin-bottom:7px;padding-bottom:5px;border-bottom:2px solid var(--cream-d)}
+.qitem{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--cream-d);font-size:11px}
+.qitem:last-child{border-bottom:none}
+.qnum{font-weight:700;color:var(--bx);min-width:26px;flex-shrink:0}
+.qdesc{flex:1;line-height:1.5;color:var(--muted)}
+.qstat{font-size:10px;font-weight:700;flex-shrink:0}
+.qstat.ok{color:var(--ok)}
+.qstat.ko{color:#aaa}
+.qscore-bar{background:var(--cream);border-radius:var(--r);padding:13px;margin-top:8px;font-size:12px;line-height:1.6}
+.prog{background:#e0ddd5;border-radius:20px;height:7px;overflow:hidden;margin:6px 0}
+.prog-fill{height:100%;border-radius:20px;transition:width .3s}
+
+/* Avis éditeur */
+.avis-mgr{padding:18px 22px}
+.avis-card-edit{background:var(--cream);border-radius:var(--r);padding:13px;margin-bottom:9px;border-left:3px solid var(--bx)}
+.stars{display:flex;gap:3px;margin-bottom:4px}
+.star{font-size:20px;cursor:pointer;background:none;border:none;color:#ddd;transition:color .1s;padding:0;line-height:1;font-family:inherit}
+.star.on{color:#f59e0b}
+
+/* ── PANNEAU DROIT — PREVIEW ── */
+.right{background:#d8d2c4;overflow-y:auto;padding:28px;display:flex;flex-direction:column;align-items:center;gap:18px}
+.right::-webkit-scrollbar{width:5px}
+.right::-webkit-scrollbar-thumb{background:rgba(0,0,0,.15);border-radius:2px}
+
+/* ── PLAQUETTE ── */
+#plaquette{width:794px;max-width:100%;background:#fff;box-shadow:var(--sh-lg);border-radius:4px;overflow:hidden;font-family:'DM Sans',sans-serif}
+
+.ph{background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 50%,var(--bx-d) 100%);padding:20px 22px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center;position:relative;overflow:hidden}
+.ph::after{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.04)}
+.ph-logo{display:flex;flex-direction:column;gap:2px}
+.ph-logo-txt{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;line-height:1}
+.ph-logo-txt span{color:#e8a0b0}
+.ph-logo-sub{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.ph-right{text-align:right}
+.ph-rncp{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8a0b0;margin-bottom:3px}
+.ph-nom{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;line-height:1.15;font-style:italic}
+.ph-adr{font-size:8px;color:rgba(255,255,255,.5);margin-top:5px;letter-spacing:.5px}
+.ph-badge{position:absolute;top:9px;right:9px;background:#fff;border:2px solid var(--bx);border-radius:5px;padding:3px 7px;font-size:7px;font-weight:700;color:var(--bx);letter-spacing:.5px;text-transform:uppercase}
+
+.pbody{display:grid;grid-template-columns:1fr 195px}
+.pmain{padding:16px 18px}
+.pside{background:var(--cream);padding:14px 12px;border-left:1px solid var(--cream-d);display:flex;flex-direction:column;gap:9px}
+
+.psec{margin-bottom:14px}
+.psec-title{background:var(--bx);color:#fff;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 9px;border-radius:3px;display:inline-block;margin-bottom:8px}
+
+.pobjs{display:flex;flex-direction:column;gap:5px}
+.pobj{display:flex;align-items:flex-start;gap:7px;font-size:10px;color:var(--text)}
+.pcheck{width:16px;height:16px;flex-shrink:0;border:2px solid var(--bx);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.pcheck svg{width:8px;height:8px;stroke:var(--bx);fill:none;stroke-width:2.5}
+.plist{display:flex;flex-direction:column;gap:3px;list-style:none;padding-left:0}
+.plist li{display:flex;align-items:flex-start;gap:6px;font-size:10px;line-height:1.4;color:var(--text)}
+.plist li::before{content:'';width:5px;height:5px;background:var(--bx);border-radius:50%;flex-shrink:0;margin-top:4px}
+.pccp{display:flex;align-items:baseline;gap:5px;font-size:10px;line-height:1.5}
+.pccp-lbl{font-weight:700;color:var(--bx);font-size:9px;min-width:34px;flex-shrink:0;text-transform:uppercase;letter-spacing:.3px}
+
+/* Sidebar */
+.psi{background:#fff;border-radius:7px;padding:7px 9px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.psi-lbl{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--navy);margin-bottom:2px;display:flex;align-items:center;gap:3px}
+.psi-lbl svg{width:9px;height:9px;fill:var(--navy);opacity:.6}
+.psi-val{font-size:10px;color:var(--text);line-height:1.4}
+.psi-val strong{font-weight:600;color:var(--bx)}
+.phand{background:var(--navy);border-radius:7px;padding:8px 9px;font-size:8px;color:rgba(255,255,255,.8);line-height:1.4;text-align:center}
+.phand strong{display:block;color:#fff;font-size:8px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+
+/* Bottom */
+.pbottom{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid var(--cream-d)}
+.pprofil{background:var(--bx);padding:11px 14px}
+.pprofil-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:7px}
+.pprofil-item{display:flex;align-items:center;gap:5px;font-size:9px;color:#fff;font-weight:500;margin-bottom:3px}
+.pprofil-item::before{content:'';width:4px;height:4px;background:rgba(255,255,255,.5);border-radius:50%;flex-shrink:0}
+.pdeb{background:var(--navy);padding:11px 14px}
+.pdeb-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:7px}
+.pdeb-item{display:flex;align-items:center;gap:5px;font-size:9px;color:#fff;margin-bottom:3px}
+.pdeb-item::before{content:'→';color:#9cc5f0;flex-shrink:0;font-size:9px}
+
+/* Avis */
+.pavis{background:var(--cream);border-top:1px solid var(--cream-d);padding:11px 14px}
+.pavis-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--navy);margin-bottom:7px}
+.pavis-grid{display:flex;gap:7px}
+.pavis-card{background:#fff;border-radius:7px;padding:7px 9px;flex:1;border-left:3px solid var(--bx);box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.pavis-stars{color:#f59e0b;font-size:11px;margin-bottom:2px}
+.pavis-text{font-size:9px;color:var(--text);font-style:italic;line-height:1.4;margin-bottom:2px}
+.pavis-author{font-size:8px;color:var(--muted);font-weight:500}
+
+/* Footer */
+.pfooter{background:var(--navy);padding:9px 18px;display:flex;align-items:center;justify-content:space-between}
+.pfi{display:flex;align-items:center;gap:5px;font-size:9px;color:rgba(255,255,255,.75)}
+.pfi svg{width:11px;height:11px;fill:rgba(255,255,255,.5)}
+
+/* Placeholder */
+.ph-txt{color:#ccc;font-style:italic}
+
+/* Overlay export */
+.ov{position:fixed;inset:0;background:rgba(26,39,68,.7);z-index:999;display:none;align-items:center;justify-content:center;flex-direction:column;gap:13px}
+.ov.on{display:flex}
+.spin{width:38px;height:38px;border:3px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+.ov-msg{color:#fff;font-size:13px;font-weight:500}
+
+/* ===== TABLET (≤900px) ===== */
+@media(max-width:900px){
+  .app{grid-template-columns:1fr;height:auto;overflow:visible}
+  .left{height:auto;max-height:none;border-right:none;border-bottom:1px solid var(--border)}
+  .right{padding:20px;min-height:auto}
+  .ph{grid-template-columns:1fr}
+  .pbody{grid-template-columns:1fr}
+  .pbottom{grid-template-columns:1fr}
+  .f2{grid-template-columns:1fr}
+  .nav{padding:0 14px}
+  .nav-logo{font-size:16px}
+  .nav-tabs{gap:3px}
+}
+
+/* ===== MOBILE (≤480px) ===== */
+@media(max-width:480px){
+  .nav{height:48px;padding:0 10px}
+  .nav-logo{font-size:14px}
+  .nav-logo .dot{width:24px;height:24px;font-size:10px}
+  .nav-tabs{overflow-x:auto;gap:0}
+  .nav-tabs::-webkit-scrollbar{display:none}
+  .btn-export{font-size:11px;padding:6px 12px}
+  .app{grid-template-columns:1fr}
+  .left{padding-bottom:16px}
+  .section-header{padding:10px 14px}
+  .section-header h3{font-size:13px}
+  .form-body{padding:10px 14px}
+  .right{padding:14px;gap:12px}
+  .card-preview{max-width:100%;width:100%}
+  .f2{grid-template-columns:1fr}
+  .ph{padding:14px;grid-template-columns:1fr}
+  .pbody{grid-template-columns:1fr}
+  .pbottom{grid-template-columns:1fr}
+  .pub-toast{bottom:12px;right:12px;left:12px;border-radius:8px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-logo" onclick="window.location.href='accueil.html'" style="cursor:pointer"><div class="dot">rp</div>real<span>portage</span> <span style="opacity:.4;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:400">/ Générateur Plaquette</span></div>
+  <div class="nav-tabs">
+    <button class="ntab on" id="btn-formulaire" onclick="switchTab('formulaire')">Formulaire</button>
+    <button class="ntab" id="btn-qualiopi"   onclick="switchTab('qualiopi')">Critères Qualiopi</button>
+    <button class="ntab" id="btn-avis"        onclick="switchTab('avis')">Avis apprenants</button>
+  </div>
+  <button class="btn-publish-cat" onclick="publishToCatalogue()">
+    <svg viewBox="0 0 16 16" style="width:13px;height:13px;fill:#fff"><path d="M8 1a3 3 0 100 6 3 3 0 000-6zM3 14c0-2.8 2.2-5 5-5s5 2.2 5 5"/></svg>
+    Publier dans le catalogue
+  </button>
+  <button class="btn-export" onclick="exportPDF()">
+    <svg viewBox="0 0 16 16" style="width:13px;height:13px;fill:#fff"><path d="M3 12h10M8 2v8M5 7l3 3 3-3"/></svg>
+    Exporter en PDF
+  </button>
+</nav>
+
+<div class="pub-toast" id="pub-toast">
+  <svg viewBox="0 0 16 16" style="width:16px;height:16px;fill:#fff;flex-shrink:0"><path d="M13 3L6 12l-3-3"/></svg>
+  <span id="pub-toast-msg">Formation publiée dans le catalogue !</span>
+</div>
+
+<div class="app">
+
+  <!-- ── GAUCHE ── -->
+  <aside class="left">
+
+    <!-- FORMULAIRE -->
+    <div id="pane-formulaire" class="tab-pane on">
+
+      <!-- Identification -->
+      <div class="fsec">
+        <div class="fsec-hd">
+          <div class="fsec-badge"><svg viewBox="0 0 16 16"><path d="M8 1a4 4 0 100 8A4 4 0 008 1zM2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg></div>
+          <span class="fsec-title">Identification</span>
+        </div>
+        <div class="f"><label>Nom de la formation</label>
+          <input id="F_nom" type="text" placeholder="ex. Développeur Web et Web Mobile"></div>
+        <div class="f"><label>Titre RNCP</label>
+          <input id="F_rncp" type="text" placeholder="ex. RNCP Niveau 5 — Titre Professionnel"></div>
+        <div class="f2">
+          <div class="f"><label>Niveau de sortie</label>
+            <select id="F_niveau">
+              <option value="">— Choisir —</option>
+              <option>Bac (Niveau 4)</option>
+              <option>Bac+2 (Niveau 5)</option>
+              <option>Bac+3 (Niveau 6)</option>
+              <option>Bac+5 (Niveau 7)</option>
+            </select>
+          </div>
+          <div class="f"><label>Rythme</label>
+            <select id="F_rythme">
+              <option value="">— Choisir —</option>
+              <option>Temps plein</option>
+              <option>Temps partiel</option>
+              <option>Formation mixte</option>
+              <option>Alternance</option>
+            </select>
+          </div>
+        </div>
+        <div class="f"><label>Centre / Organisme</label>
+          <input id="F_centre" type="text" placeholder="ex. Real Conseil Amiens"></div>
+        <div class="f2">
+          <div class="f"><label>Catégorie</label>
+            <select id="F_categorie">
+              <option value="emploi">Emploi &amp; CV</option>
+              <option value="dev">Développement web</option>
+              <option value="data">Data &amp; Tech</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <div class="f"><label>Financement</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+              <label style="display:flex;align-items:center;gap:4px;font-size:11px;text-transform:none;letter-spacing:0;color:var(--text);cursor:pointer"><input type="checkbox" id="F_cpf" checked> CPF</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:11px;text-transform:none;letter-spacing:0;color:var(--text);cursor:pointer"><input type="checkbox" id="F_pe" checked> France Travail</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:11px;text-transform:none;letter-spacing:0;color:var(--text);cursor:pointer"><input type="checkbox" id="F_opco"> OPCO</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="fsec">
+        <div class="fsec-hd">
+          <div class="fsec-badge"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1v4M11 1v4M2 7h12"/></svg></div>
+          <span class="fsec-title">Dates & Infos pratiques</span>
+        </div>
+        <div class="f2">
+          <div class="f"><label>Date de début</label><input id="F_debut" type="date"></div>
+          <div class="f"><label>Date de fin</label><input id="F_fin" type="date"></div>
+        </div>
+        <div class="f2">
+          <div class="f"><label>Durée totale (h)</label><input id="F_duree" type="number" placeholder="485"></div>
+          <div class="f"><label>dont heures entreprise</label><input id="F_duree_ent" type="number" placeholder="175"></div>
+        </div>
+        <div class="f"><label>Tarif (€)</label><input id="F_tarif" type="number" placeholder="3500"></div>
+      </div>
+
+      <!-- Objectifs -->
+      <div class="fsec">
+        <div class="fsec-hd">
+          <div class="fsec-badge"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M5 8l2 2 4-4"/></svg></div>
+          <span class="fsec-title">Objectifs</span>
+        </div>
+        <div class="ilist" id="L_obj"></div>
+        <button class="btn-add" onclick="addRow('L_obj','obj')"><span>+</span> Ajouter un objectif</button>
+      </div>
+
+      <!-- Programme -->
+      <div class="fsec">
+        <div class="fsec-hd">
+          <div class="fsec-badge"><svg viewBox="0 0 16 16"><path d="M3 3h10M3 7h10M3 11h6"/></svg></div>
+          <span class="fsec-title">Programme (CCP)</span>
+        </div>
+        <div class="f"><label>CCP 1</label><input id="F_ccp1" type="text" placeholder="ex. Développer la partie front-end"></div>
+        <div class="f"><label>CCP 2</label><input id="F_ccp2" type="text" placeholder="ex. Développer la partie back-end"></div>
+        <div class="f"><label>CCP 3 (optionnel)</label><input id="F_ccp3" type="text" placeholder="ex. Concevoir et développer des composants"></div>
+      </div>
+
+      <!-- Organisation -->
+      <div class="fsec">
+        <div class="fsec-hd">
+          <div class="fsec-badge"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg></div>
+          <span class="fsec-title">Organisation</span>
+        </div>
+        <div class="ilist" id="L_org"></div>
+        <button class="btn-add" onclick="addRow('L_org','org')"><span>+</span> Ajouter une modalité</button>
+      </div>
+
+      <!-- Pré-requis -->
+      <div class="fsec">
+        <div class="fsec-hd">
+          <div class="fsec-badge"><svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg></div>
+          <span class="fsec-title">Pré-requis</span>
+        </div>
+        <div class="ilist" id="L_pre"></div>
+        <button class="btn-add" onclick="addRow('L_pre','pre')"><span>+</span> Ajouter un pré-requis</button>
+      </div>
+
+      <!-- Débouchés -->
+      <div class="fsec">
+        <div class="fsec-hd">
+          <div class="fsec-badge"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></div>
+          <span class="fsec-title">Débouchés</span>
+        </div>
+        <div class="ilist" id="L_deb"></div>
+        <button class="btn-add" onclick="addRow('L_deb','deb')"><span>+</span> Ajouter un débouché</button>
+      </div>
+
+      <!-- Contact -->
+      <div class="fsec">
+        <div class="fsec-hd">
+          <div class="fsec-badge"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg></div>
+          <span class="fsec-title">Contact & Accessibilité</span>
+        </div>
+        <div class="f"><label>Adresse</label><input id="F_adr" type="text" placeholder="3 Avenue du Pays d'Auge — 80000 Amiens"></div>
+        <div class="f2">
+          <div class="f"><label>Téléphone</label><input id="F_tel" type="text" placeholder="07 88 12 87 69"></div>
+          <div class="f"><label>Email</label><input id="F_email" type="text" placeholder="realportage@gmail.com"></div>
+        </div>
+        <div class="f"><label>Site web</label><input id="F_web" type="text" placeholder="www.realportage.com"></div>
+      </div>
+
+      <!-- Qualiopi mini -->
+      <div class="fsec">
+        <div class="fsec-hd">
+          <div class="fsec-badge"><svg viewBox="0 0 16 16"><path d="M13 3L6 12l-3-3"/></svg></div>
+          <span class="fsec-title">Conformité Qualiopi</span>
+        </div>
+        <div class="qcheck">
+          <div class="qcheck-title">Indicateurs clés — RNQ</div>
+          <div id="Q_mini"></div>
+        </div>
+      </div>
+
+    </div><!-- /formulaire -->
+
+    <!-- QUALIOPI FULL -->
+    <div id="pane-qualiopi" class="tab-pane">
+      <div class="qfull">
+        <p>Le RNQ Qualiopi comporte <strong>7 critères</strong> et <strong>32 indicateurs</strong>. Voici ceux liés aux informations de la plaquette.</p>
+        <div class="qgroup">
+          <div class="qgroup-title">Critère 1 — Information du public</div>
+          <div class="qitem"><div class="qnum">1.1</div><div class="qdesc">Objectifs, programme, modalités, tarifs diffusés</div><div class="qstat" id="Q_c11">—</div></div>
+          <div class="qitem"><div class="qnum">1.2</div><div class="qdesc">Prérequis précisés</div><div class="qstat" id="Q_c12">—</div></div>
+          <div class="qitem"><div class="qnum">1.3</div><div class="qdesc">Délais d'accès indiqués (dates)</div><div class="qstat" id="Q_c13">—</div></div>
+          <div class="qitem"><div class="qnum">1.4</div><div class="qdesc">Modalités pédagogiques décrites</div><div class="qstat" id="Q_c14">—</div></div>
+          <div class="qitem"><div class="qnum">1.5</div><div class="qdesc">Accessibilité handicap précisée</div><div class="qstat" id="Q_c15">—</div></div>
+        </div>
+        <div class="qgroup">
+          <div class="qgroup-title">Critère 3 — Adaptation aux publics</div>
+          <div class="qitem"><div class="qnum">3.1</div><div class="qdesc">Identification du profil avant entrée</div><div class="qstat" id="Q_c31">—</div></div>
+        </div>
+        <div class="qgroup">
+          <div class="qgroup-title">Critère 6 — Environnements professionnels</div>
+          <div class="qitem"><div class="qnum">6.1</div><div class="qdesc">Résultats et débouchés publiés</div><div class="qstat" id="Q_c61">—</div></div>
+          <div class="qitem"><div class="qnum">6.2</div><div class="qdesc">Avis bénéficiaires collectés et publiés</div><div class="qstat" id="Q_c62">—</div></div>
+        </div>
+        <div id="Q_score" class="qscore-bar"></div>
+      </div>
+    </div>
+
+    <!-- AVIS -->
+    <div id="pane-avis" class="tab-pane">
+      <div class="avis-mgr">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6">
+          Ajoutez les avis apprenants — ils apparaissent en bas de la plaquette (critère Qualiopi 6.2).
+        </div>
+        <div id="A_list"></div>
+        <button class="btn-add" onclick="addAvis()" style="margin-top:7px"><span>+</span> Ajouter un avis</button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── DROITE — PLAQUETTE ── -->
+  <main class="right">
+
+    <!-- PLAQUETTE -->
+    <div id="plaquette">
+      <div class="ph-badge">Qualiopi</div>
+
+      <div class="ph">
+        <div class="ph-logo">
+          <div class="ph-logo-txt">real<span>portage</span></div>
+          <div class="ph-logo-sub">Portage Salarial</div>
+        </div>
+        <div class="ph-right">
+          <div class="ph-rncp" id="P_rncp">TITRE RNCP</div>
+          <div class="ph-nom"  id="P_nom">Nom de la formation</div>
+          <div class="ph-adr"  id="P_adr">3 Avenue du Pays d'Auge — 80000 Amiens</div>
+        </div>
+      </div>
+
+      <div class="pbody">
+        <div class="pmain">
+
+          <div class="psec">
+            <div class="psec-title">Objectifs</div>
+            <div class="pobjs" id="P_objs">
+              <div class="pobj ph-txt"><div class="pcheck"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div>Saisir les objectifs dans le formulaire…</div>
+            </div>
+          </div>
+
+          <div class="psec">
+            <div class="psec-title">Programme</div>
+            <div id="P_prog">
+              <div class="pccp ph-txt"><span class="pccp-lbl">CCP 1</span> —</div>
+              <div class="pccp ph-txt"><span class="pccp-lbl">CCP 2</span> —</div>
+            </div>
+          </div>
+
+          <div class="psec">
+            <div class="psec-title">Organisation</div>
+            <ul class="plist" id="P_org"><li class="ph-txt">Saisir les modalités…</li></ul>
+          </div>
+
+          <div class="psec">
+            <div class="psec-title">Pré-requis</div>
+            <ul class="plist" id="P_pre"><li class="ph-txt">Saisir les pré-requis…</li></ul>
+          </div>
+
+        </div>
+
+        <div class="pside">
+          <div class="psi">
+            <div class="psi-lbl"><svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>Date</div>
+            <div class="psi-val" id="P_dates">Du XX/XX au XX/XX</div>
+          </div>
+          <div class="psi">
+            <div class="psi-lbl"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>Durée</div>
+            <div class="psi-val" id="P_duree">— h dont — h entreprise</div>
+          </div>
+          <div class="psi">
+            <div class="psi-lbl"><svg viewBox="0 0 16 16"><path d="M3 12l2-4h6l2 4M8 3a2 2 0 100 4 2 2 0 000-4z"/></svg>Tarif</div>
+            <div class="psi-val" id="P_tarif">— €</div>
+          </div>
+          <div class="psi">
+            <div class="psi-lbl">Niveau de sortie</div>
+            <div class="psi-val" id="P_niveau">—</div>
+          </div>
+          <div class="psi">
+            <div class="psi-lbl">Rythme</div>
+            <div class="psi-val" id="P_rythme">—</div>
+          </div>
+          <div class="phand">
+            <strong>Situation de handicap ?</strong>
+            Contactez-nous<br>
+            <span id="P_web">www.realportage.com</span><br>
+            <span id="P_tel_side">07 88 12 87 69</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pbottom">
+        <div class="pprofil">
+          <div class="pprofil-title">Profil</div>
+          <div class="pprofil-item">Demandeurs d'emploi</div>
+          <div class="pprofil-item">Bénéficiaires des minimas sociaux</div>
+          <div class="pprofil-item">Personnes en reconversion professionnelle</div>
+          <div class="pprofil-item">Personnes reconnues travailleur handicapé</div>
+        </div>
+        <div class="pdeb">
+          <div class="pdeb-title">Débouchés</div>
+          <div id="P_deb"><div class="pdeb-item ph-txt">Saisir les débouchés…</div></div>
+        </div>
+      </div>
+
+      <div class="pavis">
+        <div class="pavis-title">Avis des apprenants</div>
+        <div class="pavis-grid" id="P_avis">
+          <div class="pavis-card ph-txt" style="font-size:9px">Les avis s'afficheront ici — ajoutez-les dans l'onglet « Avis »</div>
+        </div>
+      </div>
+
+      <div class="pfooter">
+        <div class="pfi"><svg viewBox="0 0 16 16"><path d="M8 1C5.2 1 3 3.5 3 6.5c0 4 5 8.5 5 8.5s5-4.5 5-8.5C13 3.5 10.8 1 8 1zm0 7a2 2 0 110-4 2 2 0 010 4z"/></svg><span id="P_adr_footer">3 Avenue du Pays d'Auge</span></div>
+        <div class="pfi"><svg viewBox="0 0 16 16"><path d="M3 3h10a1 1 0 011 1v6a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1zm0 0l5 5 5-5"/></svg><span id="P_email_footer">realportage@gmail.com</span></div>
+        <div class="pfi"><svg viewBox="0 0 16 16"><path d="M3 3a1 1 0 011-1h2l1 3-1.5 1.5a9 9 0 004 4L11 9l3 1v2a1 1 0 01-1 1C6 13 3 7 3 3z"/></svg><span id="P_tel_footer">07 88 12 87 69</span></div>
+      </div>
+    </div><!-- /plaquette -->
+
+  </main>
+</div>
+
+<!-- Overlay export -->
+<div class="ov" id="ov">
+  <div class="spin"></div>
+  <div class="ov-msg">Génération du PDF en cours…</div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+//  ÉTAT
+// ═══════════════════════════════════════
+let avisData = [];
+let rowCounters = {};
+
+// ═══════════════════════════════════════
+//  TABS
+// ═══════════════════════════════════════
+function switchTab(name) {
+  ['formulaire','qualiopi','avis'].forEach(n => {
+    document.getElementById('pane-' + n).classList.toggle('on', n === name);
+    document.getElementById('btn-'  + n).classList.toggle('on', n === name);
+  });
+  render();
+}
+
+// ═══════════════════════════════════════
+//  ITEMS DYNAMIQUES
+// ═══════════════════════════════════════
+function addRow(listId, prefix) {
+  rowCounters[prefix] = (rowCounters[prefix] || 0) + 1;
+  const uid = prefix + '_' + rowCounters[prefix];
+  const list = document.getElementById(listId);
+  const row = document.createElement('div');
+  row.className = 'irow';
+  row.id = 'row_' + uid;
+  row.innerHTML =
+    '<input type="text" id="' + uid + '" placeholder="Saisir…">' +
+    '<button class="btn-rm" onclick="delRow(\'row_' + uid + '\')">×</button>';
+  list.appendChild(row);
+  // Brancher l'événement directement sur le nouvel input
+  document.getElementById(uid).addEventListener('input', render);
+}
+
+function delRow(rowId) {
+  const r = document.getElementById(rowId);
+  if (r) r.remove();
+  render();
+}
+
+function getList(listId) {
+  return Array.from(document.getElementById(listId).querySelectorAll('input'))
+    .map(i => i.value.trim()).filter(Boolean);
+}
+
+// ═══════════════════════════════════════
+//  AVIS
+// ═══════════════════════════════════════
+function addAvis() {
+  const idx = avisData.length;
+  avisData.push({ note:5, texte:'', prenom:'' });
+  renderAvisList();
+}
+function delAvis(i) { avisData.splice(i, 1); renderAvisList(); }
+function setNote(i, n) { avisData[i].note = n; renderAvisList(); }
+function setAvisField(i, key, val) { avisData[i][key] = val; render(); }
+
+function renderAvisList() {
+  const el = document.getElementById('A_list');
+  el.innerHTML = avisData.map((a, i) => `
+    <div class="avis-card-edit">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:9px">
+        <div style="font-size:11px;font-weight:600;color:var(--navy)">Avis #${i+1}</div>
+        <button class="btn-rm" onclick="delAvis(${i})">×</button>
+      </div>
+      <div class="f"><label>Note</label>
+        <div class="stars">
+          ${[1,2,3,4,5].map(n => `<button class="star ${n<=a.note?'on':''}" onclick="setNote(${i},${n})">★</button>`).join('')}
+        </div>
+      </div>
+      <div class="f"><label>Commentaire</label>
+        <input type="text" value="${x(a.texte)}" placeholder="La formation était très enrichissante…"
+          oninput="setAvisField(${i},'texte',this.value)">
+      </div>
+      <div class="f"><label>Prénom</label>
+        <input type="text" value="${x(a.prenom)}" placeholder="Marie D."
+          oninput="setAvisField(${i},'prenom',this.value)">
+      </div>
+    </div>`).join('');
+  render();
+}
+
+// ═══════════════════════════════════════
+//  LECTURE DES CHAMPS
+// ═══════════════════════════════════════
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+function x(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(d) {
+  if (!d) return null;
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+function set(id, html) {
+  const el = document.getElementById(id);
+  if (el) el.innerHTML = html;
+}
+function txt(id, t) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = t;
+}
+
+// ═══════════════════════════════════════
+//  RENDU PLAQUETTE
+// ═══════════════════════════════════════
+function render() {
+  const nom    = val('F_nom');
+  const rncp   = val('F_rncp');
+  const niveau = val('F_niveau');
+  const rythme = val('F_rythme');
+  const debut  = val('F_debut');
+  const fin    = val('F_fin');
+  const duree  = val('F_duree');
+  const dEnt   = val('F_duree_ent');
+  const tarif  = val('F_tarif');
+  const ccp1   = val('F_ccp1');
+  const ccp2   = val('F_ccp2');
+  const ccp3   = val('F_ccp3');
+  const adr    = val('F_adr');
+  const tel    = val('F_tel');
+  const email  = val('F_email');
+  const web    = val('F_web');
+
+  const objs = getList('L_obj');
+  const org  = getList('L_org');
+  const pre  = getList('L_pre');
+  const deb  = getList('L_deb');
+
+  // Header
+  txt('P_nom',  nom  || 'Nom de la formation');
+  txt('P_rncp', rncp || 'TITRE RNCP');
+  txt('P_adr',  adr  || "3 Avenue du Pays d'Auge — 80000 Amiens");
+  txt('P_adr_footer',   adr  ? adr.split('—')[0].trim() : "3 Avenue du Pays d'Auge");
+  txt('P_email_footer', email || 'realportage@gmail.com');
+  txt('P_tel_footer',   tel   || '07 88 12 87 69');
+  txt('P_tel_side',     tel   || '07 88 12 87 69');
+  txt('P_web',          web   || 'www.realportage.com');
+  txt('P_niveau', niveau || '—');
+  txt('P_rythme', rythme || '—');
+  txt('P_tarif',  tarif ? parseInt(tarif).toLocaleString('fr-FR') + ' €' : '— €');
+
+  // Dates
+  const ds = (debut && fin) ? `Du ${fmtDate(debut)} au ${fmtDate(fin)}`
+           : debut           ? `À partir du ${fmtDate(debut)}`
+           :                   'Dates à définir';
+  txt('P_dates', ds);
+
+  // Durée
+  txt('P_duree', duree ? `${duree}h dont ${dEnt||'—'}h entreprise` : '— h');
+
+  // Objectifs
+  set('P_objs', objs.length
+    ? objs.map(o => `<div class="pobj"><div class="pcheck"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke-width="2"/></svg></div>${x(o)}</div>`).join('')
+    : `<div class="pobj ph-txt"><div class="pcheck"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div>Saisir les objectifs dans le formulaire…</div>`);
+
+  // Programme
+  let prog = '';
+  if (ccp1) prog += `<div class="pccp"><span class="pccp-lbl">CCP 1</span>${x(ccp1)}</div>`;
+  else prog += `<div class="pccp ph-txt"><span class="pccp-lbl">CCP 1</span>—</div>`;
+  if (ccp2) prog += `<div class="pccp"><span class="pccp-lbl">CCP 2</span>${x(ccp2)}</div>`;
+  else prog += `<div class="pccp ph-txt"><span class="pccp-lbl">CCP 2</span>—</div>`;
+  if (ccp3) prog += `<div class="pccp"><span class="pccp-lbl">CCP 3</span>${x(ccp3)}</div>`;
+  set('P_prog', prog);
+
+  // Org
+  set('P_org', org.length
+    ? org.map(o => `<li>${x(o)}</li>`).join('')
+    : `<li class="ph-txt">Saisir les modalités…</li>`);
+
+  // Pré-requis
+  set('P_pre', pre.length
+    ? pre.map(p => `<li>${x(p)}</li>`).join('')
+    : `<li class="ph-txt">Saisir les pré-requis…</li>`);
+
+  // Débouchés
+  set('P_deb', deb.length
+    ? deb.map(d => `<div class="pdeb-item">${x(d)}</div>`).join('')
+    : `<div class="pdeb-item ph-txt">Saisir les débouchés…</div>`);
+
+  // Avis
+  set('P_avis', avisData.length
+    ? avisData.slice(0,3).map(a => `
+        <div class="pavis-card">
+          <div class="pavis-stars">${'★'.repeat(a.note)}${'☆'.repeat(5-a.note)}</div>
+          <div class="pavis-text">${x(a.texte||'…')}</div>
+          <div class="pavis-author">${x(a.prenom||'Apprenant')}</div>
+        </div>`).join('')
+    : `<div class="pavis-card ph-txt" style="font-size:9px">Les avis s'afficheront ici — ajoutez-les dans l'onglet « Avis »</div>`);
+
+  // Qualiopi
+  renderQualiopi({ nom, rncp, objs, ccp1, tarif, niveau, pre, debut, fin, org, tel, web, deb });
+}
+
+// ═══════════════════════════════════════
+//  QUALIOPI
+// ═══════════════════════════════════════
+function renderQualiopi(d) {
+  const ok = {
+    c11: !!(d.nom && d.objs.length && d.ccp1 && d.tarif && d.niveau),
+    c12: d.pre.length > 0,
+    c13: !!(d.debut && d.fin),
+    c14: d.org.length > 0,
+    c15: !!(d.tel || d.web),
+    c31: d.pre.length > 0,
+    c61: d.deb.length > 0,
+    c62: avisData.length > 0,
+  };
+
+  // Mini
+  const crits = [
+    ['c11','Nom, objectifs, programme, tarif, niveau'],
+    ['c12','Pré-requis renseignés'],
+    ['c13','Dates de début et de fin'],
+    ['c14','Modalités d\'organisation'],
+    ['c15','Contact accessibilité handicap'],
+    ['c61','Débouchés professionnels'],
+    ['c62','Avis apprenants publiés'],
+  ];
+  const mini = document.getElementById('Q_mini');
+  if (mini) mini.innerHTML = crits.map(([id, lbl]) => `
+    <div class="crit">
+      <div class="cdot ${ok[id]?'ok':'ko'}"></div>
+      <div class="ctext ${ok[id]?'ok':''}">${lbl}</div>
+    </div>`).join('');
+
+  // Full
+  Object.keys(ok).forEach(k => {
+    const el = document.getElementById('Q_' + k);
+    if (!el) return;
+    el.textContent = ok[k] ? '✓ Renseigné' : '○ À compléter';
+    el.className = 'qstat ' + (ok[k] ? 'ok' : 'ko');
+  });
+
+  // Score
+  const score = Object.values(ok).filter(Boolean).length;
+  const total = Object.keys(ok).length;
+  const pct   = Math.round(score / total * 100);
+  const sc = document.getElementById('Q_score');
+  if (sc) sc.innerHTML = `
+    <div style="font-weight:600;margin-bottom:5px;font-size:12px">Score : ${score}/${total} (${pct}%)</div>
+    <div class="prog"><div class="prog-fill" style="width:${pct}%;background:${pct===100?'var(--ok)':pct>=70?'#f59e0b':'var(--bx)'}"></div></div>
+    <div style="font-size:11px;color:var(--muted);margin-top:4px">${pct===100?'✓ Plaquette complète.':'Complétez les champs manquants.'}</div>`;
+}
+
+// ═══════════════════════════════════════
+//  PUBLICATION CATALOGUE
+// ═══════════════════════════════════════
+function publishToCatalogue() {
+  const nom = val('F_nom');
+  if (!nom) { showToast('Saisissez au moins le nom de la formation.'); return; }
+
+  const fins = [];
+  if (document.getElementById('F_cpf')?.checked)  fins.push('CPF');
+  if (document.getElementById('F_pe')?.checked)   fins.push('France Travail');
+  if (document.getElementById('F_opco')?.checked) fins.push('OPCO');
+
+  const formation = {
+    id: Date.now(),
+    nom:       nom,
+    rncp:      val('F_rncp'),
+    niveau:    val('F_niveau'),
+    rythme:    val('F_rythme'),
+    centre:    val('F_centre') || val('F_adr') || 'Real Portage',
+    categorie: val('F_categorie') || 'autre',
+    debut:     val('F_debut'),
+    fin:       val('F_fin'),
+    duree:     val('F_duree'),
+    tarif:     val('F_tarif'),
+    ccp1:      val('F_ccp1'),
+    ccp2:      val('F_ccp2'),
+    ccp3:      val('F_ccp3'),
+    objectifs: getList('L_obj'),
+    organisation: getList('L_org'),
+    prerequis:    getList('L_pre'),
+    debouches:    getList('L_deb'),
+    financement:  fins,
+    avis:         avisData.map(a => ({ note: a.note, texte: a.texte, prenom: a.prenom })),
+    publiee: true,
+    source: 'plaquette'
+  };
+
+  const stored = JSON.parse(localStorage.getItem('rp_catalogue') || '[]');
+  stored.push(formation);
+  localStorage.setItem('rp_catalogue', JSON.stringify(stored));
+
+  showToast('"' + nom + '" publiée dans le catalogue !');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('pub-toast');
+  document.getElementById('pub-toast-msg').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ═══════════════════════════════════════
+//  EXPORT PDF
+// ═══════════════════════════════════════
+function exportPDF() {
+  const ov = document.getElementById('ov');
+  ov.classList.add('on');
+  setTimeout(() => {
+    const plaq = document.getElementById('plaquette');
+    const clone = plaq.cloneNode(true);
+
+    // Forcer les couleurs inline sur les éléments critiques
+    const force = (sel, css) => clone.querySelectorAll(sel).forEach(e => {
+      Object.assign(e.style, css);
+    });
+    force('.ph', {background:'#1a2744', backgroundImage:'linear-gradient(135deg,#1a2744 0%,#243460 50%,#5a1529 100%)'});
+    force('.pprofil',  {background:'#7B1E3A', backgroundColor:'#7B1E3A'});
+    force('.pdeb',     {background:'#1a2744', backgroundColor:'#1a2744'});
+    force('.pfooter',  {background:'#1a2744', backgroundColor:'#1a2744'});
+    force('.pside',    {background:'#f5f0e8', backgroundColor:'#f5f0e8'});
+    force('.pavis',    {background:'#f5f0e8', backgroundColor:'#f5f0e8'});
+    force('.phand',    {background:'#1a2744', backgroundColor:'#1a2744'});
+    force('.psec-title',{background:'#7B1E3A', backgroundColor:'#7B1E3A', color:'#fff'});
+    force('.psi',      {background:'#ffffff', backgroundColor:'#ffffff'});
+    force('.pavis-card',{background:'#ffffff', backgroundColor:'#ffffff'});
+    force('.ph-logo-txt',{color:'#ffffff'});
+    force('.ph-nom',   {color:'#ffffff'});
+    force('.ph-rncp',  {color:'#e8a0b0'});
+    force('.ph-adr',   {color:'rgba(255,255,255,0.5)'});
+    force('.ph-badge', {background:'#ffffff', backgroundColor:'#ffffff', color:'#7B1E3A'});
+    const span = clone.querySelector('.ph-logo-txt span');
+    if (span) span.style.color = '#e8a0b0';
+
+    const nom = val('F_nom') || 'plaquette';
+    const filename = nom.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+
+    const win = window.open('','_blank','width=870,height=720');
+    if (!win) { ov.classList.remove('on'); alert('Popup bloquée — autorisez les popups.'); return; }
+
+    win.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+<title>${x(nom)}</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+html,body{background:#fff;font-family:'DM Sans',sans-serif}
+.pbody{display:grid;grid-template-columns:1fr 195px}
+.pbottom{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #e8e0d0}
+.plist li{display:flex;align-items:flex-start;gap:6px;font-size:10px;line-height:1.4}
+.plist li::before{content:'';width:5px;height:5px;background:#7B1E3A!important;border-radius:50%;flex-shrink:0;margin-top:4px;display:inline-block}
+.pprofil-item::before{content:'';width:4px;height:4px;background:rgba(255,255,255,.5)!important;border-radius:50%;flex-shrink:0;display:inline-block}
+.pdeb-item::before{content:'→';color:#9cc5f0;flex-shrink:0;font-size:9px}
+.pcheck svg{stroke:#7B1E3A;fill:none;stroke-width:2.5}
+.pavis-grid{display:flex;gap:7px}
+.pside{display:flex;flex-direction:column;gap:9px}
+.pobjs,.pccp,.pfi{display:flex;align-items:flex-start;gap:7px}
+.pfi{align-items:center;gap:5px}
+.ph{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center}
+.pfooter{display:flex;align-items:center;justify-content:space-between}
+@page{size:A4 portrait;margin:6mm}
+</style>
+</head><body>${clone.outerHTML}
+<script>
+  (function(){
+    var lnk = document.createElement('link');
+    lnk.rel='stylesheet';
+    lnk.href='https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap';
+    document.head.appendChild(lnk);
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(function(){setTimeout(function(){window.focus();window.print();},500)});
+    } else { setTimeout(function(){window.focus();window.print();},1200); }
+  })();
+<\/script></body></html>`);
+    win.document.close();
+    ov.classList.remove('on');
+  }, 80);
+}
+
+// ═══════════════════════════════════════
+//  INIT — branchement direct sur chaque champ
+// ═══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Créer les lignes par défaut
+  ['L_obj','L_obj','L_obj'].forEach(() => addRow('L_obj','obj'));
+  ['L_org','L_org'].forEach(() => addRow('L_org','org'));
+  ['L_pre','L_pre'].forEach(() => addRow('L_pre','pre'));
+  ['L_deb','L_deb'].forEach(() => addRow('L_deb','deb'));
+
+  // 2. Brancher TOUS les champs fixes directement — input + change + keyup
+  [
+    'F_nom','F_rncp','F_niveau','F_rythme',
+    'F_centre','F_categorie',
+    'F_debut','F_fin','F_duree','F_duree_ent',
+    'F_tarif','F_ccp1','F_ccp2','F_ccp3',
+    'F_adr','F_tel','F_email','F_web'
+  ].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('input',  render);
+    el.addEventListener('change', render);
+    el.addEventListener('keyup',  render);
+  });
+
+  // 3. Délégation sur tout le panneau gauche pour les champs dynamiques
+  document.querySelector('.left').addEventListener('input',  render);
+  document.querySelector('.left').addEventListener('change', render);
+
+  // 4. Premier rendu
+  render();
+});
+</script>
+</body>
+</html>

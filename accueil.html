@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Real Portage — Catalogue des formations</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bx:#7B1E3A; --bx-d:#5a1529; --bx-l:#a8294f;
+  --navy:#1a2744; --navy-l:#243460; --navy-m:#3a4d7a;
+  --cream:#f5f0e8; --cream-d:#e8e0d0; --beige:#f9f6f0;
+  --text:#1a1a1a; --muted:#6b6b6b; --light:#aaa;
+  --white:#ffffff; --border:#ddd8cc;
+  --ok:#1e6e41; --ok-bg:#e8f5ee;
+  --warn:#b85c00; --warn-bg:#fff3e0;
+  --r:10px; --rl:16px;
+  --sh:0 2px 16px rgba(0,0,0,0.07);
+  --sh-lg:0 12px 40px rgba(0,0,0,0.14);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px;scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:#f0ebe0;color:var(--text);min-height:100vh}
+
+/* ===== VUES ===== */
+.view{display:none}
+.view.active{display:block}
+
+/* ===== NAV ===== */
+.nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(26,39,68,0.97);backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.nav-inner{
+  max-width:1200px;margin:0 auto;padding:0 24px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+  display:flex;align-items:center;gap:10px;
+  font-family:'DM Serif Display',serif;font-size:20px;color:#fff;
+}
+.nav-logo .dot{
+  width:30px;height:30px;border-radius:50%;background:var(--bx-l);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;color:#fff;
+}
+.nav-logo span{color:#e8a0b0}
+.nav-links{display:flex;align-items:center;gap:6px}
+.nav-link{
+  padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;
+  color:rgba(255,255,255,0.6);background:none;border:none;cursor:pointer;
+  transition:all .15s;
+}
+.nav-link:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.nav-link.active{color:#fff;background:rgba(255,255,255,0.12)}
+.btn-formateur{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 16px;background:var(--bx);color:#fff;border:none;
+  border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .15s;box-shadow:0 2px 10px rgba(123,30,58,.35);
+}
+.btn-formateur:hover{background:var(--bx-d);transform:translateY(-1px)}
+.btn-formateur svg{width:12px;height:12px;fill:#fff}
+
+/* ===== HERO ===== */
+.hero{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 55%,var(--bx-d) 100%);
+  padding:72px 24px 60px;text-align:center;position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 120%, rgba(123,30,58,.3), transparent);
+}
+.hero::after{
+  content:'';position:absolute;top:-60px;right:-60px;
+  width:300px;height:300px;border-radius:50%;
+  border:1px solid rgba(255,255,255,.05);
+}
+.hero-inner{max-width:700px;margin:0 auto;position:relative}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 14px;background:rgba(255,255,255,.1);border-radius:20px;
+  font-size:10px;font-weight:700;color:rgba(255,255,255,.7);
+  text-transform:uppercase;letter-spacing:1.5px;margin-bottom:18px;
+}
+.hero-eyebrow-dot{width:6px;height:6px;border-radius:50%;background:#e8a0b0}
+.hero h1{
+  font-family:'DM Serif Display',serif;font-size:46px;color:#fff;line-height:1.1;
+  margin-bottom:16px;font-weight:400;
+}
+.hero h1 em{color:#e8a0b0;font-style:italic}
+.hero p{font-size:15px;color:rgba(255,255,255,.65);line-height:1.7;margin-bottom:32px;max-width:540px;margin-left:auto;margin-right:auto}
+.hero-ctas{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.btn-hero-p{
+  padding:12px 28px;background:var(--bx);color:#fff;border:none;
+  border-radius:24px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;transition:all .15s;box-shadow:0 4px 16px rgba(123,30,58,.4);
+}
+.btn-hero-p:hover{background:var(--bx-d);transform:translateY(-2px)}
+.btn-hero-s{
+  padding:12px 28px;background:transparent;color:#fff;
+  border:1.5px solid rgba(255,255,255,.3);border-radius:24px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  cursor:pointer;transition:all .15s;
+}
+.btn-hero-s:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.6)}
+.hero-stats{
+  display:flex;gap:40px;justify-content:center;margin-top:48px;
+  flex-wrap:wrap;
+}
+.hero-stat{text-align:center}
+.hero-stat-val{
+  font-family:'DM Serif Display',serif;font-size:32px;color:#fff;line-height:1;
+}
+.hero-stat-label{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-top:3px}
+
+/* ===== FILTRES ===== */
+.filters-bar{
+  background:var(--white);border-bottom:1px solid var(--cream-d);
+  position:sticky;top:60px;z-index:100;
+}
+.filters-inner{
+  max-width:1200px;margin:0 auto;padding:12px 24px;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.filter-chip{
+  padding:5px 14px;border-radius:20px;font-size:11px;font-weight:500;
+  border:1.5px solid var(--border);background:var(--beige);color:var(--muted);
+  cursor:pointer;transition:all .12s;
+}
+.filter-chip:hover{border-color:var(--navy);color:var(--navy)}
+.filter-chip.active{border-color:var(--bx);background:#fce8ed;color:var(--bx)}
+.filter-search{
+  margin-left:auto;padding:6px 14px;border:1.5px solid var(--border);border-radius:20px;
+  font-family:'DM Sans',sans-serif;font-size:12px;outline:none;background:var(--beige);
+  width:200px;transition:border-color .15s;
+}
+.filter-search:focus{border-color:var(--bx);background:#fff}
+.results-count{font-size:11px;color:var(--light);margin-left:4px}
+
+/* ===== GRILLE FORMATIONS ===== */
+.catalogue{max-width:1200px;margin:0 auto;padding:36px 24px}
+.catalogue-title{
+  font-family:'DM Serif Display',serif;font-size:28px;color:var(--navy);
+  margin-bottom:4px;
+}
+.catalogue-sub{font-size:12px;color:var(--muted);margin-bottom:28px}
+.formations-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(340px,1fr));
+  gap:24px;
+}
+.empty-state{
+  grid-column:1/-1;text-align:center;padding:60px 20px;
+  font-size:13px;color:var(--muted);
+}
+.empty-state svg{width:48px;height:48px;fill:var(--border);margin:0 auto 12px;display:block}
+
+/* ===== TEMPLATE CARTE FORMATION ===== */
+/* C'est le template standardisé : toutes les formations ont exactement la même structure */
+.formation-card{
+  background:var(--white);border-radius:var(--rl);
+  box-shadow:var(--sh);overflow:hidden;
+  transition:transform .2s,box-shadow .2s;
+  cursor:pointer;position:relative;
+}
+.formation-card:hover{transform:translateY(-4px);box-shadow:var(--sh-lg)}
+.formation-card:hover .fc-cta{opacity:1;transform:translateY(0)}
+
+/* Zone header colorée — identique pour toutes les cartes */
+.fc-header{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 60%,var(--bx-d) 100%);
+  padding:20px 20px 16px;position:relative;overflow:hidden;
+}
+.fc-header::after{
+  content:'';position:absolute;right:-20px;top:-20px;
+  width:100px;height:100px;border-radius:50%;
+  background:rgba(255,255,255,0.04);
+}
+.fc-niveau{
+  display:inline-block;padding:3px 10px;background:rgba(255,255,255,.12);
+  border-radius:20px;font-size:9px;font-weight:700;color:rgba(255,255,255,.8);
+  text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;
+}
+.fc-title{
+  font-family:'DM Serif Display',serif;font-size:18px;color:#fff;
+  line-height:1.2;margin-bottom:4px;font-style:italic;
+}
+.fc-centre{font-size:10px;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.5px}
+.fc-qualiopi{
+  position:absolute;top:12px;right:12px;
+  background:#fff;border:1.5px solid rgba(255,255,255,.3);border-radius:6px;
+  padding:3px 8px;font-size:8px;font-weight:700;color:var(--bx);letter-spacing:.5px;
+}
+
+/* Infos pratiques — même layout sur toutes les cartes */
+.fc-infos{
+  display:grid;grid-template-columns:1fr 1fr 1fr;
+  border-bottom:1px solid var(--cream-d);
+}
+.fc-info{
+  padding:10px 14px;text-align:center;border-right:1px solid var(--cream-d);
+}
+.fc-info:last-child{border-right:none}
+.fc-info-icon{font-size:14px;margin-bottom:2px}
+.fc-info-val{font-size:12px;font-weight:600;color:var(--navy)}
+.fc-info-label{font-size:9px;color:var(--light);text-transform:uppercase;letter-spacing:.5px}
+
+/* Corps — même sections dans le même ordre */
+.fc-body{padding:16px 18px}
+
+.fc-section{margin-bottom:14px}
+.fc-section-title{
+  display:inline-block;background:var(--bx);color:#fff;
+  font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 10px;border-radius:4px;margin-bottom:8px;
+}
+.fc-objectifs{display:flex;flex-direction:column;gap:5px}
+.fc-obj{
+  display:flex;align-items:flex-start;gap:6px;
+  font-size:11px;color:var(--text);line-height:1.4;
+}
+.fc-obj-dot{
+  width:14px;height:14px;border-radius:50%;border:1.5px solid var(--bx);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.fc-obj-dot svg{width:7px;height:7px;stroke:var(--bx);fill:none;stroke-width:2.5}
+.fc-ccps{display:flex;flex-direction:column;gap:4px}
+.fc-ccp{
+  display:flex;align-items:baseline;gap:6px;font-size:11px;line-height:1.4;
+}
+.fc-ccp-label{
+  font-size:9px;font-weight:700;color:var(--bx);min-width:38px;flex-shrink:0;
+  text-transform:uppercase;letter-spacing:.5px;
+}
+.fc-ccp-text{color:var(--muted)}
+
+/* Profil & financement */
+.fc-footer{
+  border-top:1px solid var(--cream-d);padding:12px 18px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--beige);
+}
+.fc-financement{
+  display:flex;gap:5px;flex-wrap:wrap;
+}
+.fc-fin-tag{
+  padding:2px 8px;border-radius:20px;font-size:9px;font-weight:600;
+  background:var(--info-bg,#e8f1fb);color:#1a5276;border:1px solid rgba(26,82,118,.15);
+}
+.fc-fin-tag.cpf{background:#e8f1fb;color:#1a5276}
+.fc-fin-tag.pe{background:var(--ok-bg);color:var(--ok)}
+.fc-fin-tag.opco{background:var(--warn-bg);color:var(--warn)}
+.fc-cta{
+  display:flex;align-items:center;gap:6px;
+  padding:7px 16px;background:var(--bx);color:#fff;border:none;border-radius:20px;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  cursor:pointer;transition:all .15s;opacity:1;
+  box-shadow:0 2px 8px rgba(123,30,58,.25);
+}
+.fc-cta:hover{background:var(--bx-d)}
+
+/* ===== VUE DÉTAIL FORMATION ===== */
+.detail-header{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 55%,var(--bx-d) 100%);
+  padding:40px 24px 36px;
+}
+.detail-inner{max-width:960px;margin:0 auto}
+.detail-back{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 14px;background:rgba(255,255,255,.1);border-radius:20px;
+  color:rgba(255,255,255,.7);font-size:11px;border:none;cursor:pointer;
+  margin-bottom:20px;font-family:'DM Sans',sans-serif;transition:all .12s;
+}
+.detail-back:hover{background:rgba(255,255,255,.18);color:#fff}
+.detail-eyebrow{font-size:10px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.detail-title{font-family:'DM Serif Display',serif;font-size:36px;color:#fff;font-style:italic;margin-bottom:8px}
+.detail-meta{font-size:12px;color:rgba(255,255,255,.6)}
+.detail-body{max-width:960px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:1fr 280px;gap:24px}
+.detail-main{}
+.detail-aside{} 
+
+.detail-card{
+  background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;margin-bottom:18px;
+}
+.detail-card-title{
+  padding:14px 18px;border-bottom:1px solid var(--cream-d);
+  font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy);
+}
+.detail-card-body{padding:16px 18px}
+
+.avis-mini{
+  display:flex;flex-direction:column;gap:8px;
+}
+.avis-mini-item{
+  padding:10px 12px;background:var(--beige);border-radius:var(--r);
+  border-left:3px solid var(--bx);
+}
+.avis-mini-stars{color:#f59e0b;font-size:12px;margin-bottom:2px}
+.avis-mini-text{font-size:11px;color:var(--muted);font-style:italic}
+.avis-mini-author{font-size:10px;color:var(--light);margin-top:3px;font-weight:500}
+
+/* ===== ESPACE FORMATEUR ===== */
+.formateur-shell{min-height:100vh;background:#eae4d8}
+.formateur-nav{
+  background:var(--navy);height:52px;display:flex;align-items:center;
+  padding:0 24px;gap:14px;position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 16px rgba(0,0,0,.2);
+}
+.fn-logo{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;display:flex;align-items:center;gap:8px}
+.fn-logo .rp{width:26px;height:26px;border-radius:50%;background:var(--bx-l);display:flex;align-items:center;justify-content:center;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;color:#fff}
+.fn-logo span{color:#e8a0b0}
+.fn-tabs{display:flex;gap:2px;flex:1}
+.fntab{display:flex;align-items:center;gap:5px;padding:0 14px;height:52px;border:none;background:none;color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap}
+.fntab svg{width:13px;height:13px;fill:currentColor;flex-shrink:0}
+.fntab:hover{color:rgba(255,255,255,.85)}
+.fntab.active{color:#fff;border-bottom-color:#e8a0b0}
+.fn-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.fn-preview-btn{
+  display:flex;align-items:center;gap:6px;padding:6px 14px;
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
+  border-radius:20px;color:#fff;font-family:'DM Sans',sans-serif;font-size:11px;
+  font-weight:500;cursor:pointer;transition:all .12s;
+}
+.fn-preview-btn:hover{background:rgba(255,255,255,.18)}
+.fn-preview-btn svg{width:12px;height:12px;fill:#fff}
+
+.fpage{display:none;padding:28px}
+.fpage.active{display:block}
+
+/* Formulaire formateur */
+.form-grid{display:grid;grid-template-columns:1fr 400px;gap:24px;max-width:1100px;margin:0 auto}
+.fsection{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;margin-bottom:18px}
+.fsection-header{
+  padding:14px 18px;border-bottom:1px solid var(--cream-d);
+  display:flex;align-items:center;gap:8px;
+}
+.fsection-badge{
+  width:20px;height:20px;background:var(--bx);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.fsection-badge svg{width:11px;height:11px;fill:#fff}
+.fsection-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bx)}
+.fsection-body{padding:18px}
+.ffield{margin-bottom:13px}
+.ffield:last-child{margin-bottom:0}
+.ffield label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.ffield input,.ffield textarea,.ffield select{
+  width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r);
+  font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:var(--beige);transition:border-color .15s;
+}
+.ffield input:focus,.ffield textarea:focus,.ffield select:focus{border-color:var(--bx);background:#fff}
+.ffield textarea{resize:vertical;min-height:60px;line-height:1.5}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.items-list{display:flex;flex-direction:column;gap:6px}
+.item-row{display:flex;align-items:center;gap:6px}
+.item-row input{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:12px;background:var(--beige);outline:none;transition:border-color .15s}
+.item-row input:focus{border-color:var(--bx);background:#fff}
+.btn-rem{width:26px;height:26px;border:none;border-radius:5px;cursor:pointer;background:#fce8ed;color:var(--bx);font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background .1s}
+.btn-rem:hover{background:#f9c4cf}
+.btn-add-item{display:flex;align-items:center;gap:5px;background:none;border:1.5px dashed var(--bx);color:var(--bx);border-radius:var(--r);padding:5px 12px;font-size:10px;font-weight:700;cursor:pointer;width:100%;margin-top:6px;text-transform:uppercase;letter-spacing:.5px;transition:background .1s}
+.btn-add-item:hover{background:#fce8ed}
+
+/* Preview en temps réel dans l'espace formateur */
+.preview-sticky{
+  position:sticky;top:80px;max-height:calc(100vh - 100px);overflow-y:auto;
+}
+.preview-sticky::-webkit-scrollbar{width:3px}
+.preview-sticky::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.preview-label{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;
+}
+.preview-label-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--ok);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Bouton publier */
+.btn-publish{
+  width:100%;padding:13px;background:var(--bx);color:#fff;border:none;border-radius:24px;
+  font-family:'DM Serif Display',serif;font-size:16px;cursor:pointer;
+  transition:all .15s;box-shadow:0 4px 16px rgba(123,30,58,.3);margin-top:4px;
+}
+.btn-publish:hover{background:var(--bx-d);transform:translateY(-1px)}
+
+/* Notification publication */
+.pub-notif{
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--navy);color:#fff;padding:14px 20px;border-radius:var(--r);
+  font-size:12px;font-weight:500;display:none;align-items:center;gap:10px;
+  box-shadow:var(--sh-lg);max-width:340px;
+  animation:tIn .3s ease;
+}
+.pub-notif.show{display:flex}
+@keyframes tIn{from{transform:translateY(8px);opacity:0}to{opacity:1;transform:none}}
+.pub-notif-icon{
+  width:30px;height:30px;border-radius:50%;background:var(--ok);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;
+}
+
+/* Mes formations publiées */
+.pub-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.pub-card{
+  background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;
+  border-left:4px solid var(--bx);
+}
+.pub-card-header{padding:14px 16px;border-bottom:1px solid var(--cream-d)}
+.pub-card-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px}
+.pub-card-meta{font-size:10px;color:var(--muted)}
+.pub-card-body{padding:12px 16px;display:flex;align-items:center;justify-content:space-between}
+.pub-status{display:flex;align-items:center;gap:5px;font-size:11px}
+.pub-dot{width:7px;height:7px;border-radius:50%}
+.pub-actions{display:flex;gap:6px}
+.btn-xs{padding:4px 11px;border-radius:20px;font-size:10px;font-weight:600;cursor:pointer;border:1.5px solid;transition:all .12s}
+.btn-xs-p{background:var(--bx);color:#fff;border-color:var(--bx)}
+.btn-xs-p:hover{background:var(--bx-d)}
+.btn-xs-s{background:#fff;color:var(--navy);border-color:var(--border)}
+.btn-xs-s:hover{border-color:var(--navy)}
+
+/* Modal détail */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:600;display:none;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto}
+.modal-overlay.open{display:flex}
+.modal-full{background:var(--white);border-radius:var(--rl);width:100%;max-width:800px;margin:auto;box-shadow:var(--sh-lg);overflow:hidden;animation:mIn .25s ease}
+@keyframes mIn{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+
+@media(max-width:900px){
+  .form-grid{grid-template-columns:1fr}
+  .preview-sticky{position:static;max-height:none}
+  .detail-body{grid-template-columns:1fr}
+  .hero h1{font-size:32px}
+  .formations-grid{grid-template-columns:1fr}
+}
+
+/* ===== TABLET (≤768px) ===== */
+@media(max-width:768px){
+  .nav-inner{padding:0 14px}
+  .nav-links{gap:2px;overflow-x:auto}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-link{font-size:11px;padding:5px 10px;white-space:nowrap}
+  .btn-formateur{font-size:11px;padding:6px 12px}
+  .hero{padding:44px 18px 36px}
+  .hero h1{font-size:26px}
+  .hero-stats{gap:24px}
+  .section{padding:40px 18px}
+  .formations-grid{grid-template-columns:1fr 1fr;gap:14px}
+  .modal-overlay{padding:12px}
+  .detail-body{grid-template-columns:1fr}
+  .avis-grid{grid-template-columns:1fr}
+}
+
+/* ===== MOBILE (≤480px) ===== */
+@media(max-width:480px){
+  .nav-inner{height:50px;padding:0 10px}
+  .nav-logo{font-size:16px}
+  .nav-logo .dot{width:24px;height:24px;font-size:10px}
+  .nav-links{gap:0}
+  .nav-link{font-size:10px;padding:4px 8px}
+  .btn-formateur span{display:none}
+  .btn-formateur{padding:6px 10px}
+  .hero{padding:28px 12px 24px}
+  .hero h1{font-size:20px;line-height:1.25}
+  .hero p{font-size:12px;margin-bottom:20px}
+  .hero-ctas{flex-direction:column;gap:8px;align-items:center}
+  .hero-ctas .btn-cta,.hero-ctas .btn-cta-sec{width:100%;max-width:280px;justify-content:center}
+  .hero-stats{flex-direction:row;gap:14px;flex-wrap:wrap;justify-content:center}
+  .hero-stat-val{font-size:22px}
+  .section{padding:24px 12px}
+  .section-title{font-size:20px}
+  .formations-grid{grid-template-columns:1fr;gap:10px}
+  .filter-row{flex-wrap:wrap;gap:6px}
+  .filter-btn{font-size:10px;padding:4px 10px}
+  .search-input{width:100%}
+  .modal-overlay{padding:0}
+  .modal-box{max-width:100vw;max-height:100dvh;border-radius:0;margin:0}
+  .detail-header{padding:18px 14px}
+  .detail-nom{font-size:18px}
+  .detail-body{padding:14px}
+  .avis-grid{grid-template-columns:1fr}
+  .about-blocks{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== VUE PUBLIQUE ===== -->
+<div id="view-public" class="view active">
+
+  <!-- Nav -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <div class="nav-logo" onclick="window.location.href='accueil.html'" style="cursor:pointer">
+        <div class="dot">rp</div>
+        real<span>portage</span>
+      </div>
+      <div class="nav-links">
+        <button class="nav-link active" onclick="scrollToCatalogue()">Formations</button>
+        <button class="nav-link" onclick="scrollToAbout()">À propos</button>
+        <button class="nav-link" onclick="window.location.href='apprenants.html'">
+          <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:currentColor;margin-right:4px;vertical-align:middle"><path d="M8 1a3 3 0 100 6 3 3 0 000-6zM3 14c0-2.8 2.2-5 5-5s5 2.2 5 5"/></svg>
+          Espace apprenant
+        </button>
+        <button class="nav-link" onclick="window.location.href='admin.html'">
+          <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:currentColor;margin-right:4px;vertical-align:middle"><path d="M8 1a3.5 3.5 0 100 7 3.5 3.5 0 000-7zM2 13.5C2 11 4.7 9 8 9s6 2 6 4.5"/></svg>
+          Admin
+        </button>
+      </div>
+      <button class="btn-formateur" onclick="window.location.href='formateur.html'">
+        <svg viewBox="0 0 16 16"><path d="M8 1a3 3 0 100 6 3 3 0 000-6zM3 14c0-2.8 2.2-5 5-5s5 2.2 5 5"/></svg>
+        Espace formateur
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-dot"></div>
+        Organisme de formation certifié Qualiopi
+      </div>
+      <h1>Trouvez la formation<br>qui <em>change tout</em></h1>
+      <p>Real Portage propose des parcours de formation professionnelle certifiés, éligibles CPF, pour vous accompagner vers l'emploi et la montée en compétences.</p>
+      <div class="hero-ctas">
+        <button class="btn-hero-p" onclick="scrollToCatalogue()">Voir toutes les formations</button>
+        <button class="btn-hero-s" onclick="scrollToAbout()">Nous contacter</button>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-val" id="hero-stat-formations">—</div><div class="hero-stat-label">Formations actives</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">87</div><div class="hero-stat-label">Apprenants formés</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">3</div><div class="hero-stat-label">Centres en France</div></div>
+        <div class="hero-stat"><div class="hero-stat-val">94%</div><div class="hero-stat-label">Satisfaction</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filtres -->
+  <div class="filters-bar" id="catalogue-anchor">
+    <div class="filters-inner">
+      <button class="filter-chip active" onclick="filterCat('tous',this)">Tout voir</button>
+      <button class="filter-chip" onclick="filterCat('emploi',this)">Emploi & CV</button>
+      <button class="filter-chip" onclick="filterCat('dev',this)">Développement web</button>
+      <button class="filter-chip" onclick="filterCat('data',this)">Data & Tech</button>
+      <button class="filter-chip" onclick="filterCat('cpf',this)">Éligible CPF</button>
+      <span class="results-count" id="results-count"></span>
+      <input class="filter-search" placeholder="Rechercher…" oninput="searchFormations(this.value)" id="search-input">
+    </div>
+  </div>
+
+  <!-- Catalogue -->
+  <section class="catalogue">
+    <div class="catalogue-title">Nos formations</div>
+    <div class="catalogue-sub">Templates standardisés — chaque formation suit exactement la même structure pour une comparaison facile</div>
+    <div class="formations-grid" id="formations-grid"></div>
+  </section>
+
+  <!-- À propos -->
+  <section id="about-anchor" style="max-width:1200px;margin:0 auto 60px;padding:0 24px">
+    <div style="background:linear-gradient(135deg,var(--navy),var(--navy-l));border-radius:var(--rl);padding:40px;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:26px;margin-bottom:8px">Vous êtes formateur ?</div>
+        <div style="font-size:12px;color:rgba(255,255,255,.65);line-height:1.7;max-width:500px">
+          Créez vos modules, remplissez votre plaquette et publiez automatiquement votre formation dans ce catalogue public. Le template est identique pour tous.
+        </div>
+      </div>
+      <button class="btn-hero-p" style="flex-shrink:0" onclick="window.location.href='formateur.html'">Accéder à l'espace formateur</button>
+    </div>
+  </section>
+</div>
+
+<!-- ===== MODAL DÉTAIL FORMATION ===== -->
+<div class="modal-overlay" id="modal-detail" onclick="if(event.target===this)closeDetail()">
+  <div class="modal-full" id="modal-detail-content"></div>
+</div>
+
+
+<script>
+/* ===========================
+   DONNÉES FORMATIONS
+=========================== */
+let formationsData = [
+  {
+    id:1, nom:'CV et Recherche d\'emploi', rncp:'RNCP Niveau 4',
+    centre:'Real Conseil Amiens', niveau:'Bac (Niveau 4)',
+    debut:'2026-03-12', fin:'2026-05-20',
+    duree:485, tarif:1800, categorie:'emploi',
+    objectifs:[
+      'Concevoir un CV professionnel adapté au marché',
+      'Rédiger des lettres de motivation percutantes',
+      'Maîtriser les techniques d\'entretien d\'embauche',
+      'Développer son réseau professionnel (LinkedIn)',
+    ],
+    ccp1:'Élaborer et valoriser son parcours professionnel',
+    ccp2:'Rechercher et décrocher un emploi adapté',
+    ccp3:'Construire son projet professionnel à long terme',
+    financement:['CPF','France Travail'],
+    avis:[
+      {prenom:'Sarah B.',note:5,texte:'Formation très complète, j\'ai trouvé du travail en 2 semaines !'},
+      {prenom:'Karim D.',note:4,texte:'Contenu pratique et formateur disponible. Je recommande.'},
+    ],
+    publiee: true
+  },
+  {
+    id:2, nom:'Développeur Web et Web Mobile (DWWM)', rncp:'RNCP Niveau 5',
+    centre:'Real Conseil Amiens', niveau:'Bac+2 (Niveau 5)',
+    debut:'2026-01-05', fin:'2026-07-18',
+    duree:840, tarif:7500, categorie:'dev',
+    objectifs:[
+      'Développer des interfaces web responsive en HTML/CSS/JS',
+      'Concevoir des applications back-end PHP/MySQL',
+      'Intégrer des composants React modernes',
+      'Versionner et déployer avec Git et GitHub',
+    ],
+    ccp1:'Développer la partie front-end d\'une application web',
+    ccp2:'Développer la partie back-end d\'une application web',
+    ccp3:'',
+    financement:['CPF','France Travail','OPCO'],
+    avis:[
+      {prenom:'Théo G.',note:5,texte:'Excellente formation, très complète. Le projet fil rouge est vraiment formateur.'},
+    ],
+    publiee: true
+  },
+  {
+    id:3, nom:'Concepteur Développeur d\'Applications (CDA)', rncp:'RNCP Niveau 6',
+    centre:'Real Conseil Lille', niveau:'Bac+3 (Niveau 6)',
+    debut:'2026-02-10', fin:'2026-09-30',
+    duree:1200, tarif:9200, categorie:'dev',
+    objectifs:[
+      'Concevoir l\'architecture d\'une application complexe',
+      'Appliquer les design patterns et bonnes pratiques',
+      'Mettre en place des pipelines CI/CD',
+      'Piloter un projet en méthode agile',
+    ],
+    ccp1:'Concevoir et développer une application sécurisée',
+    ccp2:'Concevoir et développer une architecture distribuée',
+    ccp3:'Préparer le déploiement d\'une application',
+    financement:['CPF','OPCO'],
+    avis:[],
+    publiee: true
+  },
+  {
+    id:4, nom:'React & TypeScript — Développeur Front-end', rncp:'',
+    centre:'Real Portage Paris', niveau:'Bac+2 (Niveau 5)',
+    debut:'2026-03-01', fin:'2026-06-30',
+    duree:420, tarif:5800, categorie:'dev',
+    objectifs:[
+      'Maîtriser React 18 et les hooks avancés',
+      'Typer une application avec TypeScript',
+      'Gérer l\'état global avec Context et Redux',
+      'Tester ses composants avec Jest et Vitest',
+    ],
+    ccp1:'Développer des interfaces React modernes et typées',
+    ccp2:'Intégrer des API REST dans une SPA TypeScript',
+    ccp3:'',
+    financement:['CPF','France Travail'],
+    avis:[
+      {prenom:'Romain D.',note:5,texte:'Formation très technique, exactement ce dont j\'avais besoin.'},
+    ],
+    publiee: true
+  },
+  {
+    id:5, nom:'Data Analyst Python & SQL', rncp:'RNCP Niveau 5',
+    centre:'Real Portage Paris', niveau:'Bac+2 (Niveau 5)',
+    debut:'2026-04-15', fin:'2026-10-15',
+    duree:600, tarif:6500, categorie:'data',
+    objectifs:[
+      'Analyser et visualiser des données avec Python (pandas, matplotlib)',
+      'Interroger et optimiser des bases SQL',
+      'Créer des dashboards avec Power BI',
+      'Appliquer les bases du machine learning',
+    ],
+    ccp1:'Collecter, nettoyer et analyser des données',
+    ccp2:'Visualiser et restituer les résultats',
+    ccp3:'',
+    financement:['CPF','OPCO'],
+    avis:[],
+    publiee: true
+  },
+];
+
+let activeFilter = 'tous';
+let searchVal = '';
+
+/* ===========================
+   NAVIGATION VUES
+=========================== */
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='view-public') renderCatalogue();
+}
+
+function scrollToCatalogue() {
+  document.getElementById('catalogue-anchor').scrollIntoView({behavior:'smooth'});
+}
+function scrollToAbout() {
+  document.getElementById('about-anchor').scrollIntoView({behavior:'smooth'});
+}
+
+/* ===========================
+   CATALOGUE PUBLIC
+=========================== */
+function renderCatalogue() {
+  const publiees = formationsData.filter(f => f.publiee);
+  let list = publiees;
+  if(activeFilter !== 'tous') {
+    if(activeFilter === 'cpf') list = publiees.filter(f => f.financement.includes('CPF'));
+    else list = publiees.filter(f => f.categorie === activeFilter);
+  }
+  if(searchVal) {
+    const s = searchVal.toLowerCase();
+    list = list.filter(f => (f.nom+f.centre+f.rncp+f.categorie).toLowerCase().includes(s));
+  }
+
+  document.getElementById('hero-stat-formations').textContent = publiees.length;
+  document.getElementById('results-count').textContent = `${list.length} formation${list.length>1?'s':''}`;
+
+  const grid = document.getElementById('formations-grid');
+  if(list.length === 0) {
+    grid.innerHTML = `<div class="empty-state"><svg viewBox="0 0 16 16"><path d="M2 3h12M2 7h9M2 11h6"/></svg>Aucune formation ne correspond à votre recherche.</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(f => formationCardHTML(f)).join('');
+}
+
+function filterCat(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  renderCatalogue();
+}
+
+function searchFormations(val) {
+  searchVal = val;
+  renderCatalogue();
+}
+
+/* ===========================
+   TEMPLATE CARTE — standardisé
+   C'est LE template unique utilisé
+   partout : catalogue public,
+   preview formateur, détail.
+=========================== */
+function formationCardHTML(f) {
+  const fins = (f.financement||[]).map(t=>`<span class="fc-fin-tag ${t==='CPF'?'cpf':t.includes('Travail')?'pe':'opco'}">${t}</span>`).join('');
+  const objs = (f.objectifs||[]).slice(0,3).map(o=>`
+    <div class="fc-obj">
+      <div class="fc-obj-dot"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div>
+      ${esc(o)}
+    </div>`).join('');
+  const debut = f.debut ? fmtDateShort(f.debut) : '—';
+  const fin = f.fin ? fmtDateShort(f.fin) : '—';
+
+  return `
+  <div class="formation-card" onclick="openDetail(${f.id})">
+    <div class="fc-header">
+      ${f.rncp?`<div class="fc-niveau">${esc(f.rncp)}</div>`:'<div class="fc-niveau" style="opacity:0">—</div>'}
+      <div class="fc-title">${esc(f.nom)}</div>
+      <div class="fc-centre">${esc(f.centre)}</div>
+      <div class="fc-qualiopi">Qualiopi</div>
+    </div>
+    <div class="fc-infos">
+      <div class="fc-info">
+        <div class="fc-info-icon">📅</div>
+        <div class="fc-info-val">${debut}</div>
+        <div class="fc-info-label">Début</div>
+      </div>
+      <div class="fc-info">
+        <div class="fc-info-icon">⏱</div>
+        <div class="fc-info-val">${f.duree?f.duree+'h':'—'}</div>
+        <div class="fc-info-label">Durée</div>
+      </div>
+      <div class="fc-info">
+        <div class="fc-info-icon">💶</div>
+        <div class="fc-info-val">${f.tarif?parseInt(f.tarif).toLocaleString('fr-FR')+' €':'—'}</div>
+        <div class="fc-info-label">Tarif</div>
+      </div>
+    </div>
+    <div class="fc-body">
+      ${objs.length>0?`
+      <div class="fc-section">
+        <div class="fc-section-title">Objectifs</div>
+        <div class="fc-objectifs">${objs}</div>
+      </div>`:''}
+      ${(f.ccp1||f.ccp2)?`
+      <div class="fc-section">
+        <div class="fc-section-title">Programme</div>
+        <div class="fc-ccps">
+          ${f.ccp1?`<div class="fc-ccp"><span class="fc-ccp-label">CCP 1</span><span class="fc-ccp-text">${esc(f.ccp1)}</span></div>`:''}
+          ${f.ccp2?`<div class="fc-ccp"><span class="fc-ccp-label">CCP 2</span><span class="fc-ccp-text">${esc(f.ccp2)}</span></div>`:''}
+          ${f.ccp3?`<div class="fc-ccp"><span class="fc-ccp-label">CCP 3</span><span class="fc-ccp-text">${esc(f.ccp3)}</span></div>`:''}
+        </div>
+      </div>`:''}
+    </div>
+    <div class="fc-footer">
+      <div class="fc-financement">${fins}</div>
+      <button class="fc-cta" onclick="event.stopPropagation();openDetail(${f.id})">
+        <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:#fff"><path d="M8 3C4 3 1 8 1 8s3 5 7 5 7-5 7-5-3-5-7-5zm0 8a3 3 0 110-6 3 3 0 010 6z"/></svg>
+        Voir la fiche
+      </button>
+    </div>
+  </div>`;
+}
+
+/* ===========================
+   DÉTAIL FORMATION
+=========================== */
+function openDetail(id) {
+  const f = formationsData.find(x=>x.id===id);
+  if(!f) return;
+  const fins = (f.financement||[]).map(t=>`<span class="fc-fin-tag ${t==='CPF'?'cpf':t.includes('Travail')?'pe':'opco'}" style="font-size:11px;padding:3px 10px">${t}</span>`).join('');
+  const avisHTML = f.avis && f.avis.length > 0
+    ? f.avis.map(a=>`<div class="avis-mini-item"><div class="avis-mini-stars">${'★'.repeat(a.note)}${'☆'.repeat(5-a.note)}</div><div class="avis-mini-text">"${esc(a.texte)}"</div><div class="avis-mini-author">${esc(a.prenom)}</div></div>`).join('')
+    : '<div style="font-size:11px;color:var(--light);font-style:italic">Aucun avis pour l\'instant</div>';
+
+  document.getElementById('modal-detail-content').innerHTML = `
+    <div style="background:linear-gradient(135deg,var(--navy),var(--navy-l),var(--bx-d));padding:28px 28px 24px">
+      <button style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;background:rgba(255,255,255,.1);border-radius:20px;color:rgba(255,255,255,.7);font-size:11px;border:none;cursor:pointer;margin-bottom:16px;font-family:'DM Sans',sans-serif" onclick="closeDetail()">← Retour</button>
+      ${f.rncp?`<div style="font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">${esc(f.rncp)}</div>`:''}
+      <div style="font-family:'DM Serif Display',serif;font-size:26px;color:#fff;font-style:italic;margin-bottom:6px">${esc(f.nom)}</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.55)">${esc(f.centre)} · ${esc(f.niveau)}</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 240px;gap:0">
+      <div style="padding:24px 24px">
+        <!-- Infos rapides -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);border-radius:var(--r);overflow:hidden;border:1px solid var(--cream-d);margin-bottom:20px">
+          <div style="padding:12px 14px;text-align:center;border-right:1px solid var(--cream-d)">
+            <div style="font-size:11px;font-weight:600;color:var(--navy)">${f.debut?fmtDate(f.debut):'—'} → ${f.fin?fmtDate(f.fin):'—'}</div>
+            <div style="font-size:9px;color:var(--light);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Période</div>
+          </div>
+          <div style="padding:12px 14px;text-align:center;border-right:1px solid var(--cream-d)">
+            <div style="font-size:11px;font-weight:600;color:var(--navy)">${f.duree?f.duree+'h':'—'}</div>
+            <div style="font-size:9px;color:var(--light);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Durée</div>
+          </div>
+          <div style="padding:12px 14px;text-align:center">
+            <div style="font-size:11px;font-weight:600;color:var(--navy)">${f.tarif?parseInt(f.tarif).toLocaleString('fr-FR')+' €':'—'}</div>
+            <div style="font-size:9px;color:var(--light);text-transform:uppercase;letter-spacing:.5px;margin-top:2px">Tarif</div>
+          </div>
+        </div>
+
+        <!-- Objectifs -->
+        <div style="margin-bottom:18px">
+          <div style="display:inline-block;background:var(--bx);color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;margin-bottom:10px">Objectifs</div>
+          ${(f.objectifs||[]).map(o=>`<div style="display:flex;align-items:flex-start;gap:7px;margin-bottom:7px;font-size:12px;color:var(--text)"><div style="width:14px;height:14px;border-radius:50%;border:1.5px solid var(--bx);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px"><svg viewBox="0 0 12 12" style="width:7px;height:7px"><path d="M2 6l3 3 5-5" stroke="var(--bx)" fill="none" stroke-width="2.5"/></svg></div>${esc(o)}</div>`).join('')}
+        </div>
+
+        <!-- Programme -->
+        ${(f.ccp1||f.ccp2)?`
+        <div style="margin-bottom:18px">
+          <div style="display:inline-block;background:var(--bx);color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:4px;margin-bottom:10px">Programme</div>
+          ${f.ccp1?`<div style="display:flex;gap:8px;padding:8px 12px;background:var(--beige);border-radius:var(--r);margin-bottom:6px;border-left:3px solid var(--bx);font-size:12px"><span style="font-size:10px;font-weight:700;color:var(--bx);min-width:36px">CCP 1</span><span style="color:var(--text)">${esc(f.ccp1)}</span></div>`:''}
+          ${f.ccp2?`<div style="display:flex;gap:8px;padding:8px 12px;background:var(--beige);border-radius:var(--r);margin-bottom:6px;border-left:3px solid var(--navy);font-size:12px"><span style="font-size:10px;font-weight:700;color:var(--navy);min-width:36px">CCP 2</span><span style="color:var(--text)">${esc(f.ccp2)}</span></div>`:''}
+          ${f.ccp3?`<div style="display:flex;gap:8px;padding:8px 12px;background:var(--beige);border-radius:var(--r);margin-bottom:6px;border-left:3px solid var(--ok);font-size:12px"><span style="font-size:10px;font-weight:700;color:var(--ok);min-width:36px">CCP 3</span><span style="color:var(--text)">${esc(f.ccp3)}</span></div>`:''}
+        </div>`:''}
+      </div>
+
+      <!-- Sidebar détail -->
+      <div style="padding:24px 20px;border-left:1px solid var(--cream-d);background:var(--beige);display:flex;flex-direction:column;gap:16px">
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px">Financement</div>
+          <div style="display:flex;flex-direction:column;gap:5px">${fins||'<span style="font-size:11px;color:var(--light)">—</span>'}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px">Avis apprenants</div>
+          <div class="avis-mini">${avisHTML}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);margin-bottom:8px">S'inscrire</div>
+          <button style="width:100%;padding:10px;background:var(--bx);color:#fff;border:none;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:8px" onclick="showToast('Redirection vers le formulaire d\'inscription…')">Demander un dossier</button>
+          <div style="font-size:10px;color:var(--light);text-align:center;line-height:1.5">3 avenue du Pays d'Auge<br>Amiens · 07 88 12 87 69</div>
+        </div>
+      </div>
+    </div>`;
+
+  document.getElementById('modal-detail').classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('modal-detail').classList.remove('open');
+}
+
+
+/* ===========================
+   UTILS
+=========================== */
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmtDate(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${day}/${m}/${y}`}
+function fmtDateShort(d){if(!d)return'—';const[y,m,day]=d.split('-');return`${parseInt(day)}/${m}`}
+function showToast(msg){
+  const t=document.getElementById('pub-notif');
+  document.getElementById('pub-notif-title').textContent=msg;
+  document.getElementById('pub-notif-sub').textContent='';
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+/* ===========================
+   INIT
+=========================== */
+function initCatalogue() {
+  try {
+    const raw = localStorage.getItem('rp_catalogue');
+    if (!raw || JSON.parse(raw).length === 0) {
+      // Premier chargement : on stocke les formations par défaut dans localStorage
+      localStorage.setItem('rp_catalogue', JSON.stringify(formationsData));
+    } else {
+      // localStorage est la source de vérité — on remplace le tableau en mémoire
+      formationsData = JSON.parse(raw);
+    }
+  } catch(e) {}
+}
+
+window.onload = () => {
+  initCatalogue();
+  renderCatalogue();
+};
+</script>
+
+<div class="pub-notif" id="pub-notif">
+  <div class="pub-notif-icon">✓</div>
+  <div>
+    <div style="font-weight:600;margin-bottom:2px" id="pub-notif-title"></div>
+    <div style="font-size:11px;color:rgba(255,255,255,.7)" id="pub-notif-sub"></div>
+  </div>
+</div>
+</body>
+</html>

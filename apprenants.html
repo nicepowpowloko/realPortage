@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Apprenant — Real Portage</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bx: #7B1E3A;
+  --bx-d: #5a1529;
+  --bx-l: #a8294f;
+  --navy: #1a2744;
+  --navy-l: #243460;
+  --cream: #f5f0e8;
+  --cream-d: #e8e0d0;
+  --beige: #f9f6f0;
+  --text: #1a1a1a;
+  --muted: #6b6b6b;
+  --light: #9a9a9a;
+  --white: #ffffff;
+  --border: #ddd8cc;
+  --ok: #1e6e41;
+  --ok-bg: #e8f5ee;
+  --warn: #b85c00;
+  --warn-bg: #fff3e0;
+  --info: #1a5276;
+  --info-bg: #e8f1fb;
+  --r: 8px;
+  --rl: 14px;
+  --sh: 0 2px 12px rgba(0,0,0,0.07);
+  --sh-lg: 0 8px 32px rgba(0,0,0,0.13);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:'DM Sans',sans-serif;background:#eae4d8;color:var(--text);min-height:100vh}
+
+/* ===== LOGIN ===== */
+#screen-login{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 60%,var(--bx-d) 100%);
+  padding:20px;
+}
+.login-card{
+  background:var(--white);border-radius:var(--rl);
+  padding:40px 36px;width:100%;max-width:400px;
+  box-shadow:var(--sh-lg);
+}
+.login-logo{
+  font-family:'DM Serif Display',serif;font-size:26px;
+  color:var(--navy);text-align:center;margin-bottom:4px;
+}
+.login-logo span{color:var(--bx)}
+.login-sub{text-align:center;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-bottom:28px}
+.login-field{margin-bottom:14px}
+.login-field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.login-field input{
+  width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r);
+  font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:var(--beige);
+  transition:border-color .15s;
+}
+.login-field input:focus{border-color:var(--bx);background:var(--white)}
+.login-hint{font-size:10px;color:var(--light);margin-top:4px}
+.login-btn{
+  width:100%;padding:12px;background:var(--bx);color:var(--white);border:none;
+  border-radius:20px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;
+  cursor:pointer;margin-top:8px;transition:all .15s;
+  box-shadow:0 3px 12px rgba(123,30,58,0.3);
+}
+.login-btn:hover{background:var(--bx-d);transform:translateY(-1px)}
+.login-err{
+  font-size:11px;color:var(--bx);text-align:center;
+  margin-top:8px;display:none;
+}
+.login-demoes{
+  margin-top:20px;padding-top:16px;border-top:1px solid var(--cream-d);
+}
+.login-demoes p{font-size:10px;color:var(--light);text-align:center;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.demo-pills{display:flex;flex-direction:column;gap:5px}
+.demo-pill{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 12px;background:var(--beige);border-radius:var(--r);
+  border:1px solid var(--border);cursor:pointer;transition:border-color .12s;
+}
+.demo-pill:hover{border-color:var(--bx)}
+.demo-pill-name{font-size:12px;font-weight:500;color:var(--navy)}
+.demo-pill-info{font-size:10px;color:var(--light)}
+
+/* ===== APP SHELL ===== */
+#screen-app{display:none;min-height:100vh;flex-direction:column}
+#screen-app.show{display:flex}
+
+/* Topbar */
+.topbar{
+  background:var(--navy);color:var(--white);height:52px;
+  display:flex;align-items:center;padding:0 20px;gap:16px;
+  position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,0.2);flex-shrink:0;
+}
+.topbar-logo{
+  font-family:'DM Serif Display',serif;font-size:17px;
+  display:flex;align-items:center;gap:8px;
+}
+.topbar-logo .rp{
+  width:26px;height:26px;border-radius:50%;background:var(--bx-l);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+}
+.topbar-logo span{color:#e8a0b0}
+.topbar-nav{display:flex;gap:2px;flex:1;overflow-x:auto}
+.topbar-nav::-webkit-scrollbar{display:none}
+.tnav{
+  display:flex;align-items:center;gap:5px;
+  padding:0 14px;height:52px;border:none;background:none;
+  color:rgba(255,255,255,.5);font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap;
+  border-bottom:3px solid transparent;transition:all .15s;
+}
+.tnav svg{width:13px;height:13px;fill:currentColor;flex-shrink:0}
+.tnav:hover{color:rgba(255,255,255,.85)}
+.tnav.active{color:var(--white);border-bottom-color:#e8a0b0}
+.topbar-right{display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0}
+.user-chip{
+  display:flex;align-items:center;gap:7px;
+  font-size:11px;color:rgba(255,255,255,.65);
+}
+.avatar{
+  width:28px;height:28px;border-radius:50%;background:var(--bx-l);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--white);flex-shrink:0;
+}
+.btn-logout{
+  padding:5px 12px;border:1px solid rgba(255,255,255,.2);border-radius:20px;
+  background:none;color:rgba(255,255,255,.6);font-family:'DM Sans',sans-serif;
+  font-size:11px;cursor:pointer;transition:all .12s;
+}
+.btn-logout:hover{background:rgba(255,255,255,.1);color:var(--white)}
+
+/* ===== PAGES ===== */
+.page{display:none;flex:1;overflow:hidden;flex-direction:column}
+.page.active{display:flex}
+.page-body{flex:1;overflow-y:auto;padding:24px 28px}
+.page-body::-webkit-scrollbar{width:4px}
+.page-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ===== COMPOSANTS COMMUNS ===== */
+.card{background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--cream-d);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy)}
+.card-body{padding:18px 20px}
+.section-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+
+/* Boutons */
+.btn-p{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--bx);color:var(--white);border:none;border-radius:20px;
+  padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(123,30,58,.25);
+}
+.btn-p:hover{background:var(--bx-d);transform:translateY(-1px)}
+.btn-p svg{width:12px;height:12px;fill:white}
+.btn-s{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--white);color:var(--navy);border:1.5px solid var(--border);
+  border-radius:20px;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
+  cursor:pointer;transition:all .15s;
+}
+.btn-s:hover{border-color:var(--navy);background:var(--beige)}
+.btn-s svg{width:12px;height:12px;fill:currentColor}
+
+/* Badges */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 9px;border-radius:20px;font-size:10px;font-weight:600;
+}
+.badge-ok{background:var(--ok-bg);color:var(--ok)}
+.badge-warn{background:var(--warn-bg);color:var(--warn)}
+.badge-info{background:var(--info-bg);color:var(--info)}
+.badge-bx{background:#fce8ed;color:var(--bx)}
+
+/* Progress bar */
+.prog-bar{background:var(--cream-d);border-radius:20px;height:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:20px;transition:width .4s ease}
+
+/* ===== DASHBOARD ===== */
+.welcome-banner{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-l) 70%,var(--bx-d) 100%);
+  border-radius:var(--rl);padding:22px 24px;color:var(--white);margin-bottom:20px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:var(--sh-lg);position:relative;overflow:hidden;
+}
+.welcome-banner::after{
+  content:'';position:absolute;right:-30px;top:-30px;
+  width:160px;height:160px;border-radius:50%;
+  background:rgba(255,255,255,.04);
+}
+.welcome-text{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:4px}
+.welcome-sub{font-size:11px;color:rgba(255,255,255,.65)}
+.welcome-badge{
+  background:rgba(255,255,255,.12);border-radius:var(--r);
+  padding:12px 16px;text-align:right;flex-shrink:0;
+}
+.welcome-badge-val{font-family:'DM Serif Display',serif;font-size:24px;color:var(--white)}
+.welcome-badge-label{font-size:9px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px}
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.stat-mini{
+  background:var(--white);border-radius:var(--rl);padding:14px 16px;
+  box-shadow:var(--sh);border-left:3px solid transparent;
+}
+.stat-mini.bx{border-left-color:var(--bx)}
+.stat-mini.navy{border-left-color:var(--navy)}
+.stat-mini.ok{border-left-color:var(--ok)}
+.stat-mini.warn{border-left-color:var(--warn)}
+.stat-mini-val{font-family:'DM Serif Display',serif;font-size:24px;color:var(--navy)}
+.stat-mini-label{font-size:10px;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ===== LMS / MODULES ===== */
+.module-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.module-item{
+  background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);
+  overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s;
+}
+.module-item:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
+.module-item-header{
+  padding:14px 16px 10px;
+  display:flex;align-items:flex-start;gap:10px;border-bottom:1px solid var(--cream-d);
+}
+.mi-icon{
+  width:34px;height:34px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.mi-icon svg{width:16px;height:16px}
+.mi-icon.bx{background:#fce8ed} .mi-icon.bx svg{fill:var(--bx)}
+.mi-icon.navy{background:#e8edf5} .mi-icon.navy svg{fill:var(--navy-l)}
+.mi-icon.ok{background:var(--ok-bg)} .mi-icon.ok svg{fill:var(--ok)}
+.mi-icon.warn{background:var(--warn-bg)} .mi-icon.warn svg{fill:var(--warn)}
+.mi-meta{flex:1;min-width:0}
+.mi-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:2px}
+.mi-duration{font-size:10px;color:var(--muted)}
+.module-item-body{padding:10px 16px 12px}
+.mi-progress-label{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:5px}
+.mi-docs{display:flex;gap:5px;margin-top:8px;flex-wrap:wrap}
+.doc-chip{
+  display:flex;align-items:center;gap:4px;
+  padding:3px 8px;background:var(--beige);border:1px solid var(--border);
+  border-radius:5px;font-size:10px;color:var(--text);cursor:pointer;
+  transition:border-color .1s;
+}
+.doc-chip:hover{border-color:var(--bx)}
+.doc-chip svg{width:10px;height:10px;fill:var(--bx)}
+
+/* Viewer modal */
+.viewer-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:600;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.viewer-overlay.open{display:flex}
+.viewer-modal{
+  background:var(--white);border-radius:var(--rl);width:100%;max-width:640px;
+  max-height:88vh;overflow-y:auto;box-shadow:var(--sh-lg);
+  animation:mIn .2s ease;
+}
+@keyframes mIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.viewer-header{
+  padding:16px 20px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;background:var(--white);z-index:1;
+}
+.viewer-title{font-family:'DM Serif Display',serif;font-size:17px;color:var(--navy)}
+.viewer-close{
+  width:28px;height:28px;border:none;background:var(--cream-d);
+  border-radius:6px;cursor:pointer;font-size:16px;color:var(--muted);
+  display:flex;align-items:center;justify-content:center;transition:all .12s;
+}
+.viewer-close:hover{background:var(--border)}
+.viewer-body{padding:20px}
+.doc-item-full{
+  display:flex;align-items:center;gap:12px;
+  padding:10px 12px;border-radius:var(--r);border:1px solid var(--border);
+  margin-bottom:8px;cursor:pointer;transition:all .12s;
+  background:var(--white);
+}
+.doc-item-full:hover{background:var(--beige);border-color:var(--bx)}
+.doc-icon-lg{
+  width:36px;height:36px;background:#fce8ed;border-radius:8px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.doc-icon-lg svg{width:18px;height:18px;fill:var(--bx)}
+.doc-info{flex:1}
+.doc-name{font-size:12px;font-weight:500;color:var(--text)}
+.doc-type{font-size:10px;color:var(--muted)}
+.doc-dl{
+  width:26px;height:26px;border:none;background:var(--beige);border-radius:6px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:background .1s;
+}
+.doc-dl:hover{background:var(--cream-d)}
+.doc-dl svg{width:12px;height:12px;fill:var(--muted)}
+
+/* ===== QCM APPRENANT ===== */
+.qcm-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px}
+.qcm-card{
+  background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);
+  overflow:hidden;
+}
+.qcm-card-header{
+  padding:14px 18px;display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--cream-d);
+}
+.qcm-card-icon{
+  width:36px;height:36px;border-radius:8px;background:#fce8ed;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.qcm-card-icon svg{width:18px;height:18px;fill:var(--bx)}
+.qcm-card-meta{flex:1}
+.qcm-card-name{font-size:13px;font-weight:600;color:var(--navy)}
+.qcm-card-info{font-size:10px;color:var(--muted);margin-top:2px}
+.qcm-card-body{padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.qcm-result-info{font-size:11px;color:var(--muted)}
+.qcm-result-score{
+  font-family:'DM Serif Display',serif;font-size:18px;
+  color:var(--ok);
+}
+
+/* QCM passation */
+.qcm-player{
+  background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;
+}
+.qcm-player-header{
+  background:linear-gradient(135deg,var(--navy),var(--navy-l));
+  padding:16px 20px;display:flex;align-items:center;justify-content:space-between;
+}
+.qcm-player-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--white)}
+.qcm-player-progress{font-size:11px;color:rgba(255,255,255,.65)}
+.qcm-prog-bar{height:4px;background:rgba(255,255,255,.2);overflow:hidden}
+.qcm-prog-fill{height:100%;background:var(--bx-l);transition:width .3s ease}
+.qcm-player-body{padding:24px}
+.question-num{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bx);margin-bottom:8px}
+.question-text{font-size:14px;font-weight:500;color:var(--navy);line-height:1.5;margin-bottom:18px}
+.answer-list{display:flex;flex-direction:column;gap:8px}
+.answer-btn{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;border-radius:var(--r);border:1.5px solid var(--border);
+  background:var(--beige);cursor:pointer;text-align:left;
+  font-family:'DM Sans',sans-serif;font-size:12px;color:var(--text);
+  transition:all .15s;width:100%;
+}
+.answer-btn:hover:not(.answered){border-color:var(--bx);background:#fce8ed}
+.answer-btn.answered{cursor:default}
+.answer-btn.correct{border-color:var(--ok);background:var(--ok-bg);color:var(--ok);font-weight:500}
+.answer-btn.wrong{border-color:#c0392b;background:#fdecea;color:#c0392b;font-weight:500}
+.answer-btn.reveal{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.answer-btn:not(.correct):not(.wrong):not(.reveal).answered{opacity:.45}
+.answer-letter{
+  width:22px;height:22px;border-radius:5px;background:var(--cream-d);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:var(--navy);flex-shrink:0;
+}
+.answer-btn.correct .answer-letter{background:var(--ok);color:var(--white)}
+.answer-btn.wrong .answer-letter{background:#c0392b;color:var(--white)}
+.answer-btn.reveal .answer-letter{background:var(--ok);color:var(--white)}
+.qcm-feedback{
+  margin-top:12px;padding:10px 14px;border-radius:var(--r);font-size:11px;line-height:1.5;
+}
+.qcm-feedback.ok{background:var(--ok-bg);color:var(--ok)}
+.qcm-feedback.ko{background:#fdecea;color:#c0392b}
+.qcm-nav{padding:0 24px 20px;display:flex;align-items:center;justify-content:space-between}
+.qcm-score-final{
+  padding:32px 24px;text-align:center;
+}
+.score-circle{
+  width:100px;height:100px;border-radius:50%;margin:0 auto 16px;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
+  font-family:'DM Serif Display',serif;font-size:28px;font-weight:400;
+}
+.score-circle.perfect{background:var(--ok-bg);color:var(--ok);border:3px solid var(--ok)}
+.score-circle.good{background:#fff8e1;color:#b45309;border:3px solid #f59e0b}
+.score-circle.low{background:#fdecea;color:#c0392b;border:3px solid #c0392b}
+.score-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+.score-msg{font-size:13px;color:var(--muted);margin:8px 0 20px;line-height:1.5}
+
+/* ===== ABSENCES ===== */
+.absence-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.absence-summary{
+  background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);padding:20px;
+  display:flex;align-items:center;gap:16px;
+}
+.absence-big{
+  font-family:'DM Serif Display',serif;font-size:40px;line-height:1;
+  flex-shrink:0;
+}
+.absence-big.ok{color:var(--ok)}
+.absence-big.warn{color:var(--warn)}
+.absence-big.danger{color:#c0392b}
+.absence-legend{font-size:11px;color:var(--muted);line-height:1.6}
+.absence-legend strong{display:block;font-size:13px;color:var(--text);margin-bottom:2px}
+
+.absence-alert{
+  background:#fdecea;border-radius:var(--r);border-left:4px solid #c0392b;
+  padding:12px 16px;margin-bottom:16px;font-size:12px;color:#7b1a1a;line-height:1.6;
+}
+.absence-alert strong{display:block;margin-bottom:3px}
+.absence-ok-msg{
+  background:var(--ok-bg);border-radius:var(--r);border-left:4px solid var(--ok);
+  padding:12px 16px;margin-bottom:16px;font-size:12px;color:#1a4a2e;
+}
+
+.absence-list{background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden}
+.absence-row{
+  display:flex;align-items:center;gap:14px;
+  padding:11px 16px;border-bottom:1px solid var(--cream-d);font-size:12px;
+}
+.absence-row:last-child{border-bottom:none}
+.ab-date{font-weight:600;color:var(--navy);min-width:90px}
+.ab-motif{flex:1;color:var(--muted)}
+.ab-status{flex-shrink:0}
+
+/* ===== PLAQUETTE ===== */
+.plaq-dl-card{
+  background:linear-gradient(135deg,var(--navy),var(--navy-l));
+  border-radius:var(--rl);padding:24px;color:var(--white);
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:20px;box-shadow:var(--sh-lg);
+}
+.plaq-dl-info h3{font-family:'DM Serif Display',serif;font-size:20px;margin-bottom:4px}
+.plaq-dl-info p{font-size:11px;color:rgba(255,255,255,.65);line-height:1.5}
+.btn-dl{
+  display:flex;align-items:center;gap:7px;
+  background:var(--bx);color:var(--white);border:none;border-radius:20px;
+  padding:10px 20px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .15s;box-shadow:0 2px 10px rgba(123,30,58,.4);
+  white-space:nowrap;flex-shrink:0;
+}
+.btn-dl:hover{background:var(--bx-d);transform:translateY(-1px)}
+.btn-dl svg{width:14px;height:14px;fill:white}
+
+.plaq-mini{
+  background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);
+  overflow:hidden;max-width:380px;
+}
+.plaq-mini-header{
+  background:linear-gradient(135deg,var(--navy),var(--bx-d));
+  padding:14px 16px;
+}
+.plaq-mini-title{font-family:'DM Serif Display',serif;font-size:16px;color:var(--white);font-style:italic}
+.plaq-mini-rncp{font-size:9px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;margin-bottom:3px}
+.plaq-mini-body{padding:14px 16px}
+.plaq-mini-row{
+  display:flex;align-items:center;gap:8px;
+  padding:6px 0;border-bottom:1px solid var(--cream-d);font-size:11px;
+}
+.plaq-mini-row:last-child{border-bottom:none}
+.plaq-mini-label{font-weight:600;color:var(--navy);min-width:80px;font-size:10px}
+.plaq-mini-val{color:var(--muted)}
+
+/* ===== AVIS ===== */
+.avis-intro{
+  background:var(--white);border-radius:var(--rl);padding:20px;box-shadow:var(--sh);margin-bottom:20px;
+}
+.stars-large{display:flex;gap:6px;margin:10px 0}
+.star-lg{
+  font-size:28px;cursor:pointer;color:#d5d5d5;transition:color .1s;line-height:1;
+}
+.star-lg.active,.star-lg:hover{color:#f59e0b}
+.avis-textarea{
+  width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:var(--r);
+  font-family:'DM Sans',sans-serif;font-size:13px;min-height:90px;resize:vertical;
+  outline:none;background:var(--beige);transition:border-color .15s;margin:10px 0;
+}
+.avis-textarea:focus{border-color:var(--bx);background:var(--white)}
+.avis-existing{display:flex;flex-direction:column;gap:10px}
+.avis-card{
+  background:var(--white);border-radius:var(--r);padding:14px 16px;
+  box-shadow:var(--sh);border-left:3px solid var(--bx);
+}
+.avis-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.avis-card-author{font-size:12px;font-weight:600;color:var(--navy)}
+.avis-card-stars{color:#f59e0b;font-size:14px}
+.avis-card-text{font-size:12px;color:var(--muted);font-style:italic;line-height:1.5}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--navy);color:var(--white);padding:11px 18px;
+  border-radius:var(--r);font-size:12px;font-weight:500;
+  display:none;align-items:center;gap:8px;box-shadow:var(--sh-lg);
+  animation:tIn .2s ease;
+}
+.toast.show{display:flex}
+@keyframes tIn{from{transform:translateY(6px);opacity:0}to{opacity:1;transform:none}}
+
+@media(max-width:800px){
+  .stat-row{grid-template-columns:1fr 1fr}
+  .grid2,.absence-grid{grid-template-columns:1fr}
+  .welcome-banner{flex-direction:column;gap:12px;align-items:flex-start}
+}
+
+/* ===== TABLET (≤768px) ===== */
+@media(max-width:768px){
+  #screen-login{padding:16px}
+  .login-card{padding:28px 20px;max-width:100%}
+  .topbar{padding:0 12px;height:50px}
+  .topbar-logo{font-size:15px}
+  .topbar-nav{overflow-x:auto;gap:0}
+  .topbar-nav::-webkit-scrollbar{display:none}
+  .tnav{padding:0 12px;font-size:11px;white-space:nowrap;height:50px}
+  .topbar-right .user-chip span{display:none}
+  .page-body{padding:16px}
+  .stat-row{grid-template-columns:1fr 1fr}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .app-cal-wrap,.app-evt-panel{max-width:100%}
+}
+
+/* ===== MOBILE (≤480px) ===== */
+@media(max-width:480px){
+  #screen-login{padding:12px}
+  .login-card{padding:24px 16px;border-radius:10px}
+  .login-logo{font-size:22px}
+  .topbar{height:46px;padding:0 8px}
+  .topbar-logo{font-size:13px}
+  .topbar-logo .rp{width:22px;height:22px;font-size:10px}
+  .tnav{padding:0 9px;font-size:10px;height:46px}
+  .tnav svg{display:none}
+  .btn-logout{display:none}
+  .page-body{padding:10px}
+  .stat-row{grid-template-columns:1fr 1fr;gap:8px}
+  .stat-card{padding:12px 14px}
+  .stat-val{font-size:22px}
+  .welcome-banner{padding:14px;border-radius:8px}
+  .welcome-title{font-size:16px}
+  .grid2,.grid3{grid-template-columns:1fr;gap:8px}
+  .card{border-radius:8px}
+  .card-header{padding:12px 14px}
+  .card-body{padding:12px 14px}
+  .app-cal-wrap{border-radius:8px}
+  .app-cal-grid{padding:6px}
+  .app-day{min-height:46px}
+  .app-chip{display:none}
+  .app-evt-panel{border-radius:8px}
+  .avis-intro{padding:14px}
+  .viewer-modal{max-width:100vw;max-height:100dvh;border-radius:0;margin:0}
+}
+
+/* ===== CALENDRIER (lecture seule) ===== */
+.app-cal-wrap{background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;max-width:700px}
+.app-cal-hdr{background:var(--navy);color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.app-cal-month{font-family:'DM Serif Display',serif;font-size:18px}
+.app-cal-nav-btn{width:28px;height:28px;border:1px solid rgba(255,255,255,.2);border-radius:6px;background:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .12s}
+.app-cal-nav-btn:hover{background:rgba(255,255,255,.12)}
+.app-cal-grid{padding:12px}
+.app-days-hdr{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px}
+.app-day-name{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:4px 0}
+.app-days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.app-day{min-height:70px;border-radius:6px;display:flex;flex-direction:column;padding:5px 4px 4px;cursor:pointer;font-size:11px;color:var(--text);transition:background .1s;position:relative;border:1.5px solid transparent}
+.app-day:hover{background:var(--cream);border-color:var(--cream-d)}
+.app-day.other-m{color:var(--muted);background:transparent}
+.app-day.today-d{background:var(--cream-d)}
+.app-day.today-d .app-dn{font-weight:700;background:var(--navy);color:#fff;border-radius:50%}
+.app-day.sel-d{border-color:var(--bx)!important;background:#fce8ed!important}
+.app-day.sel-d .app-dn{color:var(--bx);font-weight:700}
+.app-dn{font-size:11px;font-weight:500;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:3px}
+.app-chips{display:flex;flex-direction:column;gap:2px;flex:1}
+.app-chip{font-size:9px;font-weight:500;padding:1px 5px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.5}
+.app-chip.type-cours{background:#fce8ed;color:var(--bx)}
+.app-chip.type-reunion{background:#e8edf5;color:var(--navy-l)}
+.app-chip.type-visio{background:var(--ok-bg);color:var(--ok)}
+.app-chip.type-note{background:#fff8e1;color:#b45309}
+.app-more{font-size:8px;color:var(--muted);padding-left:4px}
+.app-cal-legend{display:flex;gap:12px;padding:10px 16px;border-top:1px solid var(--cream-d);background:var(--beige);flex-wrap:wrap}
+.app-leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
+.app-leg-dot{width:8px;height:8px;border-radius:50%}
+.app-evt-panel{background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;margin-top:20px;max-width:700px}
+.app-evt-hdr{padding:14px 16px;border-bottom:1px solid var(--cream-d)}
+.app-evt-date{font-family:'DM Serif Display',serif;font-size:15px;color:var(--navy)}
+.app-evt-hint{font-size:10px;color:var(--muted);margin-top:1px}
+.app-evt-list{padding:10px 12px;display:flex;flex-direction:column;gap:6px}
+.app-evt-item{display:flex;align-items:flex-start;gap:8px;padding:9px 10px;border-radius:var(--r);background:var(--beige);border:1px solid var(--border)}
+.app-evt-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.app-evt-dot.type-cours{background:var(--bx)}
+.app-evt-dot.type-reunion{background:var(--navy)}
+.app-evt-dot.type-visio{background:var(--ok)}
+.app-evt-dot.type-note{background:#f59e0b}
+.app-evt-body{flex:1;min-width:0}
+.app-evt-title{font-size:12px;font-weight:500;color:var(--text)}
+.app-evt-meta{font-size:10px;color:var(--muted);margin-top:1px}
+.app-evt-empty{padding:20px;text-align:center;font-size:11px;color:var(--muted);line-height:1.6}
+@media(max-width:800px){.app-cal-wrap,.app-evt-panel{max-width:100%}}
+</style>
+</head>
+<body>
+
+<!-- ===========================
+     ÉCRAN LOGIN
+=========================== -->
+<div id="screen-login">
+  <div class="login-card">
+    <div class="login-logo">real<span>portage</span></div>
+    <div class="login-sub">Espace Apprenant</div>
+
+    <div class="login-field">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="prenom.nom@email.com" value="marie.dupont@email.com">
+    </div>
+    <div class="login-field">
+      <label>Mot de passe</label>
+      <input type="password" id="login-pwd" placeholder="••••••••" value="1234">
+      <div class="login-hint">Démo : mot de passe = 1234</div>
+    </div>
+    <button class="login-btn" onclick="tryLogin()">Se connecter</button>
+    <div class="login-err" id="login-err">Email ou mot de passe incorrect</div>
+
+    <div class="login-demoes">
+      <p>Comptes de démonstration</p>
+      <div class="demo-pills">
+        <div class="demo-pill" onclick="fillDemo('marie.dupont@email.com')">
+          <div class="demo-pill-name">Marie Dupont</div>
+          <div class="demo-pill-info">CV / Emploi · 0 absence</div>
+        </div>
+        <div class="demo-pill" onclick="fillDemo('lucas.martin@email.com')">
+          <div class="demo-pill-name">Lucas Martin</div>
+          <div class="demo-pill-info">CV / Emploi · 3 absences ⚠️</div>
+        </div>
+        <div class="demo-pill" onclick="fillDemo('sarah.ben@email.com')">
+          <div class="demo-pill-name">Sarah Ben Youssef</div>
+          <div class="demo-pill-info">CV / Emploi · 1 absence</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===========================
+     APP
+=========================== -->
+<div id="screen-app">
+  <!-- Topbar -->
+  <nav class="topbar">
+    <div class="topbar-logo" onclick="window.location.href='accueil.html'" style="cursor:pointer">
+      <div class="rp">rp</div>
+      real<span>portage</span>
+    </div>
+    <div class="topbar-nav">
+      <button class="tnav active" onclick="showPage('accueil',this)">
+        <svg viewBox="0 0 16 16"><path d="M2 6L8 1l6 5v8H2V6z"/></svg>Accueil
+      </button>
+      <button class="tnav" onclick="showPage('cours',this)">
+        <svg viewBox="0 0 16 16"><path d="M2 3h12M2 7h9M2 11h6"/></svg>Mes cours
+      </button>
+      <button class="tnav" onclick="showPage('qcm',this)">
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M6 6.5a2 2 0 114 0c0 1.5-2 1.5-2 3M8 13v.5"/></svg>Tests QCM
+      </button>
+      <button class="tnav" onclick="showPage('absences',this)">
+        <svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>Absences
+      </button>
+      <button class="tnav" onclick="showPage('plaquette',this)">
+        <svg viewBox="0 0 16 16"><path d="M3 2h10a1 1 0 011 1v11l-3-2-2 2-2-2-3 2V3a1 1 0 011-1z"/></svg>Ma formation
+      </button>
+      <button class="tnav" onclick="showPage('avis',this)">
+        <svg viewBox="0 0 16 16"><path d="M8 1l2 4 5 .7-3.5 3.4.8 4.9L8 12l-4.3 2.3.8-5L1 5.7 6 5z"/></svg>Avis
+      </button>
+      <button class="tnav" onclick="showPage('planning',this)">
+        <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>Planning
+      </button>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="avatar" id="user-avatar">MD</div>
+        <span id="user-name">Marie Dupont</span>
+      </div>
+      <button class="btn-logout" onclick="logout()">Déconnexion</button>
+    </div>
+  </nav>
+
+  <!-- ===== ACCUEIL ===== -->
+  <div id="page-accueil" class="page active">
+    <div class="page-body">
+      <div class="welcome-banner">
+        <div>
+          <div class="welcome-text" id="welcome-text">Bonjour Marie !</div>
+          <div class="welcome-sub" id="welcome-sub">Formation CV et Recherche d'emploi · 12 mars → 20 mai 2026</div>
+        </div>
+        <div class="welcome-badge">
+          <div class="welcome-badge-val" id="welcome-prog">38%</div>
+          <div class="welcome-badge-label">Avancement</div>
+        </div>
+      </div>
+
+      <div class="stat-row">
+        <div class="stat-mini bx">
+          <div class="stat-mini-val" id="stat-modules-done">2/4</div>
+          <div class="stat-mini-label">Modules vus</div>
+        </div>
+        <div class="stat-mini ok">
+          <div class="stat-mini-val" id="stat-qcm-done">1</div>
+          <div class="stat-mini-label">QCM passés</div>
+        </div>
+        <div class="stat-mini navy">
+          <div class="stat-mini-val" id="stat-score-moy">78%</div>
+          <div class="stat-mini-label">Score moyen</div>
+        </div>
+        <div class="stat-mini warn" id="stat-abs-mini">
+          <div class="stat-mini-val" id="stat-abs-val">0</div>
+          <div class="stat-mini-label">Absences</div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <!-- Progression -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Progression par module</div>
+          </div>
+          <div class="card-body" id="dash-modules-prog" style="display:flex;flex-direction:column;gap:12px"></div>
+        </div>
+
+        <!-- Prochain QCM + alertes -->
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div class="card">
+            <div class="card-header"><div class="card-title">Prochain test</div></div>
+            <div class="card-body">
+              <div style="font-size:13px;font-weight:500;color:var(--navy);margin-bottom:4px" id="next-qcm-title">Techniques d'entretien</div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:14px">10 questions · Niveau débutant</div>
+              <button class="btn-p" onclick="startQCMFromDash()">
+                <svg viewBox="0 0 16 16"><path d="M5 3l8 5-8 5V3z"/></svg>Commencer
+              </button>
+            </div>
+          </div>
+          <div class="card" id="dash-absence-card">
+            <div class="card-body">
+              <div id="dash-absence-msg"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== COURS ===== -->
+  <div id="page-cours" class="page">
+    <div class="page-body">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+        <div>
+          <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)">Mes cours</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px">CV et Recherche d'emploi · 4 modules</div>
+        </div>
+      </div>
+      <div class="module-grid" id="module-grid"></div>
+    </div>
+  </div>
+
+  <!-- ===== QCM ===== -->
+  <div id="page-qcm" class="page">
+    <div class="page-body" id="qcm-page-body">
+      <!-- Liste des QCM -->
+      <div id="qcm-list-view">
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);margin-bottom:4px">Tests QCM</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:20px">Évaluez vos connaissances sur chaque module</div>
+        <div class="qcm-list" id="qcm-cards"></div>
+      </div>
+
+      <!-- Passation QCM -->
+      <div id="qcm-player-view" style="display:none;max-width:640px">
+        <button class="btn-s" onclick="backToQCMList()" style="margin-bottom:16px">
+          <svg viewBox="0 0 16 16"><path d="M10 3L4 8l6 5"/></svg>Retour
+        </button>
+        <div class="qcm-player" id="qcm-player"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ABSENCES ===== -->
+  <div id="page-absences" class="page">
+    <div class="page-body">
+      <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);margin-bottom:4px">Suivi des absences</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:20px">Formation CV et Recherche d'emploi</div>
+
+      <div id="absence-alert-zone" style="margin-bottom:16px"></div>
+
+      <div class="absence-grid">
+        <div class="absence-summary">
+          <div class="absence-big" id="abs-big">0</div>
+          <div class="absence-legend">
+            <strong id="abs-legend-title">Aucune absence</strong>
+            <span id="abs-legend-sub">Sur 70 jours de formation<br>Seuil d'alerte : 3 absences</span>
+          </div>
+        </div>
+        <div class="card" style="padding:18px">
+          <div class="section-label">Seuil réglementaire</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+            <div style="flex:1">
+              <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px">
+                <span>Absences</span>
+                <span id="abs-prog-label">0 / 3</span>
+              </div>
+              <div class="prog-bar">
+                <div class="prog-fill" id="abs-prog-fill" style="background:var(--ok);width:0%"></div>
+              </div>
+            </div>
+          </div>
+          <div style="font-size:11px;color:var(--muted);line-height:1.6" id="abs-detail-msg">
+            Vous n'avez aucune absence enregistrée. Bonne présence !
+          </div>
+        </div>
+      </div>
+
+      <!-- Historique -->
+      <div class="section-label">Historique des absences</div>
+      <div class="absence-list" id="absence-list">
+        <div style="padding:20px;text-align:center;font-size:12px;color:var(--muted)">Aucune absence enregistrée</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PLAQUETTE ===== -->
+  <div id="page-plaquette" class="page">
+    <div class="page-body">
+      <div class="plaq-dl-card">
+        <div class="plaq-dl-info">
+          <h3>CV et Recherche d'emploi</h3>
+          <p>Titre RNCP Niveau 4 · Bac<br>Real Portage — 3 avenue du Pays d'Auge, Amiens</p>
+        </div>
+        <button class="btn-dl" onclick="downloadPlaquette()">
+          <svg viewBox="0 0 16 16"><path d="M3 12h10M8 2v8M5 7l3 3 3-3"/></svg>
+          Télécharger PDF
+        </button>
+      </div>
+
+      <div class="grid2">
+        <div class="plaq-mini">
+          <div class="plaq-mini-header">
+            <div class="plaq-mini-rncp">TITRE RNCP · NIVEAU 4</div>
+            <div class="plaq-mini-title">CV et Recherche d'emploi</div>
+          </div>
+          <div class="plaq-mini-body">
+            <div class="plaq-mini-row"><div class="plaq-mini-label">Dates</div><div class="plaq-mini-val">12/03 → 20/05/2026</div></div>
+            <div class="plaq-mini-row"><div class="plaq-mini-label">Durée</div><div class="plaq-mini-val">485h dont 175h entreprise</div></div>
+            <div class="plaq-mini-row"><div class="plaq-mini-label">Niveau</div><div class="plaq-mini-val">Bac (Niveau 4)</div></div>
+            <div class="plaq-mini-row"><div class="plaq-mini-label">Rythme</div><div class="plaq-mini-val">Temps plein · Formation mixte</div></div>
+            <div class="plaq-mini-row"><div class="plaq-mini-label">Financement</div><div class="plaq-mini-val">CPF · Pôle Emploi · OPCO</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><div class="card-title">Programme</div></div>
+          <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+            <div style="padding:10px 12px;background:var(--beige);border-radius:var(--r);border-left:3px solid var(--bx)">
+              <div style="font-size:10px;font-weight:700;color:var(--bx);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">CCP 1</div>
+              <div style="font-size:12px;color:var(--text)">Élaborer et valoriser son parcours professionnel</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--beige);border-radius:var(--r);border-left:3px solid var(--navy)">
+              <div style="font-size:10px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">CCP 2</div>
+              <div style="font-size:12px;color:var(--text)">Rechercher et décrocher un emploi adapté</div>
+            </div>
+            <div style="padding:10px 12px;background:var(--beige);border-radius:var(--r);border-left:3px solid var(--ok)">
+              <div style="font-size:10px;font-weight:700;color:var(--ok);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px">CCP 3</div>
+              <div style="font-size:12px;color:var(--text)">Construire son projet professionnel à long terme</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="card-header"><div class="card-title">Financement CPF</div></div>
+        <div class="card-body">
+          <div style="font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:14px">
+            Cette formation est éligible au <strong>Compte Personnel de Formation (CPF)</strong>. Vous pouvez mobiliser vos droits directement depuis l'application officielle ou le site moncompteformation.gouv.fr.
+          </div>
+          <a href="https://www.moncompteformation.gouv.fr" target="_blank">
+            <button class="btn-s">
+              <svg viewBox="0 0 16 16"><path d="M9 2h5v5M14 2L7 9M3 4H2a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1v-1"/></svg>
+              Accéder à Mon Compte Formation
+            </button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== AVIS ===== -->
+  <div id="page-avis" class="page">
+    <div class="page-body">
+      <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);margin-bottom:4px">Avis sur la formation</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:20px">Votre avis est précieux et contribue à l'amélioration continue (critère Qualiopi 6.2)</div>
+
+      <div class="avis-intro" id="avis-form-zone">
+        <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px">Laisser un avis</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Note globale</div>
+        <div class="stars-large" id="avis-stars">
+          <span class="star-lg active" onclick="setAvisNote(1)">★</span>
+          <span class="star-lg active" onclick="setAvisNote(2)">★</span>
+          <span class="star-lg active" onclick="setAvisNote(3)">★</span>
+          <span class="star-lg active" onclick="setAvisNote(4)">★</span>
+          <span class="star-lg" onclick="setAvisNote(5)">★</span>
+        </div>
+        <textarea class="avis-textarea" id="avis-texte" placeholder="Décrivez votre expérience de formation : contenu, formateur, organisation, points forts, axes d'amélioration…"></textarea>
+        <button class="btn-p" onclick="submitAvis()">
+          <svg viewBox="0 0 16 16"><path d="M13 3L6 12l-3-3"/></svg>
+          Publier mon avis
+        </button>
+      </div>
+
+      <div class="section-label" style="margin-top:24px">Avis des apprenants</div>
+      <div class="avis-existing" id="avis-list"></div>
+    </div>
+  </div>
+
+  <!-- ===== PLANNING (lecture seule) ===== -->
+  <div id="page-planning" class="page">
+    <div class="page-body">
+      <div style="margin-bottom:20px">
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)">Planning de formation</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Consultez les sessions, cours et réunions programmés par votre formateur</div>
+      </div>
+      <div class="app-cal-wrap">
+        <div class="app-cal-hdr">
+          <div class="app-cal-month" id="app-cal-month"></div>
+          <div style="display:flex;gap:6px">
+            <button class="app-cal-nav-btn" onclick="appChangeMonth(-1)">‹</button>
+            <button class="app-cal-nav-btn" onclick="appChangeMonth(1)">›</button>
+          </div>
+        </div>
+        <div class="app-cal-grid">
+          <div class="app-days-hdr">
+            <div class="app-day-name">Lun</div><div class="app-day-name">Mar</div>
+            <div class="app-day-name">Mer</div><div class="app-day-name">Jeu</div>
+            <div class="app-day-name">Ven</div><div class="app-day-name">Sam</div>
+            <div class="app-day-name">Dim</div>
+          </div>
+          <div class="app-days" id="app-days"></div>
+        </div>
+        <div class="app-cal-legend">
+          <div class="app-leg"><div class="app-leg-dot" style="background:var(--bx)"></div>Cours</div>
+          <div class="app-leg"><div class="app-leg-dot" style="background:var(--navy)"></div>Réunion</div>
+          <div class="app-leg"><div class="app-leg-dot" style="background:var(--ok)"></div>Visio</div>
+          <div class="app-leg"><div class="app-leg-dot" style="background:#f59e0b"></div>Note</div>
+        </div>
+      </div>
+      <div class="app-evt-panel">
+        <div class="app-evt-hdr">
+          <div class="app-evt-date" id="app-evt-date">Sélectionnez un jour</div>
+          <div class="app-evt-hint" id="app-evt-hint">Cliquez sur une date pour voir les événements</div>
+        </div>
+        <div class="app-evt-list" id="app-evt-list">
+          <div class="app-evt-empty">Cliquez sur une date pour voir les événements du jour</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /screen-app -->
+
+<!-- Viewer de module -->
+<div class="viewer-overlay" id="viewer-overlay" onclick="closeViewer(event)">
+  <div class="viewer-modal" id="viewer-modal">
+    <div class="viewer-header">
+      <div class="viewer-title" id="viewer-title">Module</div>
+      <button class="viewer-close" onclick="closeViewerBtn()">×</button>
+    </div>
+    <div class="viewer-body" id="viewer-body"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span id="toast-msg">Action effectuée</span>
+</div>
+
+<script>
+/* ===========================
+   DONNÉES
+=========================== */
+const USERS = [
+  { email:'marie.dupont@email.com', pwd:'1234', prenom:'Marie', nom:'Dupont', initiales:'MD',
+    absences:[], qcmResults:[], moduleProgress:[60,30,0,0], avis:null },
+  { email:'lucas.martin@email.com', pwd:'1234', prenom:'Lucas', nom:'Martin', initiales:'LM',
+    absences:[
+      {date:'2026-03-16',motif:'Maladie',justifie:true},
+      {date:'2026-03-23',motif:'Non communiqué',justifie:false},
+      {date:'2026-03-26',motif:'Non communiqué',justifie:false},
+    ], qcmResults:[{theme:'Rédaction de CV',score:6,total:10}], moduleProgress:[100,40,0,0], avis:null },
+  { email:'sarah.ben@email.com', pwd:'1234', prenom:'Sarah', nom:'Ben Youssef', initiales:'SB',
+    absences:[{date:'2026-03-18',motif:'Rendez-vous médical',justifie:true}],
+    qcmResults:[{theme:'Rédaction de CV',score:9,total:10},{theme:"Lettre de motivation",score:7,total:10}],
+    moduleProgress:[100,80,20,0], avis:{note:5,texte:'Formation très complète et formateur disponible. J\'ai trouvé du travail deux semaines après !'} },
+];
+
+const MODULES_DATA = [
+  { id:1, nom:'Rédiger un CV efficace', duree:'7h', color:'bx', docs:[
+      {name:'Support de cours — CV.pdf',type:'PDF'},
+      {name:'Grille d\'auto-évaluation.docx',type:'DOCX'},
+      {name:'Exemples de CV annotés.pdf',type:'PDF'},
+    ]},
+  { id:2, nom:'Préparer ses entretiens', duree:'6h', color:'navy', docs:[
+      {name:'Fiche méthode STAR.pdf',type:'PDF'},
+      {name:'100 questions d\'entretien.pdf',type:'PDF'},
+    ]},
+  { id:3, nom:'Lettre de motivation', duree:'5h', color:'ok', docs:[
+      {name:'Modèles de lettres.docx',type:'DOCX'},
+      {name:'Guide rédaction.pdf',type:'PDF'},
+    ]},
+  { id:4, nom:'LinkedIn & Réseaux pro', duree:'4h', color:'warn', docs:[
+      {name:'Optimiser son profil LinkedIn.pdf',type:'PDF'},
+    ]},
+];
+
+const QCM_DATA = [
+  { id:1, theme:'Rédaction de CV', nb:10, diff:'débutant', moduleId:1 },
+  { id:2, theme:"Techniques d'entretien", nb:10, diff:'intermédiaire', moduleId:2 },
+  { id:3, theme:'Lettre de motivation', nb:8, diff:'débutant', moduleId:3 },
+  { id:4, theme:'LinkedIn & e-réputation', nb:8, diff:'débutant', moduleId:4 },
+];
+
+const AVIS_EXISTANTS = [
+  { prenom:'Sarah B.', note:5, texte:'Formation très complète et formateur disponible. Trouvé du travail deux semaines après !'},
+  { prenom:'Karim D.', note:4, texte:'Contenu très pratique, les ateliers CV sont vraiment efficaces. Je recommande.'},
+  { prenom:'Amélie T.', note:5, texte:'Excellente formation, j\'ai beaucoup progressé sur la recherche d\'emploi numérique.'},
+];
+
+const QUESTION_BANK = {
+  "Rédaction de CV":[
+    {q:"Quelle est la longueur recommandée pour un CV en France ?",choices:["Une demi-page","Une page","Deux pages","Trois pages ou plus"],correct:1},
+    {q:"Quel ordre chronologique est conseillé pour les expériences ?",choices:["Du plus ancien au plus récent","Du plus récent au plus ancien","Alphabétique","Par secteur"],correct:1},
+    {q:"Doit-on mettre une photo sur un CV en France ?",choices:["Obligatoire","Recommandée mais optionnelle","Déconseillée","Interdite"],correct:1},
+    {q:"Quelle section doit apparaître en premier ?",choices:["Les loisirs","Les formations","Les coordonnées","Les langues"],correct:2},
+    {q:"Que signifie CV ?",choices:["Curriculum Vitae","Compte Virtuel","Carrière et Vocation","Carte de Visite"],correct:0},
+    {q:"Quel format de fichier envoyer par email ?",choices:["Word","PDF","Excel","PowerPoint"],correct:1},
+    {q:"À quelle fréquence mettre à jour son CV ?",choices:["Uniquement en recherche d'emploi","Tous les 5 ans","Après chaque expérience significative","Jamais"],correct:2},
+    {q:"Que doit contenir le titre ou l'accroche ?",choices:["Le salaire","Un résumé du profil ciblant le poste","La liste des formations","Les références"],correct:1},
+    {q:"Quel mot-clé est important dans un CV numérique ?",choices:["Adjectifs génériques","Termes de l'offre d'emploi","Nom de l'entreprise cible","Date de naissance"],correct:1},
+    {q:"Quelle police est la plus adaptée ?",choices:["Comic Sans","Times New Roman ou Arial","Papyrus","Impact"],correct:1},
+  ],
+  "Techniques d'entretien":[
+    {q:"Combien de temps avant faut-il arriver à un entretien ?",choices:["30 min avant","10 à 15 min avant","À l'heure pile","5 min en avance"],correct:1},
+    {q:"Que signifie la règle des 4×20 ?",choices:["20 questions en 20 min","Les 20 premières secondes, mots, gestes, centimètres","20 secondes de pitch","Aucune signification"],correct:1},
+    {q:"Comment répondre à 'Quels sont vos défauts ?' ?",choices:["Nier avoir des défauts","Citer des défauts graves","Mentionner des défauts en cours d'amélioration","Éviter la question"],correct:2},
+    {q:"Qu'est-ce qu'un entretien STAR ?",choices:["Un entretien filmé","Situation, Tâche, Action, Résultat","Un entretien avec plusieurs recruteurs","Un entretien téléphonique"],correct:1},
+    {q:"Faut-il poser des questions à la fin ?",choices:["Non, arrogance","Oui, démontre de l'intérêt","Seulement sur le salaire","Seulement si incompréhension"],correct:1},
+    {q:"Comment se préparer à un entretien ?",choices:["Relire son CV la veille","Se renseigner sur l'entreprise et préparer des exemples","Mémoriser des réponses types","Improviser"],correct:1},
+    {q:"Quelle tenue vestimentaire adopter ?",choices:["Toujours costume/tailleur","Adaptée à la culture de l'entreprise","Décontractée systématiquement","La même qu'un entretien précédent"],correct:1},
+    {q:"Comment gérer le silence lors d'un entretien ?",choices:["Le remplir immédiatement","L'utiliser pour réfléchir puis répondre","Quitter la pièce","Poser une question"],correct:1},
+  ],
+  "Lettre de motivation":[
+    {q:"Quelle est la structure classique ?",choices:["Introduction, développement, conclusion","Présentation, motivation, disponibilité","Pourquoi eux, pourquoi moi, pourquoi maintenant","Compétences, expériences, objectifs"],correct:0},
+    {q:"Quelle longueur est recommandée ?",choices:["Une demi-page","Une page","Deux pages","Trois paragraphes minimum"],correct:1},
+    {q:"Par quelle formule commence-t-on ?",choices:["Bonjour,","Chère/Cher [Prénom],","Madame, Monsieur,","À qui de droit,"],correct:2},
+    {q:"Doit-on personnaliser chaque lettre ?",choices:["Non, modèle générique suffit","Oui, adaptée à chaque offre","Seulement pour les grandes entreprises","Seulement si demandé"],correct:1},
+    {q:"Quel est l'objectif du premier paragraphe ?",choices:["Lister ses diplômes","Expliquer sa situation familiale","Accrocher le recruteur","Donner ses prétentions"],correct:2},
+    {q:"Comment montrer sa motivation ?",choices:["Copier le site web","Mentionner des éléments précis de l'entreprise","Écrire 'Je suis très motivé'","Indiquer que c'est l'unique entreprise"],correct:1},
+    {q:"Quelle formule de politesse en fin ?",choices:["Cordialement","Bisous","Veuillez agréer mes salutations distinguées","À bientôt"],correct:2},
+    {q:"Que signifie CAR ?",choices:["Contexte, Action, Résultat","Compétence, Aptitude, Réseau","Candidature, Ambition, Réussite","Critère, Argument, Résumé"],correct:0},
+  ],
+  "LinkedIn & e-réputation":[
+    {q:"Quel est le réseau professionnel le plus utilisé en France ?",choices:["Twitter","Facebook","LinkedIn","Viadeo"],correct:2},
+    {q:"Qu'est-ce qu'un résumé LinkedIn efficace doit contenir ?",choices:["Uniquement les diplômes","Profil, compétences clés et accroche personnelle","La liste des employeurs","Les loisirs"],correct:1},
+    {q:"Qu'est-ce que l'e-réputation ?",choices:["La réputation d'une boutique en ligne","L'image que renvoie une personne sur internet","Le nombre d'abonnés","Un classement Google"],correct:1},
+    {q:"Comment les recruteurs utilisent-ils LinkedIn ?",choices:["Uniquement pour publier des offres","Pour sourcer des candidats et vérifier les profils","Uniquement pour communiquer","Pour comparer les salaires"],correct:1},
+    {q:"Pourquoi personnaliser son URL LinkedIn ?",choices:["Pour le référencement et faciliter le partage","Pour augmenter les connexions","Pour accéder au premium","Aucune raison"],correct:0},
+    {q:"Combien de compétences maximum sur LinkedIn ?",choices:["10","25","50","Illimité"],correct:2},
+    {q:"Que signifie SSI sur LinkedIn ?",choices:["Social Sharing Index","Social Selling Index","Super Search Intelligence","Standard Skills Indicator"],correct:1},
+    {q:"À quoi sert la section 'Recommandations' ?",choices:["Rien","Renforcer la crédibilité par des témoignages de collègues","Augmenter les vues du profil","Obligatoire pour les premium"],correct:1},
+  ],
+};
+
+let currentUser = null;
+let currentQCM = null;
+let currentQCMIdx = 0;
+let qcmAnswers = [];
+let avisNote = 4;
+
+/* ===========================
+   LOGIN
+=========================== */
+function fillDemo(email) {
+  document.getElementById('login-email').value = email;
+  document.getElementById('login-pwd').value = '1234';
+}
+
+function tryLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const pwd = document.getElementById('login-pwd').value;
+  const user = USERS.find(u => u.email === email && u.pwd === pwd);
+  if(!user) {
+    document.getElementById('login-err').style.display = 'block';
+    return;
+  }
+  currentUser = JSON.parse(JSON.stringify(user)); // copie profonde
+  document.getElementById('screen-login').style.display = 'none';
+  document.getElementById('screen-app').classList.add('show');
+  initApp();
+}
+
+function logout() {
+  document.getElementById('screen-login').style.display = 'flex';
+  document.getElementById('screen-app').classList.remove('show');
+  document.getElementById('login-err').style.display = 'none';
+  currentUser = null;
+}
+
+/* ===========================
+   INIT
+=========================== */
+function initApp() {
+  const u = currentUser;
+  document.getElementById('user-name').textContent = u.prenom + ' ' + u.nom;
+  document.getElementById('user-avatar').textContent = u.initiales;
+  document.getElementById('welcome-text').textContent = `Bonjour ${u.prenom} !`;
+  renderDashboard();
+  renderModules();
+  renderQCMList();
+  renderAbsences();
+  renderAvis();
+  showPage('accueil', document.querySelector('.tnav'));
+}
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tnav').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name === 'planning') appRenderCalendar();
+}
+
+/* ===== CALENDRIER PARTAGÉ (Apprenant — lecture seule) ===== */
+const APP_MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const APP_TYPE_LABELS = {cours:'Cours',reunion:'Réunion',visio:'Visio',note:'Note'};
+let appMonth = new Date().getMonth() + 1;
+let appYear  = new Date().getFullYear();
+let appSelDate = null;
+
+function appLoadCalendar() {
+  try {
+    const raw = localStorage.getItem('rp_calendar');
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  return [];
+}
+
+function appRenderCalendar() {
+  const evts = appLoadCalendar().filter(e => e.visibilite !== 'interne');
+  const label = document.getElementById('app-cal-month');
+  if (label) label.textContent = `${APP_MONTHS[appMonth-1]} ${appYear}`;
+
+  const firstDay = new Date(appYear, appMonth-1, 1);
+  const lastDay  = new Date(appYear, appMonth, 0);
+  let startDow = firstDay.getDay(); startDow = startDow===0?6:startDow-1;
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  let html = '';
+  const prevLast = new Date(appYear, appMonth-1, 0).getDate();
+  for (let i = startDow-1; i >= 0; i--) html += `<div class="app-day other-m"><div class="app-dn">${prevLast-i}</div></div>`;
+
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const ds = `${appYear}-${String(appMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayEvts = evts.filter(e => e.date === ds);
+    const chips = dayEvts.slice(0,3).map(e => `<div class="app-chip type-${e.type||'cours'}">${esc(e.titre)}</div>`).join('');
+    const more  = dayEvts.length > 3 ? `<div class="app-more">+${dayEvts.length-3}</div>` : '';
+    html += `<div class="app-day ${ds===todayStr?'today-d':''} ${appSelDate===ds?'sel-d':''}" onclick="appSelectDate('${ds}')">
+      <div class="app-dn">${d}</div>
+      <div class="app-chips">${chips}${more}</div>
+    </div>`;
+  }
+  const total = startDow + lastDay.getDate();
+  const rem = total%7===0?0:7-(total%7);
+  for (let d = 1; d <= rem; d++) html += `<div class="app-day other-m"><div class="app-dn">${d}</div></div>`;
+
+  const daysEl = document.getElementById('app-days');
+  if (daysEl) daysEl.innerHTML = html;
+  appRenderSide(evts);
+}
+
+function appChangeMonth(dir) {
+  appMonth += dir;
+  if (appMonth > 12) { appMonth = 1; appYear++; }
+  if (appMonth < 1)  { appMonth = 12; appYear--; }
+  appRenderCalendar();
+}
+
+function appSelectDate(ds) {
+  appSelDate = ds;
+  appRenderCalendar();
+}
+
+function appRenderSide(evts) {
+  const list   = document.getElementById('app-evt-list');
+  const dateEl = document.getElementById('app-evt-date');
+  const hint   = document.getElementById('app-evt-hint');
+  if (!list) return;
+
+  if (!appSelDate) {
+    dateEl.textContent = 'Sélectionnez un jour';
+    hint.textContent   = 'Cliquez sur une date pour voir les événements';
+    list.innerHTML = '<div class="app-evt-empty">Cliquez sur une date pour voir les événements du jour</div>';
+    return;
+  }
+  const [y,m,d] = appSelDate.split('-');
+  dateEl.textContent = `${parseInt(d)} ${APP_MONTHS[parseInt(m)-1]} ${y}`;
+  hint.textContent   = '';
+
+  const dayEvts = evts.filter(e => e.date === appSelDate).sort((a,b) => (a.heure||'').localeCompare(b.heure||''));
+  if (dayEvts.length === 0) {
+    list.innerHTML = '<div class="app-evt-empty">Aucun événement ce jour.</div>';
+    return;
+  }
+  list.innerHTML = dayEvts.map(e => `
+    <div class="app-evt-item">
+      <div class="app-evt-dot type-${e.type||'cours'}"></div>
+      <div class="app-evt-body">
+        <div class="app-evt-title">${esc(e.titre)}</div>
+        <div class="app-evt-meta">${APP_TYPE_LABELS[e.type||'cours']}${e.heure?' · '+esc(e.heure):''}${e.formation?' · '+esc(e.formation):''}${e.auteur?' · par '+esc(e.auteur):''}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ===========================
+   DASHBOARD
+=========================== */
+function renderDashboard() {
+  const u = currentUser;
+  const absNb = u.absences.length;
+  const qcmNb = u.qcmResults.length;
+  const scoreMoy = qcmNb > 0
+    ? Math.round(u.qcmResults.reduce((a,r) => a + r.score/r.total*100, 0) / qcmNb)
+    : '—';
+  const modDone = u.moduleProgress.filter(p => p === 100).length;
+
+  document.getElementById('stat-modules-done').textContent = `${modDone}/${MODULES_DATA.length}`;
+  document.getElementById('stat-qcm-done').textContent = qcmNb;
+  document.getElementById('stat-score-moy').textContent = qcmNb > 0 ? scoreMoy + '%' : '—';
+  document.getElementById('stat-abs-val').textContent = absNb;
+  document.getElementById('stat-abs-mini').className = 'stat-mini ' + (absNb >= 3 ? 'warn' : 'ok');
+
+  // Progression modules
+  const progEl = document.getElementById('dash-modules-prog');
+  progEl.innerHTML = MODULES_DATA.map((m, i) => {
+    const p = u.moduleProgress[i] || 0;
+    return `<div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px">
+        <span style="color:var(--text);font-weight:500">${esc(m.nom)}</span>
+        <span style="color:var(--muted)">${p}%</span>
+      </div>
+      <div class="prog-bar">
+        <div class="prog-fill" style="width:${p}%;background:${p===100?'var(--ok)':p>0?'var(--bx)':'var(--cream-d)'}"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Alerte absences
+  const alertEl = document.getElementById('dash-absence-msg');
+  if(absNb >= 3) {
+    alertEl.innerHTML = `<div class="absence-alert"><strong>⚠️ Seuil d'absences atteint</strong>Vous avez ${absNb} absence(s). Un email de notification a été envoyé. Veuillez fournir un justificatif.</div>`;
+  } else if(absNb > 0) {
+    alertEl.innerHTML = `<div style="font-size:12px;color:var(--muted)">Vous avez <strong>${absNb} absence(s)</strong> enregistrée(s). Seuil d'alerte : 3.</div>`;
+  } else {
+    alertEl.innerHTML = `<div style="font-size:12px;color:var(--ok)">✓ Aucune absence enregistrée</div>`;
+  }
+}
+
+/* ===========================
+   MODULES / LMS
+=========================== */
+function renderModules() {
+  const grid = document.getElementById('module-grid');
+  grid.innerHTML = MODULES_DATA.map((m, i) => {
+    const p = currentUser.moduleProgress[i] || 0;
+    return `
+    <div class="module-item">
+      <div class="module-item-header">
+        <div class="mi-icon ${m.color}">
+          <svg viewBox="0 0 16 16"><path d="M2 3h12M2 7h9M2 11h6"/></svg>
+        </div>
+        <div class="mi-meta">
+          <div class="mi-name">${esc(m.nom)}</div>
+          <div class="mi-duration">${m.duree} · ${m.docs.length} document(s)</div>
+        </div>
+        ${p===100?'<span class="badge badge-ok">✓ Terminé</span>':''}
+      </div>
+      <div class="module-item-body">
+        <div class="mi-progress-label">
+          <span>Progression</span><span>${p}%</span>
+        </div>
+        <div class="prog-bar">
+          <div class="prog-fill" style="width:${p}%;background:${p===100?'var(--ok)':'var(--bx)'}"></div>
+        </div>
+        <div class="mi-docs">
+          ${m.docs.map(d => `
+            <div class="doc-chip" onclick="openDoc('${esc(d.name)}','${d.type}',${i})">
+              <svg viewBox="0 0 16 16"><path d="M4 1h6l4 4v10H4V1zm6 0v4h4"/></svg>
+              ${esc(d.name.split('—')[0].trim())}
+            </div>`).join('')}
+        </div>
+        <button class="btn-p" style="margin-top:12px;font-size:11px;padding:6px 14px" onclick="openModule(${i})">
+          <svg viewBox="0 0 16 16"><path d="M5 3l8 5-8 5V3z"/></svg>
+          ${p===0?'Commencer':p===100?'Revoir':'Continuer'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openModule(idx) {
+  const m = MODULES_DATA[idx];
+  document.getElementById('viewer-title').textContent = m.nom;
+  document.getElementById('viewer-body').innerHTML = `
+    <div style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.6">
+      Module de ${m.duree} · Formation CV et Recherche d'emploi
+    </div>
+    <div class="section-label">Documents disponibles</div>
+    ${m.docs.map(d => `
+      <div class="doc-item-full">
+        <div class="doc-icon-lg"><svg viewBox="0 0 16 16"><path d="M4 1h6l4 4v10H4V1zm6 0v4h4"/></svg></div>
+        <div class="doc-info">
+          <div class="doc-name">${esc(d.name)}</div>
+          <div class="doc-type">${d.type}</div>
+        </div>
+        <button class="doc-dl" onclick="showToast('Téléchargement simulé : ${esc(d.name)}')">
+          <svg viewBox="0 0 16 16"><path d="M3 12h10M8 2v8M5 7l3 3 3-3"/></svg>
+        </button>
+      </div>`).join('')}
+    <button class="btn-p" style="margin-top:18px;width:100%;justify-content:center" onclick="markModuleDone(${idx})">
+      <svg viewBox="0 0 16 16"><path d="M13 3L6 12l-3-3"/></svg>
+      Marquer comme terminé
+    </button>`;
+  document.getElementById('viewer-overlay').classList.add('open');
+}
+
+function openDoc(name, type, moduleIdx) {
+  showToast(`Ouverture : ${name}`);
+}
+
+function markModuleDone(idx) {
+  currentUser.moduleProgress[idx] = 100;
+  renderModules();
+  renderDashboard();
+  closeViewerBtn();
+  showToast('Module marqué comme terminé ✓');
+}
+
+function closeViewer(e) { if(e.target.id==='viewer-overlay') closeViewerBtn(); }
+function closeViewerBtn() { document.getElementById('viewer-overlay').classList.remove('open'); }
+
+/* ===========================
+   QCM
+=========================== */
+function renderQCMList() {
+  const el = document.getElementById('qcm-cards');
+  el.innerHTML = QCM_DATA.map(q => {
+    const result = currentUser.qcmResults.find(r => r.theme === q.theme);
+    return `
+    <div class="qcm-card">
+      <div class="qcm-card-header">
+        <div class="qcm-card-icon"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M6 6.5a2 2 0 114 0c0 1.5-2 1.5-2 3M8 13v.5"/></svg></div>
+        <div class="qcm-card-meta">
+          <div class="qcm-card-name">${esc(q.theme)}</div>
+          <div class="qcm-card-info">${q.nb} questions · ${q.diff}</div>
+        </div>
+        ${result ? `<span class="badge badge-ok">Passé</span>` : `<span class="badge badge-info">À faire</span>`}
+      </div>
+      <div class="qcm-card-body">
+        ${result
+          ? `<div class="qcm-result-info">Dernier score : <strong>${result.score}/${result.total}</strong></div>
+             <div class="qcm-result-score">${Math.round(result.score/result.total*100)}%</div>`
+          : `<div class="qcm-result-info">Non passé</div>`}
+        <button class="btn-p" style="font-size:11px;padding:6px 14px" onclick="startQCM('${q.theme}',${q.nb},'${q.diff}')">
+          <svg viewBox="0 0 16 16"><path d="M5 3l8 5-8 5V3z"/></svg>
+          ${result ? 'Repasser' : 'Commencer'}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function startQCMFromDash() {
+  startQCM("Techniques d'entretien", 10, 'intermédiaire');
+  showPage('qcm', document.querySelectorAll('.tnav')[2]);
+}
+
+function startQCM(theme, nb, diff) {
+  const pool = QUESTION_BANK[theme] || [];
+  const questions = pool.sort(() => Math.random()-.5).slice(0, nb);
+  currentQCM = { theme, questions, nb: questions.length };
+  currentQCMIdx = 0;
+  qcmAnswers = new Array(questions.length).fill(null);
+
+  document.getElementById('qcm-list-view').style.display = 'none';
+  document.getElementById('qcm-player-view').style.display = 'block';
+  renderQCMQuestion();
+}
+
+function backToQCMList() {
+  document.getElementById('qcm-list-view').style.display = 'block';
+  document.getElementById('qcm-player-view').style.display = 'none';
+  currentQCM = null;
+}
+
+function renderQCMQuestion() {
+  const q = currentQCM.questions[currentQCMIdx];
+  const total = currentQCM.nb;
+  const pct = Math.round((currentQCMIdx / total) * 100);
+
+  document.getElementById('qcm-player').innerHTML = `
+    <div class="qcm-player-header">
+      <div class="qcm-player-title">${esc(currentQCM.theme)}</div>
+      <div class="qcm-player-progress">Question ${currentQCMIdx+1} / ${total}</div>
+    </div>
+    <div class="qcm-prog-bar"><div class="qcm-prog-fill" style="width:${pct}%"></div></div>
+    <div class="qcm-player-body">
+      <div class="question-num">Question ${currentQCMIdx+1}</div>
+      <div class="question-text">${esc(q.q)}</div>
+      <div class="answer-list" id="answer-list">
+        ${q.choices.map((c,ci) => `
+          <button class="answer-btn" id="ans-${ci}" onclick="answerQuestion(${ci},${q.correct})">
+            <div class="answer-letter">${String.fromCharCode(65+ci)}</div>
+            <span>${esc(c)}</span>
+          </button>`).join('')}
+      </div>
+      <div id="qcm-feedback" style="margin-top:12px"></div>
+    </div>
+    <div class="qcm-nav">
+      <span style="font-size:11px;color:var(--muted)">${total - currentQCMIdx - 1} question(s) restante(s)</span>
+      <button class="btn-p" id="btn-next" style="display:none;font-size:11px;padding:7px 16px" onclick="nextQuestion()">
+        ${currentQCMIdx < total-1 ? 'Question suivante →' : 'Voir le résultat'}
+      </button>
+    </div>`;
+}
+
+function answerQuestion(chosen, correct) {
+  if(qcmAnswers[currentQCMIdx] !== null) return;
+  qcmAnswers[currentQCMIdx] = chosen;
+
+  document.querySelectorAll('.answer-btn').forEach((btn, i) => {
+    btn.classList.add('answered');
+    if(i === chosen && chosen === correct) btn.classList.add('correct');
+    else if(i === chosen) btn.classList.add('wrong');
+    else if(i === correct) btn.classList.add('reveal');
+  });
+
+  const ok = chosen === correct;
+  document.getElementById('qcm-feedback').innerHTML = `
+    <div class="qcm-feedback ${ok?'ok':'ko'}">
+      ${ok ? '✓ Bonne réponse !' : `✗ Incorrect — La bonne réponse était : ${esc(currentQCM.questions[currentQCMIdx].choices[correct])}`}
+    </div>`;
+  document.getElementById('btn-next').style.display = 'flex';
+}
+
+function nextQuestion() {
+  currentQCMIdx++;
+  if(currentQCMIdx >= currentQCM.nb) {
+    showQCMResult();
+  } else {
+    renderQCMQuestion();
+  }
+}
+
+function showQCMResult() {
+  const correct = qcmAnswers.filter((a,i) => a === currentQCM.questions[i].correct).length;
+  const total = currentQCM.nb;
+  const pct = Math.round(correct / total * 100);
+  const cls = pct === 100 ? 'perfect' : pct >= 60 ? 'good' : 'low';
+  const msg = pct === 100 ? 'Parfait ! Vous maîtrisez ce sujet.' :
+              pct >= 80 ? 'Très bien ! Quelques points à revoir.' :
+              pct >= 60 ? 'Bien ! Continuez à vous entraîner.' :
+              'Des lacunes à combler — relisez le support de cours.';
+
+  // Sauvegarder le résultat
+  const existing = currentUser.qcmResults.findIndex(r => r.theme === currentQCM.theme);
+  if(existing >= 0) currentUser.qcmResults[existing] = {theme: currentQCM.theme, score: correct, total};
+  else currentUser.qcmResults.push({theme: currentQCM.theme, score: correct, total});
+  renderQCMList();
+  renderDashboard();
+
+  document.getElementById('qcm-player').innerHTML = `
+    <div class="qcm-player-header">
+      <div class="qcm-player-title">${esc(currentQCM.theme)}</div>
+      <div class="qcm-player-progress">Résultat final</div>
+    </div>
+    <div class="qcm-prog-bar"><div class="qcm-prog-fill" style="width:100%"></div></div>
+    <div class="qcm-score-final">
+      <div class="score-circle ${cls}">
+        <span>${pct}%</span>
+        <span class="score-label">${correct}/${total}</span>
+      </div>
+      <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy);margin-bottom:6px">
+        ${pct===100?'Parfait !':`Score : ${correct}/${total}`}
+      </div>
+      <div class="score-msg">${msg}</div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-p" onclick="startQCM('${currentQCM.theme}',${total},'débutant')">
+          <svg viewBox="0 0 16 16"><path d="M13 8A5 5 0 113 8"/><path d="M8 1v4l2-2M8 1l-2 2"/></svg>
+          Recommencer
+        </button>
+        <button class="btn-s" onclick="backToQCMList()">Tous les QCM</button>
+      </div>
+    </div>`;
+}
+
+/* ===========================
+   ABSENCES
+=========================== */
+function renderAbsences() {
+  const u = currentUser;
+  const nb = u.absences.length;
+  const pct = Math.min(Math.round(nb/3*100), 100);
+
+  const bigEl = document.getElementById('abs-big');
+  bigEl.textContent = nb;
+  bigEl.className = 'absence-big ' + (nb >= 3 ? 'danger' : nb > 0 ? 'warn' : 'ok');
+
+  document.getElementById('abs-legend-title').textContent =
+    nb === 0 ? 'Aucune absence' : `${nb} absence${nb>1?'s':''}`;
+  document.getElementById('abs-prog-label').textContent = `${nb} / 3`;
+  const fill = document.getElementById('abs-prog-fill');
+  fill.style.width = pct + '%';
+  fill.style.background = nb >= 3 ? '#c0392b' : nb > 0 ? 'var(--warn)' : 'var(--ok)';
+
+  document.getElementById('abs-detail-msg').textContent =
+    nb === 0 ? 'Vous n\'avez aucune absence enregistrée. Bonne présence !' :
+    nb < 3 ? `${nb} absence${nb>1?'s':''} enregistrée${nb>1?'s':''}. Seuil d'alerte : 3 absences.` :
+    `Seuil d'alerte dépassé. Un email de notification a été envoyé. Justifiez vos absences.`;
+
+  const alertZone = document.getElementById('absence-alert-zone');
+  if(nb >= 3) {
+    alertZone.innerHTML = `
+      <div class="absence-alert">
+        <strong>⚠️ Notification envoyée — Seuil de 3 absences atteint</strong>
+        Un email a été envoyé automatiquement à votre formateur et au centre de formation.
+        Vous devez fournir un justificatif sous 48h, ou une sanction pourrait être appliquée.
+      </div>`;
+  } else { alertZone.innerHTML = ''; }
+
+  const list = document.getElementById('absence-list');
+  if(nb === 0) {
+    list.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--muted)">Aucune absence enregistrée</div>';
+    return;
+  }
+  list.innerHTML = u.absences.map(a => `
+    <div class="absence-row">
+      <div class="ab-date">${fmtDate(a.date)}</div>
+      <div class="ab-motif">${esc(a.motif)}</div>
+      <div class="ab-status">
+        ${a.justifie
+          ? '<span class="badge badge-ok">Justifiée</span>'
+          : '<span class="badge badge-warn">Non justifiée</span>'}
+      </div>
+    </div>`).join('');
+}
+
+/* ===========================
+   AVIS
+=========================== */
+function renderAvis() {
+  const u = currentUser;
+  const formZone = document.getElementById('avis-form-zone');
+  if(u.avis) {
+    formZone.innerHTML = `
+      <div style="font-size:12px;color:var(--ok);font-weight:600;margin-bottom:4px">✓ Votre avis a été publié</div>
+      <div style="font-size:12px;color:var(--muted)">${'★'.repeat(u.avis.note)}${'☆'.repeat(5-u.avis.note)} — "${esc(u.avis.texte)}"</div>
+      <button class="btn-s" style="margin-top:10px;font-size:11px" onclick="resetAvis()">Modifier mon avis</button>`;
+  }
+
+  const list = document.getElementById('avis-list');
+  const all = [...AVIS_EXISTANTS];
+  if(u.avis) all.unshift({prenom: u.prenom + ' ' + u.nom[0] + '.', note: u.avis.note, texte: u.avis.texte});
+  list.innerHTML = all.map(a => `
+    <div class="avis-card">
+      <div class="avis-card-header">
+        <div class="avis-card-author">${esc(a.prenom)}</div>
+        <div class="avis-card-stars">${'★'.repeat(a.note)}${'☆'.repeat(5-a.note)}</div>
+      </div>
+      <div class="avis-card-text">"${esc(a.texte)}"</div>
+    </div>`).join('');
+}
+
+function setAvisNote(n) {
+  avisNote = n;
+  const stars = document.querySelectorAll('#avis-stars .star-lg');
+  stars.forEach((s,i) => s.classList.toggle('active', i < n));
+}
+
+function submitAvis() {
+  const texte = document.getElementById('avis-texte').value.trim();
+  if(!texte) { showToast('Rédigez un commentaire avant de publier'); return; }
+  currentUser.avis = { note: avisNote, texte };
+  renderAvis();
+  showToast('Avis publié — merci pour votre retour !');
+}
+
+function resetAvis() {
+  currentUser.avis = null;
+  document.getElementById('avis-form-zone').innerHTML = `
+    <div style="font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px">Laisser un avis</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Note globale</div>
+    <div class="stars-large" id="avis-stars">
+      <span class="star-lg active" onclick="setAvisNote(1)">★</span>
+      <span class="star-lg active" onclick="setAvisNote(2)">★</span>
+      <span class="star-lg active" onclick="setAvisNote(3)">★</span>
+      <span class="star-lg active" onclick="setAvisNote(4)">★</span>
+      <span class="star-lg" onclick="setAvisNote(5)">★</span>
+    </div>
+    <textarea class="avis-textarea" id="avis-texte" placeholder="Décrivez votre expérience…"></textarea>
+    <button class="btn-p" onclick="submitAvis()">
+      <svg viewBox="0 0 16 16"><path d="M13 3L6 12l-3-3"/></svg>
+      Publier mon avis
+    </button>`;
+  avisNote = 4;
+}
+
+/* ===========================
+   PLAQUETTE
+=========================== */
+function downloadPlaquette() {
+  showToast('Téléchargement de la plaquette PDF…');
+}
+
+/* ===========================
+   UTILS
+=========================== */
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function fmtDate(d) {
+  if(!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${parseInt(day).toString().padStart(2,'0')}/${m}/${y}`;
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ── Sync calendrier partagé ── */
+function _appSyncCalendar() {
+  const raw = localStorage.getItem('rp_calendar') || '[]';
+  if (raw !== _appCalSnap) {
+    _appCalSnap = raw;
+    const page = document.getElementById('page-planning');
+    if (page && page.classList.contains('active')) appRenderCalendar();
+  }
+}
+let _appCalSnap = null;
+
+/* 1) Polling toutes les 1s */
+setInterval(_appSyncCalendar, 1000);
+
+/* 2) Dès que l'onglet redevient visible (switch depuis formateur/admin) */
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) _appSyncCalendar();
+});
+</script>
+</body>
+</html>

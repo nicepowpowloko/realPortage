@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administration — Real Portage</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bx:#7B1E3A; --bx-d:#5a1529; --bx-l:#a8294f;
+  --navy:#1a2744; --navy-l:#243460; --navy-m:#3a4d7a;
+  --cream:#f5f0e8; --cream-d:#e8e0d0; --beige:#f9f6f0;
+  --text:#1a1a1a; --muted:#6b6b6b; --light:#9a9a9a;
+  --white:#ffffff; --border:#ddd8cc;
+  --ok:#1e6e41; --ok-bg:#e8f5ee;
+  --warn:#b85c00; --warn-bg:#fff3e0;
+  --danger:#a52a2a; --danger-bg:#fdecea;
+  --info:#1a5276; --info-bg:#e8f1fb;
+  --r:8px; --rl:14px;
+  --sh:0 2px 12px rgba(0,0,0,0.07);
+  --sh-lg:0 8px 32px rgba(0,0,0,0.13);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:'DM Sans',sans-serif;background:#eae4d8;color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* ===== TOP NAV ===== */
+.topnav{
+  background:var(--navy);height:52px;display:flex;align-items:center;
+  padding:0 20px;gap:0;position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 16px rgba(0,0,0,.2);flex-shrink:0;
+}
+.tn-logo{
+  display:flex;align-items:center;gap:8px;margin-right:24px;
+  font-family:'DM Serif Display',serif;font-size:17px;color:#fff;
+}
+.tn-logo .rp{
+  width:26px;height:26px;border-radius:50%;background:var(--bx-l);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;color:#fff;
+}
+.tn-logo span{color:#e8a0b0}
+.tn-badge{
+  padding:2px 8px;background:rgba(255,255,255,.12);border-radius:20px;
+  font-size:9px;font-weight:700;color:rgba(255,255,255,.7);
+  letter-spacing:1px;text-transform:uppercase;margin-left:4px;
+}
+.tn-tabs{display:flex;gap:2px;flex:1;overflow-x:auto}
+.tn-tabs::-webkit-scrollbar{display:none}
+.nt{
+  display:flex;align-items:center;gap:5px;padding:0 14px;height:52px;
+  border:none;background:none;color:rgba(255,255,255,.5);
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
+  cursor:pointer;white-space:nowrap;border-bottom:3px solid transparent;transition:all .15s;
+}
+.nt svg{width:13px;height:13px;fill:currentColor;flex-shrink:0}
+.nt:hover{color:rgba(255,255,255,.85)}
+.nt.active{color:#fff;border-bottom-color:#e8a0b0}
+.tn-right{display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0}
+.tn-user{display:flex;align-items:center;gap:7px;font-size:11px;color:rgba(255,255,255,.65)}
+.av{
+  width:28px;height:28px;border-radius:50%;background:var(--bx-l);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;flex-shrink:0;
+}
+
+/* ===== LAYOUT ===== */
+.page{display:none;flex:1;overflow:hidden;flex-direction:column}
+.page.active{display:flex}
+.scroll{flex:1;overflow-y:auto;padding:24px 28px}
+.scroll::-webkit-scrollbar{width:4px}
+.scroll::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ===== COMPOSANTS ===== */
+.card{background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden}
+.ch{padding:14px 18px;border-bottom:1px solid var(--cream-d);display:flex;align-items:center;justify-content:space-between}
+.ct{font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy)}
+.cb{padding:16px 18px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:10px}
+
+/* Stats */
+.kpi{
+  background:var(--white);border-radius:var(--rl);padding:16px 18px;
+  box-shadow:var(--sh);border-left:4px solid transparent;
+}
+.kpi.bx{border-left-color:var(--bx)}
+.kpi.navy{border-left-color:var(--navy)}
+.kpi.ok{border-left-color:var(--ok)}
+.kpi.warn{border-left-color:var(--warn)}
+.kpi.info{border-left-color:var(--info)}
+.kv{font-family:'DM Serif Display',serif;font-size:28px;color:var(--navy);line-height:1}
+.kl{font-size:10px;color:var(--muted);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+.kt{font-size:11px;color:var(--light);margin-top:2px}
+
+/* Boutons */
+.bp{display:inline-flex;align-items:center;gap:6px;background:var(--bx);color:#fff;border:none;border-radius:20px;padding:8px 18px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(123,30,58,.25)}
+.bp:hover{background:var(--bx-d);transform:translateY(-1px)}
+.bp svg{width:12px;height:12px;fill:#fff}
+.bs{display:inline-flex;align-items:center;gap:6px;background:var(--white);color:var(--navy);border:1.5px solid var(--border);border-radius:20px;padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:all .15s}
+.bs:hover{border-color:var(--navy);background:var(--beige)}
+.bs svg{width:12px;height:12px;fill:currentColor}
+.bd{display:inline-flex;align-items:center;gap:5px;background:var(--danger-bg);color:var(--danger);border:1px solid rgba(165,42,42,.2);border-radius:20px;padding:5px 12px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s}
+.bd:hover{background:#f5c6c6}
+
+/* Badges */
+.bge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.bge-ok{background:var(--ok-bg);color:var(--ok)}
+.bge-warn{background:var(--warn-bg);color:var(--warn)}
+.bge-info{background:var(--info-bg);color:var(--info)}
+.bge-bx{background:#fce8ed;color:var(--bx)}
+.bge-d{background:var(--danger-bg);color:var(--danger)}
+.bge-gray{background:var(--cream-d);color:var(--muted)}
+
+/* Progress */
+.pb{background:var(--cream-d);border-radius:20px;height:6px;overflow:hidden}
+.pf{height:100%;border-radius:20px;transition:width .4s}
+
+/* Table */
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:8px 14px;border-bottom:2px solid var(--cream-d);background:var(--beige)}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--cream-d);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:var(--beige)}
+.tbl td.bold{font-weight:600;color:var(--navy)}
+
+/* Centre card */
+.centre-card{
+  background:var(--white);border-radius:var(--rl);box-shadow:var(--sh);
+  overflow:hidden;transition:transform .15s,box-shadow .15s;cursor:pointer;
+}
+.centre-card:hover{transform:translateY(-2px);box-shadow:var(--sh-lg)}
+.cc-header{
+  padding:16px 18px 12px;
+  background:linear-gradient(135deg,var(--navy),var(--navy-l));
+  position:relative;
+}
+.cc-name{font-family:'DM Serif Display',serif;font-size:16px;color:#fff;margin-bottom:3px}
+.cc-ville{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px}
+.cc-body{padding:14px 18px}
+.cc-stats{display:flex;gap:0;border-top:1px solid var(--cream-d);margin-top:12px}
+.cc-stat{flex:1;text-align:center;padding:10px 6px;border-right:1px solid var(--cream-d)}
+.cc-stat:last-child{border-right:none}
+.cc-stat-val{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy)}
+.cc-stat-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+
+/* Formation row */
+.form-row{
+  display:flex;align-items:center;gap:14px;padding:12px 14px;
+  border-bottom:1px solid var(--cream-d);transition:background .1s;
+}
+.form-row:last-child{border-bottom:none}
+.form-row:hover{background:var(--beige)}
+.form-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.form-meta{flex:1;min-width:0}
+.form-name{font-size:12px;font-weight:600;color:var(--navy)}
+.form-info{font-size:10px;color:var(--muted);margin-top:2px}
+.form-actions{display:flex;gap:6px;flex-shrink:0}
+
+/* Apprenant row */
+.app-avatar{
+  width:30px;height:30px;border-radius:50%;background:var(--navy-m);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:#fff;flex-shrink:0;
+}
+
+/* Donut mini */
+.donut{position:relative;width:56px;height:56px;flex-shrink:0}
+.donut svg{transform:rotate(-90deg)}
+.donut-val{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:var(--navy);
+}
+
+/* Alert row */
+.alert-row{
+  display:flex;align-items:flex-start;gap:10px;padding:10px 14px;
+  border-bottom:1px solid var(--cream-d);font-size:11px;
+}
+.alert-row:last-child{border-bottom:none}
+.alert-icon{
+  width:24px;height:24px;border-radius:6px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+}
+.alert-icon.warn{background:var(--warn-bg);color:var(--warn)}
+.alert-icon.danger{background:var(--danger-bg);color:var(--danger)}
+.alert-icon.ok{background:var(--ok-bg);color:var(--ok)}
+.alert-icon.info{background:var(--info-bg);color:var(--info)}
+.alert-body{flex:1}
+.alert-title{font-weight:600;color:var(--text);margin-bottom:1px}
+.alert-sub{color:var(--muted)}
+.alert-time{font-size:10px;color:var(--light);white-space:nowrap;margin-top:1px}
+
+/* Doc row */
+.doc-row{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--cream-d);font-size:11px}
+.doc-row:last-child{border-bottom:none}
+.doc-row:hover{background:var(--beige)}
+.doc-ext{
+  width:28px;height:28px;border-radius:6px;background:#fce8ed;
+  display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;color:var(--bx);flex-shrink:0;
+}
+.doc-name{flex:1;font-weight:500;color:var(--text)}
+.doc-centre{font-size:10px;color:var(--muted)}
+
+/* Qualiopi score */
+.qscore{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:20px;
+}
+.qscore-val{font-family:'DM Serif Display',serif;font-size:48px;color:var(--navy);line-height:1}
+.qscore-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:12px}
+.qcrit{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--cream-d);font-size:11px}
+.qcrit:last-child{border-bottom:none}
+.qcrit-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.qcrit-text{flex:1;color:var(--muted)}
+.qcrit-status{font-size:10px;font-weight:600}
+
+/* Modal */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.moverlay.open{display:flex}
+.modal{background:var(--white);border-radius:var(--rl);width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:var(--sh-lg);animation:mIn .2s ease}
+@keyframes mIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.mh{padding:18px 22px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.mt{font-family:'DM Serif Display',serif;font-size:17px;color:var(--navy)}
+.mc{width:28px;height:28px;border:none;background:var(--cream-d);border-radius:6px;cursor:pointer;font-size:16px;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.mc:hover{background:var(--border)}
+.mb{padding:18px 22px}
+.mf{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:8px 12px;border:1.5px solid var(--border);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;background:var(--beige);transition:border-color .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--bx);background:var(--white)}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;right:24px;z-index:999;background:var(--navy);color:#fff;padding:11px 18px;border-radius:var(--r);font-size:12px;font-weight:500;display:none;align-items:center;gap:8px;box-shadow:var(--sh-lg);animation:tIn .2s ease}
+.toast.show{display:flex}
+@keyframes tIn{from{transform:translateY(6px);opacity:0}to{opacity:1;transform:none}}
+
+/* Charts mini */
+.bar-chart{display:flex;flex-direction:column;gap:8px}
+.bar-row{display:flex;align-items:center;gap:10px;font-size:11px}
+.bar-label{min-width:120px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:8px;background:var(--cream-d);border-radius:20px;overflow:hidden}
+.bar-fill{height:100%;border-radius:20px;transition:width .5s ease}
+.bar-val{min-width:30px;text-align:right;font-weight:600;color:var(--navy)}
+
+@media(max-width:900px){.g4{grid-template-columns:1fr 1fr}.g3{grid-template-columns:1fr}.g2{grid-template-columns:1fr}}
+
+/* ===== TABLET (≤768px) ===== */
+@media(max-width:768px){
+  .topnav{padding:0 12px}
+  .tn-logo{font-size:15px;margin-right:10px}
+  .tn-tabs{overflow-x:auto;gap:0}
+  .tn-tabs::-webkit-scrollbar{display:none}
+  .nt{padding:0 12px;font-size:11px;white-space:nowrap}
+  .tn-right{display:none}
+  .scroll{padding:16px}
+  .g4{grid-template-columns:1fr 1fr}
+  .g3,.g2{grid-template-columns:1fr}
+  .adm-cal-layout{grid-template-columns:1fr}
+  .tbl thead{display:none}
+  .tbl tr{display:flex;flex-direction:column;border:1px solid var(--border);border-radius:var(--r);margin-bottom:8px;padding:8px 12px}
+  .tbl td{border:none;padding:3px 0;font-size:12px}
+  .tbl td::before{content:attr(data-label);font-weight:700;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px;display:block}
+}
+
+/* ===== MOBILE (≤480px) ===== */
+@media(max-width:480px){
+  .topnav{height:48px;padding:0 8px}
+  .tn-logo{font-size:13px;margin-right:6px}
+  .tn-logo .rp{width:22px;height:22px;font-size:10px}
+  .tn-badge{display:none}
+  .nt{padding:0 9px;font-size:10px}
+  .nt svg{display:none}
+  .scroll{padding:10px}
+  .g4{grid-template-columns:1fr 1fr;gap:8px}
+  .kv{font-size:22px}
+  .g3,.g2{grid-template-columns:1fr;gap:8px}
+  .card{border-radius:8px}
+  .ch{padding:10px 14px}
+  .ct{font-size:14px}
+  .cb{padding:12px 14px}
+  .adm-cal-layout{grid-template-columns:1fr;gap:10px}
+  .adm-day{min-height:46px}
+  .adm-chip{display:none}
+  .adm-cal-grid{padding:6px}
+  .moverlay{padding:0;align-items:flex-end}
+  .modal{border-radius:12px 12px 0 0;max-width:100vw;max-height:90dvh}
+  .bp,.bs{font-size:11px;padding:6px 12px}
+}
+
+/* ===== CALENDRIER PARTAGÉ ===== */
+.adm-cal-layout{display:grid;grid-template-columns:1fr 300px;gap:20px}
+.adm-cal-wrapper{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden}
+.adm-cal-header{background:var(--navy);color:#fff;padding:12px 18px;display:flex;align-items:center;justify-content:space-between}
+.adm-cal-month{font-family:'DM Serif Display',serif;font-size:18px}
+.adm-cal-nav{display:flex;gap:6px}
+.adm-cal-btn{width:28px;height:28px;border:1px solid rgba(255,255,255,.2);border-radius:6px;background:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px;transition:background .12s}
+.adm-cal-btn:hover{background:rgba(255,255,255,.12)}
+.adm-cal-grid{padding:12px}
+.adm-days-hdr{display:grid;grid-template-columns:repeat(7,1fr);text-align:center;margin-bottom:4px}
+.adm-day-name{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:4px 0}
+.adm-days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.adm-day{min-height:72px;border-radius:6px;display:flex;flex-direction:column;padding:5px 4px 4px;cursor:pointer;font-size:11px;color:var(--text);transition:background .1s;position:relative;border:1.5px solid transparent}
+.adm-day:hover{background:var(--cream);border-color:var(--cream-d)}
+.adm-day.other-m{color:var(--light);background:transparent}
+.adm-day.today-d{background:var(--cream-d)}
+.adm-day.today-d .adm-dn{font-weight:700;background:var(--navy);color:#fff;border-radius:50%}
+.adm-day.sel-d{border-color:var(--bx)!important;background:#fce8ed!important}
+.adm-day.sel-d .adm-dn{color:var(--bx);font-weight:700}
+.adm-dn{font-size:11px;font-weight:500;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:3px}
+.adm-chips{display:flex;flex-direction:column;gap:2px;flex:1}
+.adm-chip{font-size:9px;font-weight:500;padding:1px 5px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.5}
+.adm-chip.type-cours{background:#fce8ed;color:var(--bx)}
+.adm-chip.type-reunion{background:#e8edf5;color:var(--navy-m)}
+.adm-chip.type-visio{background:var(--ok-bg);color:var(--ok)}
+.adm-chip.type-note{background:#fff8e1;color:#b45309}
+.adm-more{font-size:8px;color:var(--light);padding-left:4px}
+.adm-cal-legend{display:flex;gap:12px;padding:10px 16px;border-top:1px solid var(--cream-d);background:var(--beige);flex-wrap:wrap}
+.adm-leg{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted)}
+.adm-leg-dot{width:8px;height:8px;border-radius:50%}
+.adm-side{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);overflow:hidden;display:flex;flex-direction:column}
+.adm-side-hdr{padding:14px 16px;border-bottom:1px solid var(--cream-d)}
+.adm-side-date{font-family:'DM Serif Display',serif;font-size:15px;color:var(--navy)}
+.adm-side-hint{font-size:10px;color:var(--light);margin-top:1px}
+.adm-quick{padding:12px 14px;background:var(--beige);border-bottom:1px solid var(--cream-d)}
+.adm-quick-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--bx);margin-bottom:10px}
+.adm-type-sel{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.adm-tbtn{display:flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;border:1.5px solid var(--border);background:#fff;cursor:pointer;transition:all .12s}
+.adm-tbtn.active-cours{border-color:var(--bx);background:#fce8ed;color:var(--bx)}
+.adm-tbtn.active-reunion{border-color:var(--navy);background:#e8edf5;color:var(--navy)}
+.adm-tbtn.active-visio{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.adm-tbtn.active-note{border-color:#f59e0b;background:#fff8e1;color:#b45309}
+.adm-inp{width:100%;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--r);font-family:'DM Sans',sans-serif;font-size:12px;background:#fff;outline:none;margin-bottom:8px;transition:border-color .15s}
+.adm-inp:focus{border-color:var(--bx)}
+.adm-inp-row{display:flex;gap:6px}
+.adm-inp-row .adm-inp{margin-bottom:0;flex:1}
+.adm-add-btn{background:var(--bx);color:#fff;border:none;border-radius:var(--r);padding:7px 14px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:background .12s;white-space:nowrap}
+.adm-add-btn:hover{background:var(--bx-d)}
+.adm-evt-list{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:6px;max-height:400px}
+.adm-evt-list::-webkit-scrollbar{width:3px}
+.adm-evt-list::-webkit-scrollbar-thumb{background:var(--border)}
+.adm-evt-item{display:flex;align-items:flex-start;gap:8px;padding:9px 10px;border-radius:var(--r);background:#fff;border:1px solid var(--border);transition:all .12s}
+.adm-evt-item:hover{border-color:var(--cream-d);box-shadow:var(--sh)}
+.adm-evt-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px}
+.adm-evt-dot.type-cours{background:var(--bx)}
+.adm-evt-dot.type-reunion{background:var(--navy)}
+.adm-evt-dot.type-visio{background:var(--ok)}
+.adm-evt-dot.type-note{background:#f59e0b}
+.adm-evt-body{flex:1;min-width:0}
+.adm-evt-title{font-size:12px;font-weight:500;color:var(--text)}
+.adm-evt-meta{font-size:10px;color:var(--muted);margin-top:1px}
+.adm-evt-del{width:18px;height:18px;border:none;background:none;cursor:pointer;color:var(--light);font-size:14px;display:flex;align-items:center;justify-content:center;border-radius:4px;flex-shrink:0;transition:all .1s}
+.adm-evt-del:hover{color:var(--bx);background:#fce8ed}
+.adm-evt-empty{padding:20px;text-align:center;font-size:11px;color:var(--light);line-height:1.6}
+.adm-auteur{display:inline-block;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px;background:var(--cream-d);color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-left:4px}
+@media(max-width:900px){.adm-cal-layout{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topnav">
+  <div class="tn-logo" onclick="window.location.href='accueil.html'" style="cursor:pointer">
+    <div class="rp">rp</div>
+    real<span>portage</span>
+    <span class="tn-badge">Admin</span>
+  </div>
+  <div class="tn-tabs">
+    <button class="nt active" onclick="showPage('dashboard',this)">
+      <svg viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>Dashboard
+    </button>
+    <button class="nt" onclick="showPage('centres',this)">
+      <svg viewBox="0 0 16 16"><path d="M2 14V6L8 2l6 4v8H2z"/><path d="M6 14v-4h4v4"/></svg>Centres
+    </button>
+    <button class="nt" onclick="showPage('formations',this)">
+      <svg viewBox="0 0 16 16"><path d="M2 3h12M2 7h9M2 11h6"/></svg>Formations
+    </button>
+    <button class="nt" onclick="showPage('apprenants',this)">
+      <svg viewBox="0 0 16 16"><path d="M8 1a3 3 0 100 6 3 3 0 000-6zM3 14c0-2.8 2.2-5 5-5s5 2.2 5 5"/></svg>Apprenants
+    </button>
+    <button class="nt" onclick="showPage('documents',this)">
+      <svg viewBox="0 0 16 16"><path d="M4 1h6l4 4v10H4V1zm6 0v4h4"/></svg>Documents
+    </button>
+    <button class="nt" onclick="showPage('qualiopi',this)">
+      <svg viewBox="0 0 16 16"><path d="M13 3L6 12l-3-3"/><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor"/></svg>Qualiopi
+    </button>
+    <button class="nt" onclick="showPage('absences',this)">
+      <svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>Absences
+    </button>
+    <button class="nt" onclick="showPage('planning',this)">
+      <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M8 5v3l2 2"/></svg>Planning
+    </button>
+  </div>
+  <div class="tn-right">
+    <div class="tn-user">
+      <div class="av">AD</div>
+      <span>Admin</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== DASHBOARD ===== -->
+<div id="page-dashboard" class="page active">
+  <div class="scroll">
+    <!-- KPIs -->
+    <div class="g4" style="margin-bottom:20px">
+      <div class="kpi bx"><div class="kv">3</div><div class="kl">Centres actifs</div><div class="kt">Amiens · Lille · Paris</div></div>
+      <div class="kpi navy"><div class="kv">12</div><div class="kl">Formations actives</div><div class="kt">+2 ce mois</div></div>
+      <div class="kpi ok"><div class="kv">87</div><div class="kl">Apprenants total</div><div class="kt">Toutes formations</div></div>
+      <div class="kpi warn"><div class="kv" id="kpi-abs">4</div><div class="kl">Alertes absences</div><div class="kt">Apprenants à 3+</div></div>
+    </div>
+
+    <div class="g2" style="margin-bottom:20px">
+      <!-- Alertes récentes -->
+      <div class="card">
+        <div class="ch">
+          <div class="ct">Alertes récentes</div>
+          <span class="bge bge-warn">4 en attente</span>
+        </div>
+        <div id="alerts-list"></div>
+      </div>
+
+      <!-- Taux de complétion par centre -->
+      <div class="card">
+        <div class="ch"><div class="ct">Taux de complétion</div></div>
+        <div class="cb">
+          <div class="bar-chart" id="completion-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="g3">
+      <!-- Formations actives -->
+      <div class="card" style="grid-column:span 2">
+        <div class="ch">
+          <div class="ct">Formations en cours</div>
+          <button class="bp" onclick="showPage('formations',document.querySelectorAll('.nt')[2])">
+            <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg>Ajouter
+          </button>
+        </div>
+        <div id="formations-dash"></div>
+      </div>
+
+      <!-- Score Qualiopi global -->
+      <div class="card">
+        <div class="ch"><div class="ct">Score Qualiopi global</div></div>
+        <div class="qscore">
+          <div class="qscore-val">87%</div>
+          <div class="qscore-label">Conformité RNQ</div>
+          <div style="width:100%">
+            <div class="qcrit"><div class="qcrit-dot" style="background:var(--ok)"></div><div class="qcrit-text">Critère 1 — Information public</div><div class="qcrit-status" style="color:var(--ok)">✓</div></div>
+            <div class="qcrit"><div class="qcrit-dot" style="background:var(--ok)"></div><div class="qcrit-text">Critère 2 — Identification besoins</div><div class="qcrit-status" style="color:var(--ok)">✓</div></div>
+            <div class="qcrit"><div class="qcrit-dot" style="background:var(--ok)"></div><div class="qcrit-text">Critère 3 — Adaptation publics</div><div class="qcrit-status" style="color:var(--ok)">✓</div></div>
+            <div class="qcrit"><div class="qcrit-dot" style="background:var(--warn)"></div><div class="qcrit-text">Critère 4 — Moyens pédagogiques</div><div class="qcrit-status" style="color:var(--warn)">⚠</div></div>
+            <div class="qcrit"><div class="qcrit-dot" style="background:var(--ok)"></div><div class="qcrit-text">Critère 5 — Qualification formateurs</div><div class="qcrit-status" style="color:var(--ok)">✓</div></div>
+            <div class="qcrit"><div class="qcrit-dot" style="background:var(--warn)"></div><div class="qcrit-text">Critère 6 — Inscriptions dans l'env. pro</div><div class="qcrit-status" style="color:var(--warn)">⚠</div></div>
+            <div class="qcrit"><div class="qcrit-dot" style="background:var(--ok)"></div><div class="qcrit-text">Critère 7 — Amélioration continue</div><div class="qcrit-status" style="color:var(--ok)">✓</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== CENTRES ===== -->
+<div id="page-centres" class="page">
+  <div class="scroll">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)">Centres de formation</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Gestion des accès et données par centre</div>
+      </div>
+      <button class="bp" onclick="openModal('modal-centre')">
+        <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg>Nouveau centre
+      </button>
+    </div>
+    <div class="g3" id="centres-grid"></div>
+  </div>
+</div>
+
+<!-- ===== FORMATIONS ===== -->
+<div id="page-formations" class="page">
+  <div class="scroll">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)">Formations</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Toutes les formations de tous les centres</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="bs" onclick="filterFormations('toutes')">Toutes</button>
+        <button class="bs" onclick="filterFormations('actives')">Actives</button>
+        <button class="bp" onclick="openModal('modal-formation')">
+          <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg>Nouvelle formation
+        </button>
+      </div>
+    </div>
+    <div class="card">
+      <table class="tbl" id="formations-table">
+        <thead>
+          <tr>
+            <th>Formation</th><th>Centre</th><th>Période</th><th>Apprenants</th><th>Avancement</th><th>Statut</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="formations-tbody"></tbody>
+      </table>
+    </div>
+
+    <!-- ── CATALOGUE PUBLIC ── -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin:28px 0 14px">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy)">Catalogue public</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Plaquettes publiées par les formateurs — visibles sur accueil.html</div>
+      </div>
+      <span class="bge bge-ok" id="catalogue-count"></span>
+    </div>
+    <div class="card" id="catalogue-card">
+      <div id="catalogue-empty" style="padding:28px;text-align:center;font-size:12px;color:var(--muted)">
+        Aucune plaquette publiée pour l'instant.
+      </div>
+      <table class="tbl" id="catalogue-table" style="display:none">
+        <thead>
+          <tr>
+            <th>Formation</th><th>Formateur / Centre</th><th>Catégorie</th><th>Période</th><th>Tarif</th><th>Financement</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="catalogue-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ÉDITION CATALOGUE -->
+<div class="moverlay" id="modal-edit-cat" onclick="if(event.target.id==='modal-edit-cat')closeModal('modal-edit-cat')">
+  <div class="modal" style="max-width:560px;width:100%">
+    <div class="mh"><div class="mt">Modifier la formation du catalogue</div><button class="mc" onclick="closeModal('modal-edit-cat')">×</button></div>
+    <div class="mb">
+      <input type="hidden" id="edit-cat-id">
+      <div class="field"><label>Nom de la formation</label><input id="edit-cat-nom" type="text"></div>
+      <div class="fr">
+        <div class="field"><label>Centre / Organisme</label><input id="edit-cat-centre" type="text"></div>
+        <div class="field"><label>Titre RNCP</label><input id="edit-cat-rncp" type="text"></div>
+      </div>
+      <div class="fr">
+        <div class="field"><label>Catégorie</label>
+          <select id="edit-cat-categorie">
+            <option value="emploi">Emploi &amp; CV</option>
+            <option value="dev">Développement web</option>
+            <option value="data">Data &amp; Tech</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <div class="field"><label>Tarif (€)</label><input id="edit-cat-tarif" type="number"></div>
+      </div>
+      <div class="fr">
+        <div class="field"><label>Date de début</label><input id="edit-cat-debut" type="date"></div>
+        <div class="field"><label>Date de fin</label><input id="edit-cat-fin" type="date"></div>
+      </div>
+      <div class="field"><label>Durée (h)</label><input id="edit-cat-duree" type="number"></div>
+    </div>
+    <div class="mf">
+      <button class="bs" onclick="closeModal('modal-edit-cat')">Annuler</button>
+      <button class="bp" onclick="sauvegarderModifCatalogue()">Enregistrer les modifications</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APPRENANTS ===== -->
+<div id="page-apprenants" class="page">
+  <div class="scroll">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)">Apprenants</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">87 apprenants inscrits dans tous les centres</div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="search-app" placeholder="Rechercher un apprenant…" style="padding:7px 12px;border:1.5px solid var(--border);border-radius:20px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;background:var(--white);width:200px" oninput="filterApprenants(this.value)">
+        <button class="bp" onclick="openModal('modal-apprenant')">
+          <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg>Ajouter
+        </button>
+      </div>
+    </div>
+    <div class="card">
+      <table class="tbl">
+        <thead>
+          <tr><th>Apprenant</th><th>Formation</th><th>Centre</th><th>Progression</th><th>Absences</th><th>Statut</th><th>Actions</th></tr>
+        </thead>
+        <tbody id="apprenants-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DOCUMENTS ===== -->
+<div id="page-documents" class="page">
+  <div class="scroll">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)">Documents Qualiopi</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Documents réglementaires générés et archivés</div>
+      </div>
+      <button class="bp" onclick="genererDoc()">
+        <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg>Générer un document
+      </button>
+    </div>
+    <div class="g2" style="margin-bottom:20px">
+      <div class="card">
+        <div class="ch"><div class="ct">Par type de document</div></div>
+        <div class="cb" style="display:flex;flex-direction:column;gap:10px" id="docs-by-type"></div>
+      </div>
+      <div class="card">
+        <div class="ch"><div class="ct">État de complétion</div></div>
+        <div class="cb" id="docs-completion"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="ch"><div class="ct">Tous les documents</div><div style="font-size:11px;color:var(--muted)" id="docs-count"></div></div>
+      <div id="docs-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== QUALIOPI ===== -->
+<div id="page-qualiopi" class="page">
+  <div class="scroll">
+    <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy);margin-bottom:4px">Référentiel Qualiopi</div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:20px">Suivi des 7 critères et 32 indicateurs — Référentiel National Qualité</div>
+    <div class="g2" id="qualiopi-grid"></div>
+  </div>
+</div>
+
+<!-- ===== ABSENCES ===== -->
+<div id="page-absences" class="page">
+  <div class="scroll">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)">Suivi des absences</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Apprenants ayant atteint ou dépassé le seuil</div>
+      </div>
+      <button class="bp" onclick="envoyerRelances()">
+        <svg viewBox="0 0 16 16"><path d="M3 3h10a1 1 0 011 1v6a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1zm0 0l5 5 5-5"/></svg>
+        Envoyer les relances
+      </button>
+    </div>
+
+    <div class="g3" style="margin-bottom:20px">
+      <div class="kpi danger"><div class="kv">4</div><div class="kl">Apprenants ≥ 3 absences</div><div class="kt">Email envoyé automatiquement</div></div>
+      <div class="kpi warn"><div class="kv">7</div><div class="kl">Absences non justifiées</div><div class="kt">Relance en attente</div></div>
+      <div class="kpi ok"><div class="kv">12</div><div class="kl">Absences justifiées</div><div class="kt">Dossiers complets</div></div>
+    </div>
+
+    <div class="card">
+      <div class="ch"><div class="ct">Apprenants en alerte</div><span class="bge bge-d">4 apprenants</span></div>
+      <table class="tbl">
+        <thead><tr><th>Apprenant</th><th>Formation</th><th>Centre</th><th>Absences</th><th>Justifiées</th><th>Dernier email</th><th>Action</th></tr></thead>
+        <tbody id="absences-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PLANNING ===== -->
+<div id="page-planning" class="page">
+  <div class="scroll">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
+      <div>
+        <div style="font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)">Planning partagé</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Visible par les formateurs et les apprenants — toutes les modifications sont synchronisées</div>
+      </div>
+    </div>
+    <div class="adm-cal-layout">
+      <!-- Calendrier -->
+      <div class="adm-cal-wrapper">
+        <div class="adm-cal-header">
+          <div class="adm-cal-month" id="adm-cal-month"></div>
+          <div class="adm-cal-nav">
+            <button class="adm-cal-btn" onclick="admChangeMonth(-1)">‹</button>
+            <button class="adm-cal-btn" onclick="admChangeMonth(1)">›</button>
+          </div>
+        </div>
+        <div class="adm-cal-grid">
+          <div class="adm-days-hdr">
+            <div class="adm-day-name">Lun</div><div class="adm-day-name">Mar</div>
+            <div class="adm-day-name">Mer</div><div class="adm-day-name">Jeu</div>
+            <div class="adm-day-name">Ven</div><div class="adm-day-name">Sam</div>
+            <div class="adm-day-name">Dim</div>
+          </div>
+          <div class="adm-days" id="adm-days"></div>
+        </div>
+        <div class="adm-cal-legend">
+          <div class="adm-leg"><div class="adm-leg-dot" style="background:var(--bx)"></div>Cours</div>
+          <div class="adm-leg"><div class="adm-leg-dot" style="background:var(--navy)"></div>Réunion</div>
+          <div class="adm-leg"><div class="adm-leg-dot" style="background:var(--ok)"></div>Visio</div>
+          <div class="adm-leg"><div class="adm-leg-dot" style="background:#f59e0b"></div>Note</div>
+        </div>
+      </div>
+      <!-- Panneau droit -->
+      <div class="adm-side">
+        <div class="adm-side-hdr">
+          <div class="adm-side-date" id="adm-side-date">Sélectionnez un jour</div>
+          <div class="adm-side-hint" id="adm-side-hint">Cliquez sur une date du calendrier</div>
+        </div>
+        <!-- Ajout rapide (Admin) -->
+        <div class="adm-quick" id="adm-quick-form" style="display:none">
+          <div class="adm-quick-title">Ajouter un événement</div>
+          <div class="adm-type-sel">
+            <button class="adm-tbtn active-cours" id="adm-tbtn-cours" onclick="admSelectType('cours')">📚 Cours</button>
+            <button class="adm-tbtn" id="adm-tbtn-reunion" onclick="admSelectType('reunion')">👥 Réunion</button>
+            <button class="adm-tbtn" id="adm-tbtn-visio" onclick="admSelectType('visio')">🎥 Visio</button>
+            <button class="adm-tbtn" id="adm-tbtn-note" onclick="admSelectType('note')">📝 Note</button>
+          </div>
+          <input class="adm-inp" id="adm-quick-titre" placeholder="Titre de l'événement" onkeydown="if(event.key==='Enter')admQuickAdd()">
+          <select class="adm-inp" id="adm-quick-heure" style="margin-bottom:8px">
+            <option value="">— Choisir un horaire —</option>
+            <optgroup label="Matin"><option>8h - 12h</option><option>9h - 12h</option><option>9h - 12h30</option><option>9h - 13h</option></optgroup>
+            <optgroup label="Après-midi"><option>13h - 17h</option><option>13h30 - 17h</option><option>14h - 17h</option><option>14h - 18h</option></optgroup>
+            <optgroup label="Journée"><option>9h - 17h</option><option>9h - 17h30</option><option>8h - 18h</option></optgroup>
+            <optgroup label="Court"><option>9h - 10h</option><option>10h - 12h</option><option>14h - 15h</option><option>14h - 16h</option><option>15h - 17h</option></optgroup>
+          </select>
+          <select class="adm-inp" id="adm-quick-visibilite" style="margin-bottom:8px">
+            <option value="tous">👥 Visible par les apprenants</option>
+            <option value="interne">🔒 Réunion interne (non visible apprenants)</option>
+          </select>
+          <button class="adm-add-btn" style="width:100%" onclick="admQuickAdd()">+ Ajouter</button>
+        </div>
+        <div class="adm-evt-list" id="adm-evt-list">
+          <div class="adm-evt-empty">Sélectionnez un jour<br>pour voir et gérer les événements</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="moverlay" id="modal-centre" onclick="if(event.target.id==='modal-centre')closeModal('modal-centre')">
+  <div class="modal">
+    <div class="mh"><div class="mt">Nouveau centre</div><button class="mc" onclick="closeModal('modal-centre')">×</button></div>
+    <div class="mb">
+      <div class="field"><label>Nom du centre</label><input type="text" id="c-nom" placeholder="ex. Real Conseil Paris"></div>
+      <div class="field"><label>Ville</label><input type="text" id="c-ville" placeholder="ex. Paris"></div>
+      <div class="fr">
+        <div class="field"><label>Responsable</label><input type="text" id="c-resp" placeholder="Nom du responsable"></div>
+        <div class="field"><label>Email</label><input type="email" id="c-email" placeholder="contact@centre.fr"></div>
+      </div>
+      <div class="field"><label>Adresse</label><input type="text" id="c-adresse" placeholder="Adresse complète"></div>
+    </div>
+    <div class="mf">
+      <button class="bs" onclick="closeModal('modal-centre')">Annuler</button>
+      <button class="bp" onclick="addCentre()">Créer le centre</button>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="modal-formation" onclick="if(event.target.id==='modal-formation')closeModal('modal-formation')">
+  <div class="modal">
+    <div class="mh"><div class="mt">Nouvelle formation</div><button class="mc" onclick="closeModal('modal-formation')">×</button></div>
+    <div class="mb">
+      <div class="field"><label>Nom de la formation</label><input type="text" id="f-nom" placeholder="ex. Développeur Web (DWWM)"></div>
+      <div class="fr">
+        <div class="field"><label>Centre</label><select id="f-centre"><option>Real Conseil Amiens</option><option>Real Conseil Lille</option><option>Real Portage Paris</option></select></div>
+        <div class="field"><label>Titre RNCP</label><input type="text" id="f-rncp" placeholder="RNCP Niveau 5"></div>
+      </div>
+      <div class="fr">
+        <div class="field"><label>Date début</label><input type="date" id="f-debut"></div>
+        <div class="field"><label>Date fin</label><input type="date" id="f-fin"></div>
+      </div>
+      <div class="fr">
+        <div class="field"><label>Durée (h)</label><input type="number" id="f-duree" placeholder="485"></div>
+        <div class="field"><label>Tarif (€)</label><input type="number" id="f-tarif" placeholder="3500"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="bs" onclick="closeModal('modal-formation')">Annuler</button>
+      <button class="bp" onclick="addFormation()">Créer la formation</button>
+    </div>
+  </div>
+</div>
+
+<div class="moverlay" id="modal-apprenant" onclick="if(event.target.id==='modal-apprenant')closeModal('modal-apprenant')">
+  <div class="modal">
+    <div class="mh"><div class="mt">Ajouter un apprenant</div><button class="mc" onclick="closeModal('modal-apprenant')">×</button></div>
+    <div class="mb">
+      <div class="fr">
+        <div class="field"><label>Prénom</label><input type="text" id="a-prenom" placeholder="Prénom"></div>
+        <div class="field"><label>Nom</label><input type="text" id="a-nom" placeholder="Nom"></div>
+      </div>
+      <div class="field"><label>Email</label><input type="email" id="a-email" placeholder="prenom.nom@email.com"></div>
+      <div class="fr">
+        <div class="field"><label>Formation</label><select id="a-formation"><option>CV / Emploi</option><option>DWWM</option><option>CDA</option></select></div>
+        <div class="field"><label>Centre</label><select id="a-centre"><option>Real Conseil Amiens</option><option>Real Conseil Lille</option></select></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="bs" onclick="closeModal('modal-apprenant')">Annuler</button>
+      <button class="bp" onclick="addApprenant()">Inscrire</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toast-msg">OK</span></div>
+
+<script>
+/* ===== DATA ===== */
+let centres = [
+  { id:1, nom:'Real Conseil Amiens', ville:'Amiens', resp:'Thomas H.', email:'amiens@realconseil.fr', formations:5, apprenants:34, completion:72 },
+  { id:2, nom:'Real Conseil Lille', ville:'Lille', resp:'Sophie M.', email:'lille@realconseil.fr', formations:4, apprenants:28, completion:65 },
+  { id:3, nom:'Real Portage Paris', ville:'Paris', resp:'Marc D.', email:'paris@realportage.fr', formations:3, apprenants:25, completion:81 },
+];
+
+let formations = [
+  { id:1, nom:'CV et Recherche d\'emploi', centre:'Real Conseil Amiens', debut:'2026-03-12', fin:'2026-05-20', apprenants:14, completion:38, statut:'active', rncp:'RNCP Niv.4', tarif:1800 },
+  { id:2, nom:'Développeur Web (DWWM)', centre:'Real Conseil Amiens', debut:'2026-01-05', fin:'2026-07-18', apprenants:12, completion:55, statut:'active', rncp:'RNCP Niv.5', tarif:7500 },
+  { id:3, nom:'Concepteur Développeur (CDA)', centre:'Real Conseil Lille', debut:'2026-02-10', fin:'2026-09-30', apprenants:10, completion:30, statut:'active', rncp:'RNCP Niv.6', tarif:9200 },
+  { id:4, nom:'PHP Avancé & Symfony', centre:'Real Conseil Lille', debut:'2025-10-01', fin:'2026-03-15', apprenants:8, completion:100, statut:'terminée', rncp:'', tarif:4200 },
+  { id:5, nom:'React & TypeScript', centre:'Real Portage Paris', debut:'2026-03-01', fin:'2026-06-30', apprenants:11, completion:25, statut:'active', rncp:'', tarif:5800 },
+  { id:6, nom:'Data Analyst Python', centre:'Real Portage Paris', debut:'2026-04-15', fin:'2026-10-15', apprenants:9, completion:0, statut:'à venir', rncp:'RNCP Niv.5', tarif:6500 },
+];
+
+let apprenants = [
+  { id:1, prenom:'Marie', nom:'Dupont', email:'marie.dupont@email.com', formation:'CV et Recherche d\'emploi', centre:'Real Conseil Amiens', progression:38, absences:0, statut:'actif' },
+  { id:2, prenom:'Lucas', nom:'Martin', email:'lucas.martin@email.com', formation:'CV et Recherche d\'emploi', centre:'Real Conseil Amiens', progression:45, absences:3, statut:'alerte' },
+  { id:3, prenom:'Sarah', nom:'Ben Youssef', email:'sarah.ben@email.com', formation:'CV et Recherche d\'emploi', centre:'Real Conseil Amiens', progression:72, absences:1, statut:'actif' },
+  { id:4, prenom:'Karim', nom:'Djebali', email:'karim.d@email.com', formation:'DWWM', centre:'Real Conseil Amiens', progression:60, absences:0, statut:'actif' },
+  { id:5, prenom:'Amina', nom:'Bousselmi', email:'amina.b@email.com', formation:'DWWM', centre:'Real Conseil Amiens', progression:48, absences:4, statut:'alerte' },
+  { id:6, prenom:'Théo', nom:'Grimaud', email:'theo.g@email.com', formation:'CDA', centre:'Real Conseil Lille', progression:30, absences:0, statut:'actif' },
+  { id:7, prenom:'Jade', nom:'Fontaine', email:'jade.f@email.com', formation:'CDA', centre:'Real Conseil Lille', progression:35, absences:3, statut:'alerte' },
+  { id:8, prenom:'Romain', nom:'Duval', email:'romain.d@email.com', formation:'React & TypeScript', centre:'Real Portage Paris', progression:20, absences:0, statut:'actif' },
+  { id:9, prenom:'Nadia', nom:'Cheikh', email:'nadia.c@email.com', formation:'React & TypeScript', centre:'Real Portage Paris', progression:25, absences:3, statut:'alerte' },
+];
+
+let documents = [
+  { id:1, nom:'Règlement intérieur — CV Amiens', type:'Règlement', centre:'Real Conseil Amiens', date:'2026-03-10', statut:'valide' },
+  { id:2, nom:'Livret d\'accueil — CV Amiens', type:'Livret accueil', centre:'Real Conseil Amiens', date:'2026-03-10', statut:'valide' },
+  { id:3, nom:'Programme détaillé — DWWM', type:'Programme', centre:'Real Conseil Amiens', date:'2026-01-03', statut:'valide' },
+  { id:4, nom:'Convention formation — Karim D.', type:'Convention', centre:'Real Conseil Amiens', date:'2026-01-04', statut:'valide' },
+  { id:5, nom:'Règlement intérieur — CDA Lille', type:'Règlement', centre:'Real Conseil Lille', date:'2026-02-08', statut:'valide' },
+  { id:6, nom:'Livret d\'accueil — CDA Lille', type:'Livret accueil', centre:'Real Conseil Lille', date:'2026-02-08', statut:'valide' },
+  { id:7, nom:'Bilan de formation — PHP Avancé', type:'Bilan', centre:'Real Conseil Lille', date:'2026-03-16', statut:'validé' },
+  { id:8, nom:'Programme détaillé — React TS', type:'Programme', centre:'Real Portage Paris', date:'2026-02-28', statut:'valide' },
+  { id:9, nom:'Attestation fin formation — Sarah B.', type:'Attestation', centre:'Real Conseil Amiens', date:'2026-03-01', statut:'émis' },
+  { id:10, nom:'Livret accueil — React TS Paris', type:'Livret accueil', centre:'Real Portage Paris', date:'2026-02-28', statut:'valide' },
+];
+
+const QUALIOPI_CRITERES = [
+  { num:'1', titre:'Conditions d\'information du public', score:95, indicators:[
+    {n:'1.1',lib:'Éléments de l\'offre diffusés (objectifs, programme, tarif)',ok:true},
+    {n:'1.2',lib:'Prérequis précisés',ok:true},
+    {n:'1.3',lib:'Délais d\'accès indiqués',ok:true},
+    {n:'1.4',lib:'Modalités pédagogiques décrites',ok:true},
+    {n:'1.5',lib:'Accessibilité handicap précisée',ok:true},
+  ]},
+  { num:'2', titre:'Identification et analyse des besoins', score:88, indicators:[
+    {n:'2.1',lib:'Positionnement préalable réalisé',ok:true},
+    {n:'2.2',lib:'Adaptation du programme aux besoins identifiés',ok:true},
+    {n:'2.3',lib:'Résultats des positionnements tracés',ok:false},
+  ]},
+  { num:'3', titre:'Adaptation aux publics bénéficiaires', score:82, indicators:[
+    {n:'3.1',lib:'Identification du profil réalisée avant entrée',ok:true},
+    {n:'3.2',lib:'Accompagnement adapté mis en place',ok:true},
+    {n:'3.3',lib:'Accessibilité handicap opérationnelle',ok:false},
+  ]},
+  { num:'4', titre:'Adéquation des moyens pédagogiques', score:70, indicators:[
+    {n:'4.1',lib:'Moyens pédagogiques adaptés',ok:true},
+    {n:'4.2',lib:'Modalités d\'évaluation définies',ok:true},
+    {n:'4.3',lib:'Formation à distance conforme',ok:false},
+    {n:'4.4',lib:'Suivi pédagogique tracé',ok:false},
+  ]},
+  { num:'5', titre:'Qualification des formateurs', score:100, indicators:[
+    {n:'5.1',lib:'Compétences des intervenants vérifiées',ok:true},
+    {n:'5.2',lib:'Développement des compétences des formateurs',ok:true},
+  ]},
+  { num:'6', titre:'Inscription dans les environnements', score:72, indicators:[
+    {n:'6.1',lib:'Résultats et taux d\'insertion publiés',ok:true},
+    {n:'6.2',lib:'Avis des bénéficiaires collectés et publiés',ok:true},
+    {n:'6.3',lib:'Évolutions du marché intégrées au programme',ok:false},
+  ]},
+  { num:'7', titre:'Amélioration continue de la prestation', score:90, indicators:[
+    {n:'7.1',lib:'Indicateurs de résultat définis et suivis',ok:true},
+    {n:'7.2',lib:'Bilan réalisé après chaque action',ok:true},
+    {n:'7.3',lib:'Démarche d\'amélioration formalisée',ok:false},
+  ]},
+];
+
+/* ===== NAVIGATION ===== */
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nt').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(name==='dashboard') renderDashboard();
+  if(name==='centres') renderCentres();
+  if(name==='formations') { renderFormations(); renderCatalogueFormations(); }
+  if(name==='apprenants') renderApprenants();
+  if(name==='documents') renderDocuments();
+  if(name==='qualiopi') renderQualiopi();
+  if(name==='absences') renderAbsencesPage();
+  if(name==='planning') admRenderCalendar();
+}
+
+/* ===== DASHBOARD ===== */
+function renderDashboard() {
+  // Alertes
+  const alertsEl = document.getElementById('alerts-list');
+  const alertes = apprenants.filter(a => a.absences >= 3);
+  const alertsData = [
+    ...alertes.map(a => ({type:'danger',icon:'⚠️',title:`${a.prenom} ${a.nom} — ${a.absences} absences`,sub:`${a.formation} · ${a.centre}`,time:'Aujourd\'hui'})),
+    {type:'warn',icon:'📄',title:'Programme DWWM non mis à jour',sub:'Real Conseil Amiens',time:'Il y a 2j'},
+    {type:'info',icon:'📋',title:'Bilan formation PHP à compléter',sub:'Real Conseil Lille',time:'Il y a 3j'},
+    {type:'ok',icon:'✓',title:'Audit Qualiopi prévu le 15/04',sub:'Real Conseil Amiens',time:'Programmé'},
+  ];
+  alertsEl.innerHTML = alertsData.slice(0,6).map(a => `
+    <div class="alert-row">
+      <div class="alert-icon ${a.type}">${a.icon}</div>
+      <div class="alert-body">
+        <div class="alert-title">${esc(a.title)}</div>
+        <div class="alert-sub">${esc(a.sub)}</div>
+      </div>
+      <div class="alert-time">${esc(a.time)}</div>
+    </div>`).join('');
+
+  // Complétion par centre
+  const chartEl = document.getElementById('completion-chart');
+  chartEl.innerHTML = centres.map(c => `
+    <div class="bar-row">
+      <div class="bar-label">${esc(c.nom.replace('Real Conseil ','').replace('Real Portage ',''))}</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width:${c.completion}%;background:${c.completion>=75?'var(--ok)':c.completion>=50?'var(--bx)':'var(--warn)'}"></div>
+      </div>
+      <div class="bar-val">${c.completion}%</div>
+    </div>`).join('');
+
+  // Formations actives
+  const formEl = document.getElementById('formations-dash');
+  const actives = formations.filter(f => f.statut === 'active').slice(0,5);
+  formEl.innerHTML = actives.map(f => `
+    <div class="form-row">
+      <div class="form-dot" style="background:${colorFor(f.centre)}"></div>
+      <div class="form-meta">
+        <div class="form-name">${esc(f.nom)}</div>
+        <div class="form-info">${esc(f.centre)} · ${f.apprenants} apprenants · ${fmtDate(f.debut)} → ${fmtDate(f.fin)}</div>
+      </div>
+      <div style="min-width:80px">
+        <div style="font-size:10px;color:var(--muted);text-align:right;margin-bottom:3px">${f.completion}%</div>
+        <div class="pb" style="width:80px"><div class="pf" style="width:${f.completion}%;background:${f.completion>=75?'var(--ok)':'var(--bx)'}"></div></div>
+      </div>
+      <span class="bge ${f.statut==='active'?'bge-ok':f.statut==='à venir'?'bge-info':'bge-gray'}">${f.statut}</span>
+    </div>`).join('');
+}
+
+/* ===== CENTRES ===== */
+function renderCentres() {
+  const grid = document.getElementById('centres-grid');
+  grid.innerHTML = centres.map(c => `
+    <div class="centre-card">
+      <div class="cc-header">
+        <div class="cc-name">${esc(c.nom)}</div>
+        <div class="cc-ville">${esc(c.ville)}</div>
+      </div>
+      <div class="cc-body">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">
+          <strong style="color:var(--text)">${esc(c.resp)}</strong><br>${esc(c.email)}
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+          <button class="bs" style="font-size:10px;padding:4px 10px" onclick="showToast('Accès centre : ${esc(c.nom)}')">
+            <svg viewBox="0 0 16 16"><path d="M9 2h5v5M14 2L7 9M3 4H2a1 1 0 00-1 1v8a1 1 0 001 1h8a1 1 0 001-1v-1"/></svg>Accéder
+          </button>
+          <button class="bs" style="font-size:10px;padding:4px 10px" onclick="showToast('Modifier : ${esc(c.nom)}')">Modifier</button>
+        </div>
+      </div>
+      <div class="cc-stats">
+        <div class="cc-stat"><div class="cc-stat-val">${c.formations}</div><div class="cc-stat-label">Formations</div></div>
+        <div class="cc-stat"><div class="cc-stat-val">${c.apprenants}</div><div class="cc-stat-label">Apprenants</div></div>
+        <div class="cc-stat"><div class="cc-stat-val">${c.completion}%</div><div class="cc-stat-label">Complétion</div></div>
+      </div>
+    </div>`).join('');
+}
+
+/* ===== FORMATIONS ===== */
+function renderFormations(filter) {
+  const list = filter === 'actives' ? formations.filter(f=>f.statut==='active') : formations;
+  const tbody = document.getElementById('formations-tbody');
+  tbody.innerHTML = list.map(f => `
+    <tr>
+      <td class="bold">${esc(f.nom)}<br><span style="font-size:10px;color:var(--muted);font-weight:400">${esc(f.rncp)}</span></td>
+      <td><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${colorFor(f.centre)};margin-right:5px"></span>${esc(f.centre.replace('Real Conseil ','').replace('Real Portage ',''))}</td>
+      <td style="font-size:11px;color:var(--muted)">${fmtDate(f.debut)}<br>${fmtDate(f.fin)}</td>
+      <td><strong>${f.apprenants}</strong></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="pb" style="width:60px"><div class="pf" style="width:${f.completion}%;background:${f.completion===100?'var(--ok)':f.completion>0?'var(--bx)':'var(--cream-d)'}"></div></div>
+          <span style="font-size:11px;color:var(--muted)">${f.completion}%</span>
+        </div>
+      </td>
+      <td><span class="bge ${f.statut==='active'?'bge-ok':f.statut==='à venir'?'bge-info':f.statut==='terminée'?'bge-gray':'bge-bx'}">${f.statut}</span></td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <button class="bs" style="font-size:10px;padding:3px 9px" onclick="showToast('Plaquette générée pour : ${esc(f.nom)}')">Plaquette</button>
+          <button class="bs" style="font-size:10px;padding:3px 9px" onclick="showToast('QCM généré pour : ${esc(f.nom)}')">QCM</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterFormations(filter) { renderFormations(filter); }
+
+/* ===== CATALOGUE PUBLIC (localStorage) ===== */
+function getCatalogueFormations() {
+  try { return JSON.parse(localStorage.getItem('rp_catalogue') || '[]'); }
+  catch(e) { return []; }
+}
+
+function renderCatalogueFormations() {
+  const list = getCatalogueFormations();
+  const count = document.getElementById('catalogue-count');
+  const empty = document.getElementById('catalogue-empty');
+  const table = document.getElementById('catalogue-table');
+  const tbody = document.getElementById('catalogue-tbody');
+
+  if (count) count.textContent = list.length + ' formation' + (list.length > 1 ? 's' : '');
+
+  if (!list.length) {
+    if (empty) empty.style.display = 'block';
+    if (table) table.style.display = 'none';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  if (table) table.style.display = 'table';
+
+  const catLabels = { emploi:'Emploi & CV', dev:'Développement web', data:'Data & Tech', autre:'Autre' };
+  tbody.innerHTML = list.map(f => `
+    <tr>
+      <td class="bold">${esc(f.nom)}<br><span style="font-size:10px;color:var(--muted);font-weight:400">${esc(f.rncp||'')}</span></td>
+      <td style="font-size:11px">${esc(f.centre||'—')}</td>
+      <td><span class="bge bge-info">${esc(catLabels[f.categorie]||f.categorie||'—')}</span></td>
+      <td style="font-size:11px;color:var(--muted)">${fmtDate(f.debut)}<br>${fmtDate(f.fin)}</td>
+      <td style="font-weight:600">${f.tarif ? parseInt(f.tarif).toLocaleString('fr-FR')+' €' : '—'}</td>
+      <td style="font-size:11px">${(f.financement||[]).join(', ')||'—'}</td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <button class="bs" style="font-size:10px;padding:3px 9px" onclick="ouvrirModifCatalogue(${f.id})">Modifier</button>
+          <button class="bd" style="font-size:10px;padding:3px 9px" onclick="supprimerCatalogue(${f.id})">Supprimer</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function supprimerCatalogue(id) {
+  const list = getCatalogueFormations();
+  const f = list.find(x => x.id === id);
+  if (!f) return;
+  if (!confirm('Supprimer "' + f.nom + '" du catalogue public ?')) return;
+  const updated = list.filter(x => x.id !== id);
+  localStorage.setItem('rp_catalogue', JSON.stringify(updated));
+  renderCatalogueFormations();
+  showToast('"' + f.nom + '" supprimée du catalogue');
+}
+
+function ouvrirModifCatalogue(id) {
+  const list = getCatalogueFormations();
+  const f = list.find(x => x.id === id);
+  if (!f) return;
+  document.getElementById('edit-cat-id').value      = id;
+  document.getElementById('edit-cat-nom').value     = f.nom || '';
+  document.getElementById('edit-cat-centre').value  = f.centre || '';
+  document.getElementById('edit-cat-rncp').value    = f.rncp || '';
+  document.getElementById('edit-cat-categorie').value = f.categorie || 'autre';
+  document.getElementById('edit-cat-tarif').value   = f.tarif || '';
+  document.getElementById('edit-cat-debut').value   = f.debut || '';
+  document.getElementById('edit-cat-fin').value     = f.fin || '';
+  document.getElementById('edit-cat-duree').value   = f.duree || '';
+  openModal('modal-edit-cat');
+}
+
+function sauvegarderModifCatalogue() {
+  const id  = parseInt(document.getElementById('edit-cat-id').value);
+  const list = getCatalogueFormations();
+  const idx = list.findIndex(x => x.id === id);
+  if (idx === -1) return;
+  list[idx] = {
+    ...list[idx],
+    nom:       document.getElementById('edit-cat-nom').value.trim(),
+    centre:    document.getElementById('edit-cat-centre').value.trim(),
+    rncp:      document.getElementById('edit-cat-rncp').value.trim(),
+    categorie: document.getElementById('edit-cat-categorie').value,
+    tarif:     document.getElementById('edit-cat-tarif').value,
+    debut:     document.getElementById('edit-cat-debut').value,
+    fin:       document.getElementById('edit-cat-fin').value,
+    duree:     document.getElementById('edit-cat-duree').value,
+  };
+  localStorage.setItem('rp_catalogue', JSON.stringify(list));
+  closeModal('modal-edit-cat');
+  renderCatalogueFormations();
+  showToast('"' + list[idx].nom + '" mise à jour dans le catalogue');
+}
+
+/* ===== APPRENANTS ===== */
+function renderApprenants(search) {
+  const list = search
+    ? apprenants.filter(a => (a.prenom+' '+a.nom+' '+a.email).toLowerCase().includes(search.toLowerCase()))
+    : apprenants;
+  const tbody = document.getElementById('apprenants-tbody');
+  tbody.innerHTML = list.map(a => `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="app-avatar">${a.prenom[0]+a.nom[0]}</div>
+          <div>
+            <div style="font-weight:600;color:var(--navy)">${esc(a.prenom)} ${esc(a.nom)}</div>
+            <div style="font-size:10px;color:var(--muted)">${esc(a.email)}</div>
+          </div>
+        </div>
+      </td>
+      <td style="font-size:11px">${esc(a.formation)}</td>
+      <td style="font-size:11px">${esc(a.centre.replace('Real Conseil ','').replace('Real Portage ',''))}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="pb" style="width:60px"><div class="pf" style="width:${a.progression}%;background:${a.progression===100?'var(--ok)':'var(--bx)'}"></div></div>
+          <span style="font-size:11px;color:var(--muted)">${a.progression}%</span>
+        </div>
+      </td>
+      <td>
+        <span class="bge ${a.absences===0?'bge-ok':a.absences>=3?'bge-d':'bge-warn'}">${a.absences} abs.</span>
+      </td>
+      <td><span class="bge ${a.statut==='actif'?'bge-ok':'bge-d'}">${a.statut}</span></td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <button class="bs" style="font-size:10px;padding:3px 9px" onclick="showToast('Fiche apprenant : ${esc(a.prenom)} ${esc(a.nom)}')">Fiche</button>
+          ${a.absences>=3?`<button class="bd" style="font-size:10px;padding:3px 9px" onclick="envoyerEmail('${esc(a.prenom)} ${esc(a.nom)}')">Email ⚠</button>`:''}
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterApprenants(val) { renderApprenants(val); }
+
+/* ===== DOCUMENTS ===== */
+function renderDocuments() {
+  // Par type
+  const types = [...new Set(documents.map(d=>d.type))];
+  document.getElementById('docs-by-type').innerHTML = types.map(t => {
+    const n = documents.filter(d=>d.type===t).length;
+    return `<div class="bar-row">
+      <div class="bar-label">${t}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(n*25,100)}%;background:var(--bx)"></div></div>
+      <div class="bar-val">${n}</div>
+    </div>`;
+  }).join('');
+
+  // Complétion
+  const reqDocs = ['Règlement','Livret accueil','Programme','Convention'];
+  const compEl = document.getElementById('docs-completion');
+  compEl.innerHTML = reqDocs.map(t => {
+    const present = documents.filter(d=>d.type===t).length;
+    const needed = centres.length;
+    const pct = Math.round(Math.min(present/needed,1)*100);
+    return `<div style="margin-bottom:10px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:4px">
+        <span style="color:var(--muted)">${t}</span>
+        <span style="font-weight:600;color:var(--navy)">${present}/${needed}</span>
+      </div>
+      <div class="pb"><div class="pf" style="width:${pct}%;background:${pct===100?'var(--ok)':'var(--bx)'}"></div></div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('docs-count').textContent = documents.length + ' document(s)';
+  document.getElementById('docs-list').innerHTML = documents.map(d => `
+    <div class="doc-row">
+      <div class="doc-ext">${d.type.slice(0,3).toUpperCase()}</div>
+      <div class="doc-name">${esc(d.nom)}</div>
+      <div class="doc-centre">${esc(d.centre.replace('Real Conseil ',''))}</div>
+      <div style="font-size:10px;color:var(--muted);min-width:80px;text-align:right">${fmtDate(d.date)}</div>
+      <span class="bge bge-ok" style="margin-left:8px">${d.statut}</span>
+      <button class="bs" style="font-size:10px;padding:3px 9px;margin-left:8px" onclick="showToast('Téléchargement : ${esc(d.nom)}')">PDF</button>
+    </div>`).join('');
+}
+
+function genererDoc() {
+  const types = ['Règlement intérieur','Livret d\'accueil','Convention de formation','Attestation de fin'];
+  const t = types[Math.floor(Math.random()*types.length)];
+  const c = formations[Math.floor(Math.random()*formations.length)];
+  documents.unshift({id:Date.now(),nom:`${t} — ${c.nom}`,type:t.split(' ')[0],centre:c.centre,date:new Date().toISOString().split('T')[0],statut:'généré'});
+  renderDocuments();
+  showToast(`Document généré : ${t}`);
+}
+
+/* ===== QUALIOPI ===== */
+function renderQualiopi() {
+  const grid = document.getElementById('qualiopi-grid');
+  grid.innerHTML = QUALIOPI_CRITERES.map(c => {
+    const okCount = c.indicators.filter(i=>i.ok).length;
+    const total = c.indicators.length;
+    const pct = Math.round(okCount/total*100);
+    return `
+    <div class="card">
+      <div class="ch">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:var(--bx);text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">Critère ${c.num}</div>
+          <div class="ct">${esc(c.titre)}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div style="font-family:'DM Serif Display',serif;font-size:20px;color:${pct===100?'var(--ok)':pct>=70?'var(--bx)':'var(--warn)'}">${pct}%</div>
+          <div style="font-size:10px;color:var(--muted)">${okCount}/${total}</div>
+        </div>
+      </div>
+      <div class="cb" style="padding-top:8px">
+        <div style="margin-bottom:10px">
+          <div class="pb"><div class="pf" style="width:${pct}%;background:${pct===100?'var(--ok)':pct>=70?'var(--bx)':'var(--warn)'}"></div></div>
+        </div>
+        ${c.indicators.map(i => `
+          <div style="display:flex;align-items:flex-start;gap:7px;padding:5px 0;border-bottom:1px solid var(--cream-d);font-size:11px">
+            <div style="width:8px;height:8px;border-radius:50%;background:${i.ok?'var(--ok)':'var(--border)'};flex-shrink:0;margin-top:3px"></div>
+            <div style="flex:1;color:var(--muted)"><strong style="color:var(--navy)">${i.n}</strong> — ${esc(i.lib)}</div>
+            <div style="font-size:10px;font-weight:600;flex-shrink:0;color:${i.ok?'var(--ok)':'var(--light)'}">${i.ok?'✓':'—'}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ===== ABSENCES PAGE ===== */
+function renderAbsencesPage() {
+  const alertes = apprenants.filter(a => a.absences >= 3);
+  const tbody = document.getElementById('absences-tbody');
+  tbody.innerHTML = alertes.map(a => {
+    const justifiees = Math.floor(a.absences * .4);
+    return `
+    <tr>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="app-avatar">${a.prenom[0]+a.nom[0]}</div>
+          <div>
+            <div style="font-weight:600;color:var(--navy)">${esc(a.prenom)} ${esc(a.nom)}</div>
+            <div style="font-size:10px;color:var(--muted)">${esc(a.email)}</div>
+          </div>
+        </div>
+      </td>
+      <td style="font-size:11px">${esc(a.formation)}</td>
+      <td style="font-size:11px">${esc(a.centre.replace('Real Conseil ','').replace('Real Portage ',''))}</td>
+      <td><span class="bge bge-d">${a.absences} absences</span></td>
+      <td><span class="bge ${justifiees>0?'bge-warn':'bge-d'}">${justifiees} justifiée(s)</span></td>
+      <td style="font-size:11px;color:var(--muted)">Aujourd'hui</td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <button class="bd" onclick="envoyerEmail('${esc(a.prenom)} ${esc(a.nom)}')">
+            <svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:currentColor"><path d="M3 3h10a1 1 0 011 1v6a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1zm0 0l5 5 5-5"/></svg>
+            Relancer
+          </button>
+          <button class="bs" style="font-size:10px;padding:3px 9px" onclick="showToast('Fiche : ${esc(a.prenom)} ${esc(a.nom)}')">Fiche</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+/* ===== MODALS ===== */
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function addCentre() {
+  const nom = document.getElementById('c-nom').value.trim();
+  if(!nom) { showToast('Saisir un nom de centre'); return; }
+  centres.push({
+    id:Date.now(), nom, ville:document.getElementById('c-ville').value,
+    resp:document.getElementById('c-resp').value, email:document.getElementById('c-email').value,
+    formations:0, apprenants:0, completion:0
+  });
+  closeModal('modal-centre');
+  renderCentres();
+  showToast(`Centre "${nom}" créé`);
+}
+
+function addFormation() {
+  const nom = document.getElementById('f-nom').value.trim();
+  if(!nom) { showToast('Saisir un nom de formation'); return; }
+  formations.push({
+    id:Date.now(), nom,
+    centre:document.getElementById('f-centre').value,
+    debut:document.getElementById('f-debut').value,
+    fin:document.getElementById('f-fin').value,
+    apprenants:0, completion:0, statut:'à venir',
+    rncp:document.getElementById('f-rncp').value,
+    tarif:parseInt(document.getElementById('f-tarif').value)||0
+  });
+  closeModal('modal-formation');
+  renderFormations();
+  showToast(`Formation "${nom}" créée`);
+}
+
+function addApprenant() {
+  const prenom = document.getElementById('a-prenom').value.trim();
+  const nom = document.getElementById('a-nom').value.trim();
+  if(!prenom||!nom) { showToast('Saisir le prénom et le nom'); return; }
+  apprenants.push({
+    id:Date.now(), prenom, nom,
+    email:document.getElementById('a-email').value,
+    formation:document.getElementById('a-formation').value,
+    centre:document.getElementById('a-centre').value,
+    progression:0, absences:0, statut:'actif'
+  });
+  closeModal('modal-apprenant');
+  renderApprenants();
+  showToast(`${prenom} ${nom} inscrit(e)`);
+}
+
+/* ===== ACTIONS ===== */
+function envoyerEmail(nom) {
+  showToast(`Email de notification envoyé à ${nom}`);
+}
+function envoyerRelances() {
+  const n = apprenants.filter(a=>a.absences>=3).length;
+  showToast(`${n} email(s) de relance envoyé(s)`);
+}
+
+/* ===== UTILS ===== */
+function colorFor(centre) {
+  if(centre.includes('Amiens')) return 'var(--bx)';
+  if(centre.includes('Lille')) return 'var(--navy)';
+  return 'var(--ok)';
+}
+function fmtDate(d) {
+  if(!d) return '—';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+/* ===== CALENDRIER PARTAGÉ (Admin) ===== */
+const RP_CAL_KEY = 'rp_calendar';
+const RP_CAL_DEFAULTS = [
+  { id:1, titre:'Atelier CV — Séance 1', date:'2026-03-16', heure:'9h-13h', type:'cours', formation:'CV / Emploi', notes:'', auteur:'Formateur' },
+  { id:2, titre:'Entretiens simulés', date:'2026-03-23', heure:'9h-17h', type:'cours', formation:'CV / Emploi', notes:'Prévoir CV de chaque apprenant', auteur:'Formateur' },
+  { id:3, titre:'Réunion équipe pédagogique', date:'2026-03-26', heure:'14h-15h', type:'reunion', formation:'', notes:'', auteur:'Admin' },
+  { id:4, titre:'Atelier CV — Séance 2', date:'2026-04-06', heure:'9h-12h', type:'cours', formation:'CV / Emploi', notes:'', auteur:'Formateur' },
+  { id:5, titre:'Visio candidats à distance', date:'2026-04-14', heure:'14h-16h', type:'visio', formation:'CV / Emploi', notes:'', auteur:'Formateur' },
+  { id:6, titre:'LinkedIn & Réseau pro', date:'2026-04-14', heure:'9h-12h', type:'cours', formation:'CV / Emploi', notes:'', auteur:'Formateur' },
+  { id:7, titre:'Lettres de motivation', date:'2026-04-27', heure:'9h-12h', type:'cours', formation:'CV / Emploi', notes:'', auteur:'Formateur' },
+];
+const ADM_MONTHS = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const ADM_TYPE_LABELS = {cours:'Cours',reunion:'Réunion',visio:'Visio',note:'Note'};
+
+let admMonth = new Date().getMonth() + 1;
+let admYear = new Date().getFullYear();
+let admSelDate = null;
+let admCurType = 'cours';
+
+function admLoadCalendar() {
+  try {
+    const raw = localStorage.getItem(RP_CAL_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  localStorage.setItem(RP_CAL_KEY, JSON.stringify(RP_CAL_DEFAULTS));
+  return RP_CAL_DEFAULTS.map(s => ({...s}));
+}
+function admSaveCalendar(evts) {
+  localStorage.setItem(RP_CAL_KEY, JSON.stringify(evts));
+}
+
+function admRenderCalendar() {
+  const evts = admLoadCalendar();
+  const label = document.getElementById('adm-cal-month');
+  if (label) label.textContent = `${ADM_MONTHS[admMonth-1]} ${admYear}`;
+
+  const firstDay = new Date(admYear, admMonth-1, 1);
+  const lastDay  = new Date(admYear, admMonth, 0);
+  let startDow = firstDay.getDay(); startDow = startDow===0?6:startDow-1;
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  let html = '';
+  const prevLast = new Date(admYear, admMonth-1, 0).getDate();
+  for (let i = startDow-1; i >= 0; i--) html += `<div class="adm-day other-m"><div class="adm-dn">${prevLast-i}</div></div>`;
+
+  for (let d = 1; d <= lastDay.getDate(); d++) {
+    const ds = `${admYear}-${String(admMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayEvts = evts.filter(e => e.date === ds);
+    const chips = dayEvts.slice(0,3).map(e => `<div class="adm-chip type-${e.type||'cours'}">${esc(e.titre)}</div>`).join('');
+    const more  = dayEvts.length > 3 ? `<div class="adm-more">+${dayEvts.length-3}</div>` : '';
+    html += `<div class="adm-day ${ds===todayStr?'today-d':''} ${admSelDate===ds?'sel-d':''}" onclick="admSelectDate('${ds}')">
+      <div class="adm-dn">${d}</div>
+      <div class="adm-chips">${chips}${more}</div>
+    </div>`;
+  }
+  const total = startDow + lastDay.getDate();
+  const rem = total%7===0?0:7-(total%7);
+  for (let d = 1; d <= rem; d++) html += `<div class="adm-day other-m"><div class="adm-dn">${d}</div></div>`;
+
+  const daysEl = document.getElementById('adm-days');
+  if (daysEl) daysEl.innerHTML = html;
+  admRenderSide(evts);
+}
+
+function admChangeMonth(dir) {
+  admMonth += dir;
+  if (admMonth > 12) { admMonth = 1; admYear++; }
+  if (admMonth < 1)  { admMonth = 12; admYear--; }
+  admRenderCalendar();
+}
+
+function admSelectDate(ds) {
+  admSelDate = ds;
+  admRenderCalendar();
+}
+
+function admRenderSide(evts) {
+  const list   = document.getElementById('adm-evt-list');
+  const dateEl = document.getElementById('adm-side-date');
+  const hint   = document.getElementById('adm-side-hint');
+  const form   = document.getElementById('adm-quick-form');
+  if (!list) return;
+
+  if (!admSelDate) {
+    dateEl.textContent = 'Sélectionnez un jour';
+    hint.textContent   = 'Cliquez sur une date du calendrier';
+    form.style.display = 'none';
+    list.innerHTML = '<div class="adm-evt-empty">Sélectionnez un jour<br>pour voir et gérer les événements</div>';
+    return;
+  }
+  const [y,m,d] = admSelDate.split('-');
+  dateEl.textContent = `${parseInt(d)} ${ADM_MONTHS[parseInt(m)-1]} ${y}`;
+  hint.textContent   = 'Cliquez + Ajouter pour créer un événement';
+  form.style.display = 'block';
+
+  const dayEvts = evts.filter(e => e.date === admSelDate).sort((a,b) => (a.heure||'').localeCompare(b.heure||''));
+  if (dayEvts.length === 0) {
+    list.innerHTML = '<div class="adm-evt-empty">Aucun événement ce jour.</div>';
+    return;
+  }
+  list.innerHTML = dayEvts.map(e => `
+    <div class="adm-evt-item">
+      <div class="adm-evt-dot type-${e.type||'cours'}"></div>
+      <div class="adm-evt-body">
+        <div class="adm-evt-title">${esc(e.titre)}<span class="adm-auteur">${esc(e.auteur||'')}</span>${e.visibilite==='interne'?'<span style="display:inline-block;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px;background:#fff3e0;color:#b85c00;margin-left:4px;text-transform:uppercase">🔒 Interne</span>':''}</div>
+        <div class="adm-evt-meta">${ADM_TYPE_LABELS[e.type||'cours']}${e.heure?' · '+esc(e.heure):''}${e.formation?' · '+esc(e.formation):''}</div>
+      </div>
+      <button class="adm-evt-del" onclick="admDeleteEvent(${e.id})" title="Supprimer">×</button>
+    </div>`).join('');
+}
+
+function admSelectType(type) {
+  admCurType = type;
+  document.querySelectorAll('.adm-tbtn').forEach(b => b.className = 'adm-tbtn');
+  const btn = document.getElementById('adm-tbtn-' + type);
+  if (btn) btn.className = `adm-tbtn active-${type}`;
+}
+
+function admQuickAdd() {
+  const titre = document.getElementById('adm-quick-titre').value.trim();
+  if (!titre) { document.getElementById('adm-quick-titre').focus(); return; }
+  const heure = document.getElementById('adm-quick-heure').value.trim();
+  const visibilite = document.getElementById('adm-quick-visibilite').value;
+  const evts = admLoadCalendar();
+  evts.push({ id: Date.now(), titre, date: admSelDate, heure, type: admCurType, formation:'', notes:'', auteur:'Admin', visibilite });
+  admSaveCalendar(evts);
+  document.getElementById('adm-quick-titre').value = '';
+  document.getElementById('adm-quick-heure').value = '';
+  admRenderCalendar();
+  showToast('Événement ajouté ✓');
+}
+
+function admDeleteEvent(id) {
+  const evts = admLoadCalendar().filter(e => e.id !== id);
+  admSaveCalendar(evts);
+  admRenderCalendar();
+  showToast('Événement supprimé');
+}
+
+// ── DONNÉES PAR DÉFAUT (mêmes que accueil.html) ──
+const DEFAULT_CATALOGUE = [
+  { id:1, nom:'CV et Recherche d\'emploi', rncp:'RNCP Niveau 4', centre:'Real Conseil Amiens', niveau:'Bac (Niveau 4)', debut:'2026-03-12', fin:'2026-05-20', duree:485, tarif:1800, categorie:'emploi', objectifs:['Concevoir un CV professionnel adapté au marché','Rédiger des lettres de motivation percutantes','Maîtriser les techniques d\'entretien d\'embauche','Développer son réseau professionnel (LinkedIn)'], ccp1:'Élaborer et valoriser son parcours professionnel', ccp2:'Rechercher et décrocher un emploi adapté', ccp3:'Construire son projet professionnel à long terme', financement:['CPF','France Travail'], avis:[], publiee:true },
+  { id:2, nom:'Développeur Web et Web Mobile (DWWM)', rncp:'RNCP Niveau 5', centre:'Real Conseil Amiens', niveau:'Bac+2 (Niveau 5)', debut:'2026-01-05', fin:'2026-07-18', duree:840, tarif:7500, categorie:'dev', objectifs:['Développer des interfaces web responsive en HTML/CSS/JS','Concevoir des applications back-end PHP/MySQL','Intégrer des composants React modernes','Versionner et déployer avec Git et GitHub'], ccp1:'Développer la partie front-end d\'une application web', ccp2:'Développer la partie back-end d\'une application web', ccp3:'', financement:['CPF','France Travail','OPCO'], avis:[], publiee:true },
+  { id:3, nom:'Concepteur Développeur d\'Applications (CDA)', rncp:'RNCP Niveau 6', centre:'Real Conseil Lille', niveau:'Bac+3 (Niveau 6)', debut:'2026-02-10', fin:'2026-09-30', duree:1200, tarif:9200, categorie:'dev', objectifs:['Concevoir l\'architecture d\'une application complexe','Appliquer les design patterns et bonnes pratiques','Mettre en place des pipelines CI/CD','Piloter un projet en méthode agile'], ccp1:'Concevoir et développer une application sécurisée', ccp2:'Concevoir et développer une architecture distribuée', ccp3:'Préparer le déploiement d\'une application', financement:['CPF','OPCO'], avis:[], publiee:true },
+  { id:4, nom:'React & TypeScript — Développeur Front-end', rncp:'', centre:'Real Portage Paris', niveau:'Bac+2 (Niveau 5)', debut:'2026-03-01', fin:'2026-06-30', duree:420, tarif:5800, categorie:'dev', objectifs:['Maîtriser React 18 et les hooks avancés','Typer une application avec TypeScript','Gérer l\'état global avec Context et Redux','Tester ses composants avec Jest et Vitest'], ccp1:'Développer des interfaces React modernes et typées', ccp2:'Intégrer des API REST dans une SPA TypeScript', ccp3:'', financement:['CPF','France Travail'], avis:[], publiee:true },
+  { id:5, nom:'Data Analyst Python & SQL', rncp:'RNCP Niveau 5', centre:'Real Portage Paris', niveau:'Bac+2 (Niveau 5)', debut:'2026-04-15', fin:'2026-10-15', duree:600, tarif:6500, categorie:'data', objectifs:['Analyser et visualiser des données avec Python','Interroger et optimiser des bases SQL','Créer des dashboards avec Power BI','Appliquer les bases du machine learning'], ccp1:'Collecter, nettoyer et analyser des données', ccp2:'Visualiser et restituer les résultats', ccp3:'', financement:['CPF','OPCO'], avis:[], publiee:true }
+];
+
+function initCatalogueAdmin() {
+  try {
+    const raw = localStorage.getItem('rp_catalogue');
+    if (!raw || JSON.parse(raw).length === 0) {
+      localStorage.setItem('rp_catalogue', JSON.stringify(DEFAULT_CATALOGUE));
+    }
+  } catch(e) {}
+}
+
+// Init
+initCatalogueAdmin();
+renderDashboard();
+
+/* ── Sync calendrier partagé ── */
+function _admSyncCalendar() {
+  const raw = localStorage.getItem(RP_CAL_KEY) || '[]';
+  if (raw !== _admCalSnap) {
+    _admCalSnap = raw;
+    const page = document.getElementById('page-planning');
+    if (page && page.classList.contains('active')) admRenderCalendar();
+  }
+}
+let _admCalSnap = null;
+
+/* 1) Polling toutes les 1s */
+setInterval(_admSyncCalendar, 1000);
+
+/* 2) Dès que l'onglet redevient visible */
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) _admSyncCalendar();
+});
+</script>
+</body>
+</html>

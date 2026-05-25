@@ -1,0 +1,2373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Espace Formateur — Real Portage</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bordeaux: #7B1E3A;
+  --bordeaux-dark: #5a1529;
+  --bordeaux-light: #a8294f;
+  --navy: #1a2744;
+  --navy-light: #243460;
+  --navy-muted: #3a4d7a;
+  --cream: #f5f0e8;
+  --cream-dark: #e8e0d0;
+  --beige: #f9f6f0;
+  --text: #1a1a1a;
+  --text-muted: #6b6b6b;
+  --text-light: #9a9a9a;
+  --white: #ffffff;
+  --border: #ddd8cc;
+  --success: #1e6e41;
+  --success-bg: #e8f5ee;
+  --warn: #b85c00;
+  --warn-bg: #fff3e0;
+  --info: #1a5276;
+  --info-bg: #e8f1fb;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 2px 12px rgba(0,0,0,0.07);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:14px}
+body{font-family:'DM Sans',sans-serif;background:#eae4d8;color:var(--text);min-height:100vh;display:flex;flex-direction:column}
+
+/* ===== TOP NAV ===== */
+.topnav{
+  background:var(--navy);color:var(--white);
+  height:52px;display:flex;align-items:center;
+  padding:0 20px;gap:0;position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 16px rgba(0,0,0,0.2);flex-shrink:0;
+}
+.topnav-logo{
+  display:flex;align-items:center;gap:8px;
+  font-family:'DM Serif Display',serif;font-size:17px;
+  margin-right:28px;white-space:nowrap;
+}
+.topnav-logo .rp{
+  width:26px;height:26px;background:var(--bordeaux-light);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+}
+.topnav-logo span{color:#e8a0b0}
+.nav-tabs{display:flex;gap:2px;flex:1}
+.nav-tab{
+  display:flex;align-items:center;gap:6px;
+  padding:0 16px;height:52px;border:none;background:none;
+  color:rgba(255,255,255,0.55);font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:500;cursor:pointer;
+  border-bottom:3px solid transparent;
+  transition:all .15s;white-space:nowrap;
+}
+.nav-tab svg{width:14px;height:14px;fill:currentColor;flex-shrink:0}
+.nav-tab:hover{color:rgba(255,255,255,0.85)}
+.nav-tab.active{color:var(--white);border-bottom-color:#e8a0b0}
+.topnav-right{display:flex;align-items:center;gap:10px;margin-left:auto}
+.badge-user{
+  display:flex;align-items:center;gap:7px;
+  font-size:11px;color:rgba(255,255,255,0.6);
+}
+.avatar{
+  width:28px;height:28px;border-radius:50%;
+  background:var(--navy-muted);display:flex;align-items:center;
+  justify-content:center;font-size:11px;font-weight:600;color:var(--white);
+}
+
+/* ===== LAYOUT PAGES ===== */
+.page{display:none;flex:1;overflow:hidden}
+.page.active{display:flex;flex-direction:column}
+
+/* ===== PAGE HEADER ===== */
+.page-header{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:16px 28px;display:flex;align-items:center;
+  justify-content:space-between;flex-shrink:0;
+}
+.page-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--navy)}
+.page-subtitle{font-size:11px;color:var(--text-muted);margin-top:2px}
+.btn-primary{
+  display:flex;align-items:center;gap:6px;
+  background:var(--bordeaux);color:var(--white);border:none;
+  border-radius:20px;padding:8px 18px;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:all .15s;box-shadow:0 2px 8px rgba(123,30,58,0.25);
+  white-space:nowrap;
+}
+.btn-primary:hover{background:var(--bordeaux-dark);transform:translateY(-1px)}
+.btn-primary svg{width:13px;height:13px;fill:white;flex-shrink:0}
+.btn-secondary{
+  display:flex;align-items:center;gap:6px;
+  background:var(--white);color:var(--navy);border:1.5px solid var(--border);
+  border-radius:20px;padding:7px 16px;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;
+  cursor:pointer;transition:all .15s;
+}
+.btn-secondary:hover{border-color:var(--navy);background:var(--beige)}
+.btn-secondary svg{width:13px;height:13px;fill:currentColor;flex-shrink:0}
+
+/* ===== SCROLL AREA ===== */
+.scroll-area{flex:1;overflow-y:auto;padding:24px 28px}
+.scroll-area::-webkit-scrollbar{width:4px}
+.scroll-area::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+/* ===== CARDS & GRIDS ===== */
+.card{
+  background:var(--white);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+
+/* ===== PAGE DASHBOARD ===== */
+.dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat-card{
+  background:var(--white);border-radius:var(--radius-lg);
+  padding:18px 20px;box-shadow:var(--shadow);
+  border-left:4px solid transparent;
+}
+.stat-card.bordeaux{border-left-color:var(--bordeaux)}
+.stat-card.navy{border-left-color:var(--navy)}
+.stat-card.green{border-left-color:var(--success)}
+.stat-card.warn{border-left-color:var(--warn)}
+.stat-val{font-family:'DM Serif Display',serif;font-size:28px;color:var(--navy);line-height:1}
+.stat-label{font-size:11px;color:var(--text-muted);margin-top:4px;font-weight:500;text-transform:uppercase;letter-spacing:0.5px}
+
+.section-title-sm{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;
+  color:var(--text-muted);margin-bottom:12px;
+}
+
+/* ===== MODULES ===== */
+.modules-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.module-card{
+  background:var(--white);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);overflow:hidden;
+  transition:transform .15s,box-shadow .15s;cursor:pointer;
+}
+.module-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.module-card-header{
+  padding:16px 18px 12px;
+  border-bottom:1px solid var(--cream-dark);
+  display:flex;align-items:flex-start;gap:12px;
+}
+.module-icon{
+  width:36px;height:36px;border-radius:8px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;
+}
+.module-icon svg{width:18px;height:18px}
+.module-icon.bordeaux{background:#fce8ed}
+.module-icon.bordeaux svg{fill:var(--bordeaux)}
+.module-icon.navy{background:#e8edf5}
+.module-icon.navy svg{fill:var(--navy)}
+.module-icon.green{background:var(--success-bg)}
+.module-icon.green svg{fill:var(--success)}
+.module-icon.warn{background:var(--warn-bg)}
+.module-icon.warn svg{fill:var(--warn)}
+.module-meta{flex:1;min-width:0}
+.module-name{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.module-formation{font-size:10px;color:var(--text-muted)}
+.module-body{padding:12px 18px}
+.module-stats{display:flex;gap:16px}
+.module-stat{font-size:11px;color:var(--text-muted)}
+.module-stat strong{color:var(--text);font-weight:600}
+.module-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:10px}
+.tag{
+  padding:2px 8px;border-radius:20px;font-size:10px;font-weight:500;
+}
+.tag.bordeaux{background:#fce8ed;color:var(--bordeaux)}
+.tag.navy{background:#e8edf5;color:var(--navy-muted)}
+.tag.green{background:var(--success-bg);color:var(--success)}
+.module-footer{
+  padding:10px 18px;background:var(--beige);
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:10px;color:var(--text-muted);
+}
+.module-actions{display:flex;gap:6px}
+.btn-icon-sm{
+  width:26px;height:26px;border:none;border-radius:6px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  background:var(--cream-dark);transition:all .12s;
+}
+.btn-icon-sm:hover{background:var(--cream)}
+.btn-icon-sm svg{width:12px;height:12px;fill:var(--text-muted)}
+
+/* Upload zone */
+.upload-zone{
+  border:2px dashed var(--bordeaux);border-radius:var(--radius-lg);
+  padding:32px;text-align:center;cursor:pointer;
+  transition:all .15s;background:var(--beige);margin-bottom:16px;
+}
+.upload-zone:hover{background:#fce8ed;border-color:var(--bordeaux-dark)}
+.upload-zone svg{width:32px;height:32px;fill:var(--bordeaux);margin-bottom:10px;opacity:0.6}
+.upload-zone p{font-size:12px;color:var(--text-muted);line-height:1.5}
+.upload-zone strong{color:var(--bordeaux)}
+.file-list{display:flex;flex-direction:column;gap:6px}
+.file-item{
+  display:flex;align-items:center;gap:10px;
+  background:var(--beige);border-radius:var(--radius);padding:8px 12px;
+  border:1px solid var(--border);
+}
+.file-item svg{width:16px;height:16px;fill:var(--bordeaux);flex-shrink:0}
+.file-name{flex:1;font-size:12px;font-weight:500;color:var(--text)}
+.file-size{font-size:10px;color:var(--text-muted)}
+.file-remove{width:20px;height:20px;border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:14px;display:flex;align-items:center;justify-content:center}
+.file-remove:hover{color:var(--bordeaux)}
+input[type=file]{display:none}
+
+/* ===== PLANNING ===== */
+.planning-layout{display:grid;grid-template-columns:1fr 300px;gap:20px}
+
+.calendar-wrapper{
+  background:var(--white);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.cal-header{
+  background:var(--navy);color:var(--white);
+  padding:12px 18px;display:flex;align-items:center;justify-content:space-between;
+}
+.cal-month{font-family:'DM Serif Display',serif;font-size:18px}
+.cal-nav{display:flex;gap:6px}
+.cal-nav-btn{
+  width:28px;height:28px;border:1px solid rgba(255,255,255,0.2);
+  border-radius:6px;background:none;color:var(--white);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:14px;transition:background .12s;
+}
+.cal-nav-btn:hover{background:rgba(255,255,255,0.1)}
+.cal-grid{padding:12px}
+.cal-days-header{
+  display:grid;grid-template-columns:repeat(7,1fr);
+  text-align:center;margin-bottom:4px;
+}
+.cal-day-name{font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;padding:4px 0}
+.cal-days{display:grid;grid-template-columns:repeat(7,1fr);gap:1px}
+.cal-day{
+  min-height:72px;border-radius:6px;display:flex;flex-direction:column;
+  padding:5px 4px 4px;cursor:pointer;
+  font-size:11px;color:var(--text);transition:background .1s;
+  position:relative;border:1.5px solid transparent;
+}
+.cal-day:hover{background:var(--cream);border-color:var(--cream-dark)}
+.cal-day:hover .cal-day-add{opacity:1}
+.cal-day.other-month{color:var(--text-light);background:transparent}
+.cal-day.other-month:hover{background:var(--cream)}
+.cal-day.today{background:var(--cream-dark);}
+.cal-day.today .cal-day-num{font-weight:700;color:var(--navy)}
+.cal-day.selected{border-color:var(--bordeaux)!important;background:#fce8ed!important}
+.cal-day.selected .cal-day-num{color:var(--bordeaux);font-weight:700}
+.cal-day-num{
+  font-size:11px;font-weight:500;
+  width:20px;height:20px;display:flex;align-items:center;justify-content:center;
+  border-radius:50%;flex-shrink:0;margin-bottom:3px;
+}
+.cal-day.today .cal-day-num{
+  background:var(--navy);color:var(--white);
+}
+.cal-day-events{display:flex;flex-direction:column;gap:2px;flex:1}
+.cal-event-chip{
+  font-size:9px;font-weight:500;
+  padding:1px 5px;border-radius:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  line-height:1.5;
+}
+.cal-event-chip.type-cours{background:#fce8ed;color:var(--bordeaux)}
+.cal-event-chip.type-reunion{background:#e8edf5;color:var(--navy-muted)}
+.cal-event-chip.type-visio{background:var(--success-bg);color:var(--success)}
+.cal-event-chip.type-note{background:#fff8e1;color:#b45309}
+.cal-day-add{
+  position:absolute;top:4px;right:4px;
+  width:16px;height:16px;border-radius:50%;
+  background:var(--bordeaux);color:white;
+  font-size:12px;line-height:16px;text-align:center;
+  opacity:0;transition:opacity .15s;
+  font-weight:400;
+}
+.cal-more{font-size:8px;color:var(--text-light);padding-left:4px}
+
+/* Panneau droite planning */
+.sessions-panel{display:flex;flex-direction:column;gap:0}
+.sessions-side{
+  background:var(--white);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.sessions-side-header{
+  padding:14px 16px;border-bottom:1px solid var(--cream-dark);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.sessions-side-date{
+  font-family:'DM Serif Display',serif;font-size:15px;color:var(--navy);
+}
+.sessions-side-hint{font-size:10px;color:var(--text-light);margin-top:1px}
+
+/* Quick add form inline */
+.quick-add{
+  padding:12px 14px;background:var(--beige);
+  border-bottom:1px solid var(--cream-dark);
+}
+.quick-add-title{
+  font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;
+  color:var(--bordeaux);margin-bottom:10px;
+}
+.type-selector{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.type-btn{
+  display:flex;align-items:center;gap:4px;
+  padding:4px 10px;border-radius:20px;font-size:10px;font-weight:600;
+  border:1.5px solid var(--border);background:var(--white);
+  cursor:pointer;transition:all .12s;
+}
+.type-btn.active-cours{border-color:var(--bordeaux);background:#fce8ed;color:var(--bordeaux)}
+.type-btn.active-reunion{border-color:var(--navy);background:#e8edf5;color:var(--navy)}
+.type-btn.active-visio{border-color:var(--success);background:var(--success-bg);color:var(--success)}
+.type-btn.active-note{border-color:#f59e0b;background:#fff8e1;color:#b45309}
+.type-btn:not([class*="active"]):hover{border-color:var(--navy)}
+.quick-input{
+  width:100%;padding:7px 10px;border:1.5px solid var(--border);
+  border-radius:var(--radius);font-family:'DM Sans',sans-serif;
+  font-size:12px;background:var(--white);outline:none;margin-bottom:8px;
+  transition:border-color .15s;
+}
+.quick-input:focus{border-color:var(--bordeaux)}
+.quick-row{display:flex;gap:6px}
+.quick-row .quick-input{margin-bottom:0;flex:1}
+.btn-quick-add{
+  background:var(--bordeaux);color:var(--white);border:none;
+  border-radius:var(--radius);padding:7px 14px;
+  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;
+  cursor:pointer;transition:background .12s;white-space:nowrap;
+}
+.btn-quick-add:hover{background:var(--bordeaux-dark)}
+
+/* Liste events du jour */
+.sessions-list{
+  flex:1;overflow-y:auto;padding:10px 12px;
+  display:flex;flex-direction:column;gap:6px;
+  max-height:400px;
+}
+.sessions-list::-webkit-scrollbar{width:3px}
+.sessions-list::-webkit-scrollbar-thumb{background:var(--border)}
+.event-item{
+  display:flex;align-items:flex-start;gap:8px;
+  padding:9px 10px;border-radius:var(--radius);
+  background:var(--white);border:1px solid var(--border);
+  transition:all .12s;
+}
+.event-item:hover{border-color:var(--cream-dark);box-shadow:var(--shadow)}
+.event-type-dot{
+  width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:3px;
+}
+.event-type-dot.type-cours{background:var(--bordeaux)}
+.event-type-dot.type-reunion{background:var(--navy)}
+.event-type-dot.type-visio{background:var(--success)}
+.event-type-dot.type-note{background:#f59e0b}
+.event-item-body{flex:1;min-width:0}
+.event-item-title{font-size:12px;font-weight:500;color:var(--text)}
+.event-item-meta{font-size:10px;color:var(--text-muted);margin-top:1px}
+.event-item-del{
+  width:18px;height:18px;border:none;background:none;
+  cursor:pointer;color:var(--text-light);font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  border-radius:4px;flex-shrink:0;transition:all .1s;
+}
+.event-item-del:hover{color:var(--bordeaux);background:#fce8ed}
+.event-empty{
+  padding:20px;text-align:center;
+  font-size:11px;color:var(--text-light);line-height:1.6;
+}
+
+/* Legend types */
+.cal-legend{
+  display:flex;gap:12px;padding:10px 16px;
+  border-top:1px solid var(--cream-dark);
+  background:var(--beige);flex-wrap:wrap;
+}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--text-muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+
+/* ===== MODAL ===== */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.45);
+  z-index:500;display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open{display:flex}
+.modal{
+  background:var(--white);border-radius:var(--radius-lg);
+  width:100%;max-width:560px;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--shadow-lg);
+  animation:modalIn .2s ease;
+}
+@keyframes modalIn{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-header{
+  padding:20px 24px 16px;border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title{font-family:'DM Serif Display',serif;font-size:18px;color:var(--navy)}
+.modal-close{
+  width:28px;height:28px;border:none;background:var(--cream-dark);
+  border-radius:6px;cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;color:var(--text-muted);
+  transition:all .12s;
+}
+.modal-close:hover{background:var(--border);color:var(--text)}
+.modal-body{padding:20px 24px}
+.modal-footer{
+  padding:16px 24px;border-top:1px solid var(--border);
+  display:flex;justify-content:flex-end;gap:10px;
+}
+
+/* Form elements */
+.field{margin-bottom:14px}
+.field label{
+  display:block;font-size:11px;font-weight:600;color:var(--text-muted);
+  margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px;
+}
+.field input,.field textarea,.field select{
+  width:100%;padding:8px 12px;
+  border:1.5px solid var(--border);border-radius:var(--radius);
+  font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);
+  background:var(--beige);transition:border-color .15s,box-shadow .15s;outline:none;
+}
+.field input:focus,.field textarea:focus,.field select:focus{
+  border-color:var(--bordeaux);
+  box-shadow:0 0 0 3px rgba(123,30,58,0.08);background:var(--white);
+}
+.field textarea{resize:vertical;min-height:70px;line-height:1.5}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* ===== QCM ===== */
+.qcm-layout{display:grid;grid-template-columns:320px 1fr;gap:20px}
+.qcm-config{
+  background:var(--white);border-radius:var(--radius-lg);
+  padding:20px;box-shadow:var(--shadow);height:fit-content;
+  position:sticky;top:0;
+}
+.qcm-config-title{
+  font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy);
+  margin-bottom:16px;
+}
+.qcm-result{
+  background:var(--white);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow);overflow:hidden;
+}
+.qcm-result-header{
+  background:linear-gradient(135deg,var(--navy),var(--navy-light));
+  padding:16px 20px;
+}
+.qcm-result-title{font-family:'DM Serif Display',serif;font-size:17px;color:var(--white)}
+.qcm-result-subtitle{font-size:11px;color:rgba(255,255,255,0.6);margin-top:2px}
+.qcm-body{padding:20px}
+.question-block{
+  border:1px solid var(--border);border-radius:var(--radius);
+  overflow:hidden;margin-bottom:12px;
+}
+.question-header{
+  background:var(--beige);padding:12px 16px;
+  display:flex;align-items:flex-start;gap:10px;
+  border-bottom:1px solid var(--border);
+}
+.q-num{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--bordeaux);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;flex-shrink:0;
+}
+.q-text{font-size:13px;font-weight:500;color:var(--text);line-height:1.4}
+.question-choices{padding:10px 16px;display:flex;flex-direction:column;gap:6px}
+.choice{
+  display:flex;align-items:center;gap:8px;
+  padding:8px 12px;border-radius:8px;font-size:12px;
+  border:1.5px solid var(--border);color:var(--text);
+  cursor:pointer;transition:all .15s;user-select:none;
+}
+.choice:hover:not(.answered){border-color:var(--bordeaux);background:#fce8ed}
+.choice.answered{cursor:default}
+.choice.chosen-correct{
+  border-color:var(--success);background:var(--success-bg);
+  color:var(--success);font-weight:500;
+}
+.choice.chosen-wrong{
+  border-color:#c0392b;background:#fdecea;
+  color:#c0392b;font-weight:500;
+}
+.choice.reveal-correct{
+  border-color:var(--success);background:var(--success-bg);
+  color:var(--success);
+}
+.choice.answered:not(.chosen-correct):not(.chosen-wrong):not(.reveal-correct){
+  opacity:0.45;
+}
+.choice-letter{
+  width:20px;height:20px;border-radius:5px;
+  background:var(--cream-dark);display:flex;align-items:center;
+  justify-content:center;font-size:10px;font-weight:700;
+  flex-shrink:0;color:var(--navy);transition:all .15s;
+}
+.choice.chosen-correct .choice-letter{background:var(--success);color:var(--white)}
+.choice.chosen-wrong .choice-letter{background:#c0392b;color:var(--white)}
+.choice.reveal-correct .choice-letter{background:var(--success);color:var(--white)}
+.choice-feedback{
+  margin-left:auto;font-size:14px;flex-shrink:0;
+}
+
+/* Barre de score */
+.qcm-score-bar{
+  margin:16px 0 4px;padding:14px 16px;
+  border-radius:var(--radius);font-size:12px;font-weight:600;
+  display:flex;align-items:center;gap:10px;
+  border:1.5px solid var(--border);
+}
+.qcm-score-bar.perfect{background:var(--success-bg);border-color:var(--success);color:var(--success)}
+.qcm-score-bar.good{background:#fff8e1;border-color:#f59e0b;color:#b45309}
+.qcm-score-bar.low{background:#fdecea;border-color:#c0392b;color:#c0392b}
+.score-progress{flex:1;height:6px;background:rgba(0,0,0,0.08);border-radius:10px;overflow:hidden}
+.score-progress-fill{height:100%;border-radius:10px;transition:width .5s ease}
+
+/* AI loader */
+.ai-loader{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:48px;text-align:center;
+}
+.loader-dots{display:flex;gap:6px;margin-bottom:14px}
+.loader-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--bordeaux);
+  animation:dot-bounce .8s infinite;
+}
+.loader-dot:nth-child(2){animation-delay:.15s}
+.loader-dot:nth-child(3){animation-delay:.3s}
+@keyframes dot-bounce{0%,80%,100%{transform:scale(0.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.ai-loader-text{font-size:13px;color:var(--text-muted)}
+.ai-loader-sub{font-size:11px;color:var(--text-light);margin-top:4px}
+
+/* AI error */
+.ai-empty{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:48px;text-align:center;
+  color:var(--text-muted);
+}
+.ai-empty svg{width:40px;height:40px;fill:var(--border);margin-bottom:12px}
+.ai-empty p{font-size:13px;line-height:1.5}
+
+/* Chip select */
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.chip{
+  padding:4px 12px;border-radius:20px;font-size:11px;font-weight:500;
+  cursor:pointer;border:1.5px solid var(--border);color:var(--text-muted);
+  background:var(--beige);transition:all .12s;
+}
+.chip.active{border-color:var(--bordeaux);background:#fce8ed;color:var(--bordeaux)}
+
+/* Notif toast */
+.toast{
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--navy);color:var(--white);
+  padding:12px 18px;border-radius:var(--radius);
+  font-size:12px;font-weight:500;
+  box-shadow:var(--shadow-lg);
+  display:none;align-items:center;gap:8px;
+  animation:toastIn .2s ease;
+}
+.toast.show{display:flex}
+@keyframes toastIn{from{transform:translateY(8px);opacity:0}to{transform:none;opacity:1}}
+.toast svg{width:14px;height:14px;fill:var(--white)}
+
+/* ===== RESPONSIVE GRID FIX ===== */
+@media(max-width:900px){
+  .planning-layout,.qcm-layout,.grid-2,.grid-3{grid-template-columns:1fr}
+  .dash-stats{grid-template-columns:1fr 1fr}
+}
+
+/* ===== TABLET (≤768px) ===== */
+@media(max-width:768px){
+  .topnav{padding:0 12px;gap:0}
+  .topnav-logo{margin-right:12px;font-size:15px}
+  .nav-tabs{overflow-x:auto;gap:0}
+  .nav-tabs::-webkit-scrollbar{display:none}
+  .nav-tab{padding:0 12px;font-size:11px;white-space:nowrap}
+  .topnav-right{display:none}
+  .page-header{padding:12px 16px}
+  .page-title{font-size:17px}
+  .scroll-area{padding:16px}
+  .dash-stats{grid-template-columns:1fr 1fr}
+  .grid-2,.grid-3{grid-template-columns:1fr}
+  .pf-subtabs{padding:10px 14px 0}
+  .plaquette-layout{grid-template-columns:1fr}
+  .plaquette-preview-sticky{position:static}
+  .field-row{flex-direction:column}
+}
+
+/* ===== MOBILE (≤480px) ===== */
+@media(max-width:480px){
+  .topnav{height:48px;padding:0 8px}
+  .topnav-logo{font-size:14px;margin-right:8px}
+  .topnav-logo .rp{width:22px;height:22px;font-size:10px}
+  .nav-tab{padding:0 10px;font-size:10px}
+  .nav-tab svg{display:none}
+  .page-header{padding:10px 12px}
+  .page-title{font-size:16px}
+  .page-subtitle{display:none}
+  .scroll-area{padding:12px}
+  .dash-stats{grid-template-columns:1fr 1fr;gap:8px}
+  .stat-card{padding:12px 14px}
+  .stat-value{font-size:24px}
+  .modules-grid,.grid-2,.grid-3{grid-template-columns:1fr;gap:10px}
+  .planning-layout{grid-template-columns:1fr;gap:12px}
+  .cal-day{min-height:48px}
+  .cal-day-num{font-size:10px}
+  .cal-event-chip{display:none}
+  .cal-grid{padding:6px}
+  .sessions-panel{margin-top:0}
+  .adm-cal-layout,.plaquette-layout{grid-template-columns:1fr}
+  .pf-subtab{font-size:11px;padding:6px 12px}
+  .card{border-radius:8px}
+  .modal{max-width:100vw;border-radius:0;max-height:100dvh}
+  .modal-overlay.open{padding:0;align-items:flex-end}
+  .table-wrap{overflow-x:auto}
+  .tbl{min-width:500px}
+  .quick-add{padding:10px 12px}
+}
+
+/* ===== PLAQUETTE PAGE ===== */
+.plaquette-layout{display:grid;grid-template-columns:1fr 370px;gap:24px;align-items:start}
+.plaquette-preview-sticky{position:sticky;top:20px}
+.preview-live-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.preview-live-dot{width:7px;height:7px;border-radius:50%;background:var(--success);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.obj-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.obj-row{display:flex;align-items:center;gap:6px}
+.obj-row input{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--radius);font-family:'DM Sans',sans-serif;font-size:12px;background:var(--beige);outline:none;transition:border-color .15s}
+.obj-row input:focus{border-color:var(--bordeaux);background:#fff}
+.obj-rm{width:26px;height:26px;border:none;border-radius:5px;cursor:pointer;background:#fce8ed;color:var(--bordeaux);font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;transition:background .1s}
+.obj-rm:hover{background:#f9c4cf}
+.btn-add-obj{display:flex;align-items:center;gap:5px;background:none;border:1.5px dashed var(--bordeaux);color:var(--bordeaux);border-radius:var(--radius);padding:6px 12px;font-size:10px;font-weight:700;cursor:pointer;width:100%;text-transform:uppercase;letter-spacing:.5px;font-family:'DM Sans',sans-serif;transition:background .1s}
+.btn-add-obj:hover{background:#fce8ed}
+.btn-publier{width:100%;padding:13px;background:var(--bordeaux);color:#fff;border:none;border-radius:24px;font-family:'DM Serif Display',serif;font-size:16px;cursor:pointer;transition:all .15s;box-shadow:0 4px 16px rgba(123,30,58,.3)}
+.btn-publier:hover{background:var(--bordeaux-dark);transform:translateY(-1px)}
+.plaq-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border)}
+.plaq-card-header{background:linear-gradient(135deg,#1a2744 0%,#243460 55%,#5a1529 100%);padding:16px;position:relative}
+.plaq-card-rncp{font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:4px}
+.plaq-card-nom{font-family:'DM Serif Display',serif;font-size:17px;color:#fff;font-style:italic;line-height:1.2;margin-bottom:3px}
+.plaq-card-centre{font-size:9px;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.5px}
+.plaq-card-badge{position:absolute;top:10px;right:10px;background:#fff;border-radius:5px;padding:2px 7px;font-size:7px;font-weight:700;color:var(--bordeaux);letter-spacing:.5px}
+.plaq-card-infos{display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:1px solid #e8e0d0}
+.plaq-info{padding:9px 12px;text-align:center;border-right:1px solid #e8e0d0}
+.plaq-info:last-child{border-right:none}
+.plaq-info-icon{font-size:13px;margin-bottom:2px}
+.plaq-info-val{font-size:11px;font-weight:600;color:#1a2744}
+.plaq-info-lbl{font-size:9px;color:#aaa;text-transform:uppercase;letter-spacing:.5px}
+.plaq-card-body{padding:14px 16px}
+.plaq-section-title{display:inline-block;background:var(--bordeaux);color:#fff;font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:3px;margin-bottom:7px}
+.plaq-obj{display:flex;align-items:flex-start;gap:6px;font-size:11px;color:#1a1a1a;margin-bottom:4px}
+.plaq-obj-dot{width:13px;height:13px;border-radius:50%;border:1.5px solid var(--bordeaux);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.plaq-obj-dot svg{width:7px;height:7px;stroke:var(--bordeaux);fill:none;stroke-width:2.5}
+.plaq-ccp{display:flex;gap:5px;font-size:10px;margin-bottom:3px}
+.plaq-ccp-lbl{font-weight:700;color:var(--bordeaux);min-width:34px;font-size:9px;text-transform:uppercase}
+.plaq-card-footer{border-top:1px solid #e8e0d0;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;background:#f9f6f0}
+.fin-tag{padding:2px 8px;border-radius:20px;font-size:9px;font-weight:600}
+.fin-cpf{background:#e8f1fb;color:#1a5276}
+.fin-pe{background:#e8f5ee;color:#1e6e41}
+.fin-opco{background:#fff3e0;color:#b85c00}
+.pub-list{margin-top:20px;display:flex;flex-direction:column;gap:10px}
+.pub-item{background:#fff;border-radius:10px;padding:12px 14px;box-shadow:var(--shadow);border-left:4px solid var(--bordeaux);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pub-item-nom{font-size:13px;font-weight:600;color:var(--navy)}
+.pub-item-meta{font-size:10px;color:var(--text-muted);margin-top:2px}
+.pub-item-actions{display:flex;gap:5px;flex-shrink:0}
+@media(max-width:900px){.plaquette-layout{grid-template-columns:1fr}}
+
+/* ===== PLAQUETTE SUB-TABS ===== */
+.pf-subtabs{display:flex;gap:4px;padding:14px 28px 0;background:var(--white);border-bottom:1px solid var(--border);flex-shrink:0}
+.pf-subtab{padding:8px 18px;border:none;border-radius:7px 7px 0 0;background:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text-muted);cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;margin-bottom:-1px}
+.pf-subtab:hover{color:var(--navy);background:var(--cream)}
+.pf-subtab.active{color:var(--bordeaux);font-weight:700;border-bottom-color:var(--bordeaux);background:var(--white)}
+.pf-subcontent{display:none}
+.pf-subcontent.active{display:block}
+
+/* ===== CATALOGUE SUB-TAB ===== */
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;padding:24px 28px}
+.cat-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:var(--shadow);border:1px solid var(--border);transition:box-shadow .15s}
+.cat-card:hover{box-shadow:var(--shadow-lg)}
+.cat-card-head{background:linear-gradient(135deg,#1a2744 0%,#243460 55%,#5a1529 100%);padding:14px 16px;position:relative}
+.cat-card-rncp{font-size:8px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:3px}
+.cat-card-nom{font-family:'DM Serif Display',serif;font-size:15px;color:#fff;font-style:italic;line-height:1.2}
+.cat-card-centre{font-size:8px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
+.cat-card-badge{position:absolute;top:8px;right:8px;background:#fff;border-radius:4px;padding:2px 7px;font-size:7px;font-weight:700;color:var(--bordeaux);letter-spacing:.5px}
+.cat-card-body{padding:12px 16px}
+.cat-card-meta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+.cat-meta-chip{font-size:9px;font-weight:600;padding:3px 8px;border-radius:20px;background:var(--cream);color:var(--navy)}
+.cat-fins{display:flex;gap:5px;flex-wrap:wrap}
+.cat-empty{text-align:center;padding:40px 20px;color:var(--text-muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="topnav">
+  <div class="topnav-logo" onclick="window.location.href='accueil.html'" style="cursor:pointer">
+    <div class="rp">rp</div>
+    real<span>portage</span>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('dashboard',this)">
+      <svg viewBox="0 0 16 16"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
+      Tableau de bord
+    </button>
+    <button class="nav-tab" onclick="showPage('modules',this)">
+      <svg viewBox="0 0 16 16"><path d="M2 3h12M2 7h9M2 11h6"/><path d="M13 9l-3 3 3 3"/></svg>
+      Modules & Cours
+    </button>
+    <button class="nav-tab" onclick="showPage('planning',this)">
+      <svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>
+      Planning
+    </button>
+    <button class="nav-tab" onclick="showPage('qcm',this)">
+      <svg viewBox="0 0 16 16"><path d="M8 2a3 3 0 100 6 3 3 0 000-6zM5 9a3 3 0 00-3 3h12a3 3 0 00-3-3"/></svg>
+      Générateur QCM
+    </button>
+    <button class="nav-tab" onclick="showPage('plaquette',this)">
+      <svg viewBox="0 0 16 16"><path d="M4 1h6l4 4v10H4V1zm6 0v4h4"/></svg>
+      Créer une plaquette
+    </button>
+  </div>
+  <div class="topnav-right">
+    <div class="badge-user">
+      <div class="avatar">TH</div>
+      <span>Thomas H.</span>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== PAGE : DASHBOARD ===== -->
+<div id="page-dashboard" class="page active">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Bonjour Thomas</div>
+      <div class="page-subtitle">Espace formateur — Real Conseil via Real Portage</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-secondary" onclick="showPage('planning',document.querySelector('[onclick*=planning]'))">
+        <svg viewBox="0 0 16 16"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1v4M11 1v4M2 7h12"/></svg>
+        Voir le planning
+      </button>
+      <button class="btn-primary" onclick="openModal('modal-module')">
+        <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg>
+        Nouveau module
+      </button>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div class="dash-stats">
+      <div class="stat-card bordeaux">
+        <div class="stat-val" id="stat-modules">4</div>
+        <div class="stat-label">Modules actifs</div>
+      </div>
+      <div class="stat-card navy">
+        <div class="stat-val" id="stat-sessions">12</div>
+        <div class="stat-label">Sessions planifiées</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-val" id="stat-qcm">3</div>
+        <div class="stat-label">QCM générés</div>
+      </div>
+      <div class="stat-card warn">
+        <div class="stat-val" id="stat-docs">8</div>
+        <div class="stat-label">Documents uploadés</div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-bottom:20px">
+      <!-- Formation active -->
+      <div class="card">
+        <div style="padding:16px 18px;border-bottom:1px solid var(--cream-dark)">
+          <div class="section-title-sm">Formation en cours</div>
+          <div style="font-family:'DM Serif Display',serif;font-size:16px;color:var(--navy);margin-bottom:4px">CV / Recherche d'emploi</div>
+          <div style="font-size:11px;color:var(--text-muted)">12 mars → 20 mai 2026</div>
+        </div>
+        <div style="padding:14px 18px">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:11px;color:var(--text-muted)">Avancement</span>
+            <span style="font-size:11px;font-weight:600;color:var(--navy)" id="dash-progress-label">38%</span>
+          </div>
+          <div style="background:var(--cream-dark);border-radius:20px;height:6px;overflow:hidden">
+            <div style="background:var(--bordeaux);height:100%;width:38%;border-radius:20px"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:14px">
+            <div style="text-align:center;padding:8px;background:var(--beige);border-radius:var(--radius)">
+              <div style="font-weight:700;font-size:15px;color:var(--navy)">70</div>
+              <div style="font-size:10px;color:var(--text-muted)">jours total</div>
+            </div>
+            <div style="text-align:center;padding:8px;background:var(--beige);border-radius:var(--radius)">
+              <div style="font-weight:700;font-size:15px;color:var(--bordeaux)">27</div>
+              <div style="font-size:10px;color:var(--text-muted)">écoulés</div>
+            </div>
+            <div style="text-align:center;padding:8px;background:var(--beige);border-radius:var(--radius)">
+              <div style="font-weight:700;font-size:15px;color:var(--success)">43</div>
+              <div style="font-size:10px;color:var(--text-muted)">restants</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prochaines sessions -->
+      <div class="card">
+        <div style="padding:16px 18px;border-bottom:1px solid var(--cream-dark)">
+          <div class="section-title-sm">Prochaines sessions</div>
+        </div>
+        <div style="padding:12px 18px;display:flex;flex-direction:column;gap:8px" id="dash-sessions">
+        </div>
+      </div>
+    </div>
+
+    <!-- Modules récents -->
+    <div class="section-title-sm">Modules récents</div>
+    <div class="modules-grid" id="dash-modules-preview"></div>
+  </div>
+</div>
+
+<!-- ===== PAGE : MODULES ===== -->
+<div id="page-modules" class="page">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Modules & Cours</div>
+      <div class="page-subtitle">Gérez vos supports pédagogiques et ressources</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn-secondary" onclick="openModal('modal-upload')">
+        <svg viewBox="0 0 16 16"><path d="M8 2v8M5 5l3-3 3 3M3 12h10"/></svg>
+        Uploader un fichier
+      </button>
+      <button class="btn-primary" onclick="openModal('modal-module')">
+        <svg viewBox="0 0 16 16"><path d="M8 2v12M2 8h12"/></svg>
+        Nouveau module
+      </button>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <!-- Filtres -->
+    <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap">
+      <button class="chip active" onclick="filterModules('tous',this)">Tous</button>
+      <button class="chip" onclick="filterModules('DWWM',this)">DWWM</button>
+      <button class="chip" onclick="filterModules('CDA',this)">CDA</button>
+      <button class="chip" onclick="filterModules('CV',this)">CV / Emploi</button>
+    </div>
+    <div class="modules-grid" id="modules-grid"></div>
+  </div>
+</div>
+
+<!-- ===== PAGE : PLANNING ===== -->
+<div id="page-planning" class="page">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Planning</div>
+      <div class="page-subtitle">Cliquez sur un jour pour ajouter un cours, une réunion ou une visio</div>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div class="planning-layout">
+      <!-- Calendrier -->
+      <div class="calendar-wrapper">
+        <div class="cal-header">
+          <div class="cal-month" id="cal-month-label">Mars 2026</div>
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="changeMonth(-1)">‹</button>
+            <button class="cal-nav-btn" onclick="changeMonth(1)">›</button>
+          </div>
+        </div>
+        <div class="cal-grid">
+          <div class="cal-days-header">
+            <div class="cal-day-name">Lun</div>
+            <div class="cal-day-name">Mar</div>
+            <div class="cal-day-name">Mer</div>
+            <div class="cal-day-name">Jeu</div>
+            <div class="cal-day-name">Ven</div>
+            <div class="cal-day-name">Sam</div>
+            <div class="cal-day-name">Dim</div>
+          </div>
+          <div class="cal-days" id="cal-days"></div>
+        </div>
+        <div class="cal-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:var(--bordeaux)"></div>Cours</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--navy)"></div>Réunion</div>
+          <div class="legend-item"><div class="legend-dot" style="background:var(--success)"></div>Visio</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#f59e0b"></div>Note</div>
+        </div>
+      </div>
+
+      <!-- Panneau droit -->
+      <div class="sessions-panel">
+        <div class="sessions-side">
+          <div class="sessions-side-header">
+            <div>
+              <div class="sessions-side-date" id="sessions-date-label">Sélectionnez un jour</div>
+              <div class="sessions-side-hint" id="sessions-side-hint">Cliquez sur une date du calendrier</div>
+            </div>
+          </div>
+
+          <!-- Ajout rapide inline -->
+          <div class="quick-add" id="quick-add-form" style="display:none">
+            <div class="quick-add-title">Ajouter</div>
+            <div class="type-selector">
+              <button class="type-btn active-cours" id="tbtn-cours" onclick="selectType('cours')">📚 Cours</button>
+              <button class="type-btn" id="tbtn-reunion" onclick="selectType('reunion')">👥 Réunion</button>
+              <button class="type-btn" id="tbtn-visio" onclick="selectType('visio')">🎥 Visio</button>
+              <button class="type-btn" id="tbtn-note" onclick="selectType('note')">📝 Note</button>
+            </div>
+            <input class="quick-input" id="quick-titre" placeholder="Titre (ex. Travail sur CV…)" onkeydown="if(event.key==='Enter')quickAddEvent()">
+            <select class="quick-input" id="quick-heure" style="margin-bottom:8px">
+              <option value="">— Choisir un horaire —</option>
+              <optgroup label="Matin">
+                <option>8h - 12h</option>
+                <option>9h - 12h</option>
+                <option>9h - 12h30</option>
+                <option>9h - 13h</option>
+              </optgroup>
+              <optgroup label="Après-midi">
+                <option>13h - 17h</option>
+                <option>13h30 - 17h</option>
+                <option>14h - 17h</option>
+                <option>14h - 18h</option>
+              </optgroup>
+              <optgroup label="Journée">
+                <option>9h - 17h</option>
+                <option>9h - 17h30</option>
+                <option>8h - 18h</option>
+              </optgroup>
+              <optgroup label="Court">
+                <option>9h - 10h</option>
+                <option>10h - 12h</option>
+                <option>14h - 15h</option>
+                <option>14h - 16h</option>
+                <option>15h - 17h</option>
+              </optgroup>
+            </select>
+            <select class="quick-input" id="quick-visibilite" style="margin-bottom:8px">
+              <option value="tous">👥 Visible par les apprenants</option>
+              <option value="interne">🔒 Réunion interne (non visible apprenants)</option>
+            </select>
+            <button class="btn-quick-add" style="width:100%" onclick="quickAddEvent()">+ Ajouter</button>
+          </div>
+
+          <!-- Liste des events du jour sélectionné -->
+          <div class="sessions-list" id="sessions-list">
+            <div class="event-empty">Sélectionnez un jour<br>pour voir et ajouter des événements</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE : QCM ===== -->
+<div id="page-qcm" class="page">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Générateur de QCM</div>
+      <div class="page-subtitle">Génération automatique par IA depuis vos plaquettes et modules</div>
+    </div>
+    <div style="display:flex;gap:8px" id="qcm-export-btns" style="display:none">
+      <button class="btn-secondary" onclick="exportQCM()" id="btn-export-qcm" style="display:none">
+        <svg viewBox="0 0 16 16"><path d="M3 12h10M8 2v8M5 7l3 3 3-3"/></svg>
+        Exporter QCM
+      </button>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div class="qcm-layout">
+      <!-- Config -->
+      <div class="qcm-config">
+        <div class="qcm-config-title">Paramètres</div>
+
+        <div class="field">
+          <label>Formation</label>
+          <select id="qcm-formation" onchange="updateQCMTheme()">
+            <option value="">— Choisir —</option>
+            <option value="CV">CV et Recherche d'emploi</option>
+            <option value="DWWM">Développeur Web (DWWM)</option>
+            <option value="CDA">Concepteur Développeur (CDA)</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Thème / Module</label>
+          <select id="qcm-theme">
+            <option value="">— Choisir une formation d'abord —</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Nombre de questions</label>
+          <div class="chips" id="qcm-nb-chips">
+            <div class="chip active" onclick="selectChip(this,'qcm-nb',5)">5</div>
+            <div class="chip" onclick="selectChip(this,'qcm-nb',10)">10</div>
+            <div class="chip" onclick="selectChip(this,'qcm-nb',15)">15</div>
+            <div class="chip" onclick="selectChip(this,'qcm-nb',20)">20</div>
+          </div>
+          <input type="hidden" id="qcm-nb" value="5">
+        </div>
+
+        <div class="field">
+          <label>Niveau de difficulté</label>
+          <div class="chips">
+            <div class="chip active" onclick="selectChip(this,'qcm-diff','débutant')">Débutant</div>
+            <div class="chip" onclick="selectChip(this,'qcm-diff','intermédiaire')">Intermédiaire</div>
+            <div class="chip" onclick="selectChip(this,'qcm-diff','avancé')">Avancé</div>
+          </div>
+          <input type="hidden" id="qcm-diff" value="débutant">
+        </div>
+
+        <div class="field">
+          <label>Type de questions</label>
+          <div class="chips">
+            <div class="chip active" onclick="selectChip(this,'qcm-type','QCM')">QCM (4 choix)</div>
+            <div class="chip" onclick="selectChip(this,'qcm-type','vrai/faux')">Vrai / Faux</div>
+            <div class="chip" onclick="selectChip(this,'qcm-type','mixte')">Mixte</div>
+          </div>
+          <input type="hidden" id="qcm-type" value="QCM">
+        </div>
+
+        <button class="btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="generateQCM()">
+          <svg viewBox="0 0 16 16"><path d="M8 1a4 4 0 10.001 8.001A4 4 0 008 1zm0 2v2l1.5 1.5M3 13c0-2.2 2.2-4 5-4s5 1.8 5 4"/></svg>
+          Générer avec l'IA
+        </button>
+
+        <div style="margin-top:14px;padding:10px;background:var(--info-bg);border-radius:var(--radius);font-size:10px;color:var(--info);line-height:1.5">
+          Le QCM est généré par Claude (Anthropic). Les questions sont adaptées au niveau et au thème choisis, avec les bonnes réponses identifiées.
+        </div>
+      </div>
+
+      <!-- Résultat -->
+      <div class="qcm-result">
+        <div class="qcm-result-header">
+          <div class="qcm-result-title" id="qcm-result-title">Résultat du QCM</div>
+          <div class="qcm-result-subtitle" id="qcm-result-subtitle">Configurez les paramètres puis cliquez sur Générer</div>
+        </div>
+        <div class="qcm-body" id="qcm-body">
+          <div class="ai-empty">
+            <svg viewBox="0 0 16 16"><path d="M8 1a4 4 0 100 8A4 4 0 008 1zM2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg>
+            <p>Choisissez une formation et un thème,<br>puis cliquez sur <strong>Générer avec l'IA</strong></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PAGE : PLAQUETTE ===== -->
+<div id="page-plaquette" class="page">
+  <div class="page-header">
+    <div>
+      <div class="page-title">Plaquettes de formation</div>
+      <div class="page-subtitle">Créez et publiez vos formations dans le catalogue public Real Portage</div>
+    </div>
+  </div>
+  <!-- Sub-tabs -->
+  <div class="pf-subtabs">
+    <button class="pf-subtab active" id="pf-st-creer" onclick="pfShowSubTab('creer')">
+      <svg viewBox="0 0 16 16" style="width:12px;height:12px;fill:currentColor;display:inline;vertical-align:middle;margin-right:5px"><path d="M8 2v12M2 8h12"/></svg>
+      Créer une plaquette
+    </button>
+    <button class="pf-subtab" id="pf-st-catalogue" onclick="pfShowSubTab('catalogue')">
+      <svg viewBox="0 0 16 16" style="width:12px;height:12px;fill:currentColor;display:inline;vertical-align:middle;margin-right:5px"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>
+      Catalogue public
+    </button>
+  </div>
+
+  <!-- Sub-tab : Créer une plaquette -->
+  <div id="pf-sub-creer" class="pf-subcontent active">
+  <div class="scroll-area">
+    <div class="plaquette-layout">
+
+      <!-- ── FORMULAIRE ── -->
+      <div>
+
+        <!-- Identification -->
+        <div class="card" style="margin-bottom:16px">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--cream-dark);display:flex;align-items:center;gap:8px">
+            <div style="width:20px;height:20px;background:var(--bordeaux);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:#fff"><path d="M8 1a4 4 0 100 8A4 4 0 008 1zM2 14c0-3 2.7-5 6-5s6 2 6 5"/></svg></div>
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bordeaux)">Identification</span>
+          </div>
+          <div style="padding:16px 18px">
+            <div class="field"><label>Nom de la formation</label><input id="pf-nom" type="text" placeholder="ex. Développeur Web et Web Mobile"></div>
+            <div class="field"><label>Titre RNCP</label><input id="pf-rncp" type="text" placeholder="ex. RNCP Niveau 5 — Titre Professionnel"></div>
+            <div class="field-row">
+              <div class="field"><label>Centre</label>
+                <select id="pf-centre">
+                  <option>Real Conseil Amiens</option>
+                  <option>Real Conseil Lille</option>
+                  <option>Real Portage Paris</option>
+                </select>
+              </div>
+              <div class="field"><label>Niveau de sortie</label>
+                <select id="pf-niveau">
+                  <option>Bac (Niveau 4)</option>
+                  <option>Bac+2 (Niveau 5)</option>
+                  <option>Bac+3 (Niveau 6)</option>
+                  <option>Bac+5 (Niveau 7)</option>
+                </select>
+              </div>
+            </div>
+            <div class="field"><label>Catégorie</label>
+              <select id="pf-categorie">
+                <option value="emploi">Emploi &amp; CV</option>
+                <option value="dev">Développement web</option>
+                <option value="data">Data &amp; Tech</option>
+                <option value="autre">Autre</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Dates & Pratique -->
+        <div class="card" style="margin-bottom:16px">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--cream-dark);display:flex;align-items:center;gap:8px">
+            <div style="width:20px;height:20px;background:var(--bordeaux);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:#fff"><rect x="2" y="3" width="12" height="11" rx="1"/><path d="M5 1v4M11 1v4M2 7h12"/></svg></div>
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bordeaux)">Dates &amp; Informations pratiques</span>
+          </div>
+          <div style="padding:16px 18px">
+            <div class="field-row">
+              <div class="field"><label>Date de début</label><input id="pf-debut" type="date"></div>
+              <div class="field"><label>Date de fin</label><input id="pf-fin" type="date"></div>
+            </div>
+            <div class="field-row">
+              <div class="field"><label>Durée totale (h)</label><input id="pf-duree" type="number" placeholder="485"></div>
+              <div class="field"><label>Tarif (€)</label><input id="pf-tarif" type="number" placeholder="3500"></div>
+            </div>
+            <div class="field"><label>Financement</label>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px">
+                <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer"><input type="checkbox" id="pf-cpf" checked> CPF</label>
+                <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer"><input type="checkbox" id="pf-pe" checked> France Travail</label>
+                <label style="display:flex;align-items:center;gap:5px;font-size:12px;font-weight:400;text-transform:none;letter-spacing:0;cursor:pointer"><input type="checkbox" id="pf-opco"> OPCO</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Objectifs -->
+        <div class="card" style="margin-bottom:16px">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--cream-dark);display:flex;align-items:center;gap:8px">
+            <div style="width:20px;height:20px;background:var(--bordeaux);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:#fff"><circle cx="8" cy="8" r="6"/><path d="M5 8l2 2 4-4"/></svg></div>
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bordeaux)">Objectifs pédagogiques</span>
+          </div>
+          <div style="padding:16px 18px">
+            <div class="obj-list" id="pf-obj-list"></div>
+            <button class="btn-add-obj" onclick="pfAddObj()"><span>+</span> Ajouter un objectif</button>
+          </div>
+        </div>
+
+        <!-- Programme CCP -->
+        <div class="card" style="margin-bottom:16px">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--cream-dark);display:flex;align-items:center;gap:8px">
+            <div style="width:20px;height:20px;background:var(--bordeaux);border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg viewBox="0 0 16 16" style="width:11px;height:11px;fill:#fff"><path d="M3 3h10M3 7h10M3 11h6"/></svg></div>
+            <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--bordeaux)">Programme (CCP)</span>
+          </div>
+          <div style="padding:16px 18px">
+            <div class="field"><label>CCP 1</label><input id="pf-ccp1" type="text" placeholder="ex. Développer la partie front-end"></div>
+            <div class="field"><label>CCP 2</label><input id="pf-ccp2" type="text" placeholder="ex. Développer la partie back-end"></div>
+            <div class="field"><label>CCP 3 (optionnel)</label><input id="pf-ccp3" type="text" placeholder="ex. Concevoir et déployer"></div>
+          </div>
+        </div>
+
+        <!-- Publier -->
+        <div class="card">
+          <div style="padding:16px 18px">
+            <button class="btn-publier" onclick="publierPlaquette()">Publier dans le catalogue public →</button>
+            <div style="font-size:10px;color:var(--text-muted);text-align:center;margin-top:8px;line-height:1.5">
+              La formation sera visible immédiatement sur accueil.html
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── APERÇU + MES PLAQUETTES ── -->
+      <div class="plaquette-preview-sticky">
+        <div class="preview-live-label">
+          <div class="preview-live-dot"></div>
+          Aperçu en temps réel
+        </div>
+        <div id="pf-preview"></div>
+
+        <div id="pf-pub-list"></div>
+      </div>
+    </div>
+  </div>
+  </div><!-- /pf-sub-creer -->
+
+  <!-- Sub-tab : Catalogue public -->
+  <div id="pf-sub-catalogue" class="pf-subcontent">
+    <div class="scroll-area">
+      <div style="padding:20px 28px 8px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--navy)">Catalogue public</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Toutes les formations visibles sur accueil.html</div>
+        </div>
+        <button class="btn-secondary" style="font-size:11px" onclick="pfRenderCatalogue()">
+          <svg viewBox="0 0 16 16" style="width:12px;height:12px;fill:currentColor"><path d="M13.5 8A5.5 5.5 0 112.5 8a5.5 5.5 0 0111 0z" opacity=".3"/><path d="M14 8a6 6 0 11-4.5-5.8l-1 1.7A4 4 0 104 8"/><path d="M13 2v4h-4"/></svg>
+          Actualiser
+        </button>
+      </div>
+      <div id="pf-cat-grid" class="cat-grid"></div>
+    </div>
+  </div><!-- /pf-sub-catalogue -->
+
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Modal Nouveau Module -->
+<div class="modal-overlay" id="modal-module" onclick="closeModalOutside(event,'modal-module')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Nouveau module</div>
+      <button class="modal-close" onclick="closeModal('modal-module')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Nom du module</label>
+        <input type="text" id="m-nom" placeholder="ex. Rédiger un CV efficace">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Formation</label>
+          <select id="m-formation">
+            <option>CV / Emploi</option>
+            <option>DWWM</option>
+            <option>CDA</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Durée (h)</label>
+          <input type="number" id="m-duree" placeholder="7">
+        </div>
+      </div>
+      <div class="field">
+        <label>Description</label>
+        <textarea id="m-desc" placeholder="Objectifs pédagogiques du module…"></textarea>
+      </div>
+      <div class="field">
+        <label>Tags</label>
+        <input type="text" id="m-tags" placeholder="ex. CV, Lettre de motivation, Entretien">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-module')">Annuler</button>
+      <button class="btn-primary" onclick="addModule()">
+        <svg viewBox="0 0 16 16"><path d="M13 3L6 12l-3-3"/></svg>
+        Créer le module
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Upload -->
+<div class="modal-overlay" id="modal-upload" onclick="closeModalOutside(event,'modal-upload')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Uploader des supports</div>
+      <button class="modal-close" onclick="closeModal('modal-upload')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Module associé</label>
+        <select id="up-module">
+          <option>— Sélectionner un module —</option>
+        </select>
+      </div>
+      <div class="upload-zone" onclick="document.getElementById('file-input').click()">
+        <input type="file" id="file-input" multiple accept=".pdf,.pptx,.docx,.mp4,.zip,.html" onchange="handleFileSelect(this)">
+        <svg viewBox="0 0 16 16"><path d="M8 2v8M5 5l3-3 3 3M3 12h10"/></svg>
+        <p><strong>Cliquez pour choisir des fichiers</strong><br>ou glissez-déposez ici<br><span style="font-size:10px">PDF, PPTX, DOCX, HTML, MP4, ZIP</span></p>
+      </div>
+      <div class="file-list" id="upload-file-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-upload')">Fermer</button>
+      <button class="btn-primary" onclick="confirmUpload()">
+        <svg viewBox="0 0 16 16"><path d="M8 2v8M5 5l3-3 3 3M3 12h10"/></svg>
+        Valider l'upload
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Session -->
+<div class="modal-overlay" id="modal-session" onclick="closeModalOutside(event,'modal-session')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">Planifier une session</div>
+      <button class="modal-close" onclick="closeModal('modal-session')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Titre de la session</label>
+        <input type="text" id="s-titre" placeholder="ex. Atelier CV — Séance 3">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Date</label>
+          <input type="date" id="s-date">
+        </div>
+        <div class="field">
+          <label>Horaire</label>
+          <input type="text" id="s-heure" placeholder="9h00 — 17h00">
+        </div>
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Formation</label>
+          <select id="s-formation">
+            <option>CV / Emploi</option>
+            <option>DWWM</option>
+            <option>CDA</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Module</label>
+          <select id="s-module">
+            <option>— Tous —</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <textarea id="s-notes" placeholder="Remarques, supports à préparer…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal('modal-session')">Annuler</button>
+      <button class="btn-primary" onclick="addSession()">
+        <svg viewBox="0 0 16 16"><path d="M13 3L6 12l-3-3"/></svg>
+        Planifier
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg viewBox="0 0 16 16"><path d="M13 3L6 12l-3-3"/></svg>
+  <span id="toast-text">Action effectuée</span>
+</div>
+
+<script>
+/* 
+   DONNÉES
+ */
+let modules = [
+  { id:1, nom:'Rédiger un CV efficace', formation:'CV / Emploi', duree:7, desc:'Structurer, valoriser les compétences, adapter selon le poste.', tags:['CV','Mise en page'], color:'bordeaux', docs:3 },
+  { id:2, nom:'Préparer les entretiens', formation:'CV / Emploi', duree:6, desc:"Techniques d'entretien, gestion du stress, questions pièges.", tags:['Entretien','Oral'], color:'navy', docs:2 },
+  { id:3, nom:'Réseaux sociaux pro', formation:'CV / Emploi', duree:4, desc:'LinkedIn, Viadeo, e-réputation professionnelle.', tags:['LinkedIn','Réseau'], color:'green', docs:1 },
+  { id:4, nom:'Lettre de motivation', formation:'CV / Emploi', duree:5, desc:'Structurer et personnaliser une lettre percutante.', tags:['Lettre','Rédaction'], color:'warn', docs:2 },
+];
+const RP_CAL_KEY = 'rp_calendar';
+const RP_CAL_DEFAULTS = [
+  { id:1, titre:'Atelier CV — Séance 1', date:'2026-03-16', heure:'9h-13h', type:'cours', formation:'CV / Emploi', notes:'', color:'bordeaux', auteur:'Formateur' },
+  { id:2, titre:'Entretiens simulés', date:'2026-03-23', heure:'9h-17h', type:'cours', formation:'CV / Emploi', notes:'Prévoir CV de chaque apprenant', color:'navy', auteur:'Formateur' },
+  { id:3, titre:'Réunion équipe pédagogique', date:'2026-03-26', heure:'14h-15h', type:'reunion', formation:'', notes:'', color:'navy', auteur:'Admin' },
+  { id:4, titre:'Atelier CV — Séance 2', date:'2026-04-06', heure:'9h-12h', type:'cours', formation:'CV / Emploi', notes:'', color:'bordeaux', auteur:'Formateur' },
+  { id:5, titre:'Visio candidats à distance', date:'2026-04-14', heure:'14h-16h', type:'visio', formation:'CV / Emploi', notes:'', color:'green', auteur:'Formateur' },
+  { id:6, titre:'LinkedIn & Réseau pro', date:'2026-04-14', heure:'9h-12h', type:'cours', formation:'CV / Emploi', notes:'', color:'bordeaux', auteur:'Formateur' },
+  { id:7, titre:'Lettres de motivation', date:'2026-04-27', heure:'9h-12h', type:'cours', formation:'CV / Emploi', notes:'', color:'bordeaux', auteur:'Formateur' },
+];
+function loadCalendar() {
+  try {
+    const raw = localStorage.getItem(RP_CAL_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  localStorage.setItem(RP_CAL_KEY, JSON.stringify(RP_CAL_DEFAULTS));
+  return RP_CAL_DEFAULTS.map(s => ({...s}));
+}
+function saveCalendar() {
+  localStorage.setItem(RP_CAL_KEY, JSON.stringify(sessions));
+}
+let sessions = loadCalendar();
+let uploadedFiles = [];
+let currentMonth = new Date().getMonth() + 1, currentYear = new Date().getFullYear();
+let selectedDate = null;
+let qcmNb = 5, qcmDiff = 'débutant', qcmType = 'QCM';
+let lastQCM = null;
+
+const ICONS = {
+  bordeaux: `<svg viewBox="0 0 16 16"><path d="M2 3h12M2 7h9M2 11h6"/></svg>`,
+  navy: `<svg viewBox="0 0 16 16"><path d="M3 3h10a1 1 0 011 1v6a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1zm0 0l5 5 5-5"/></svg>`,
+  green: `<svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="6"/><path d="M5 8l2 2 4-4"/></svg>`,
+  warn: `<svg viewBox="0 0 16 16"><path d="M8 2v8M8 12v1"/><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor"/></svg>`,
+};
+
+const QCM_THEMES = {
+  CV: ['Rédaction de CV', 'Lettre de motivation', 'Techniques d\'entretien', 'LinkedIn & e-réputation', 'Marché de l\'emploi'],
+  DWWM: ['HTML / CSS fondamentaux', 'JavaScript ES6+', 'PHP & MySQL', 'React et composants', 'Git & versionning', 'API REST'],
+  CDA: ['Architecture logicielle', 'Design patterns', 'Tests unitaires', 'CI/CD & DevOps', 'Base de données avancées'],
+};
+
+/* 
+   NAVIGATION
+ */
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  btn.classList.add('active');
+  if(name==='planning') { sessions = loadCalendar(); renderCalendar(); }
+  if(name==='modules') renderModules();
+  if(name==='dashboard') renderDashboard();
+  if(name==='plaquette') { pfLivePreview(); pfRenderPubList(); pfRenderCatalogue(); }
+}
+
+/* ══════════════════════════════════════
+   PLAQUETTE — SOUS-ONGLETS
+══════════════════════════════════════ */
+function pfShowSubTab(name) {
+  document.querySelectorAll('.pf-subtab').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.pf-subcontent').forEach(d => d.classList.remove('active'));
+  document.getElementById('pf-st-' + name).classList.add('active');
+  document.getElementById('pf-sub-' + name).classList.add('active');
+  if (name === 'catalogue') pfRenderCatalogue();
+}
+
+function pfRenderCatalogue() {
+  const grid = document.getElementById('pf-cat-grid');
+  if (!grid) return;
+  let formations = [];
+  try { formations = JSON.parse(localStorage.getItem('rp_catalogue') || '[]'); } catch(e) {}
+  if (formations.length === 0) {
+    pfSeedCatalogue();
+    try { formations = JSON.parse(localStorage.getItem('rp_catalogue') || '[]'); } catch(e) {}
+  }
+  if (formations.length === 0) {
+    grid.innerHTML = '<div class="cat-empty"><svg viewBox="0 0 24 24" style="width:36px;height:36px;stroke:var(--border);fill:none;stroke-width:1.5;display:block;margin:0 auto 10px"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Le catalogue est vide pour l\'instant.</div>';
+    return;
+  }
+  grid.innerHTML = formations.map(f => {
+    const fins = Array.isArray(f.fins) ? f.fins : (Array.isArray(f.financement) ? f.financement : []);
+    const finTags = fins.map(t =>
+      t==='CPF'    ? '<span class="fin-tag fin-cpf">CPF</span>' :
+      t==='France Travail' ? '<span class="fin-tag fin-pe">France Travail</span>' :
+      t==='OPCO'   ? '<span class="fin-tag fin-opco">OPCO</span>' : ''
+    ).join('');
+    return `<div class="cat-card">
+      <div class="cat-card-head">
+        ${f.rncp ? `<div class="cat-card-rncp">${f.rncp}</div>` : ''}
+        <div class="cat-card-nom">${f.nom || 'Formation'}</div>
+        ${f.centre ? `<div class="cat-card-centre">${f.centre}</div>` : ''}
+        ${f.niveau ? `<div class="cat-card-badge">${f.niveau}</div>` : ''}
+      </div>
+      <div class="cat-card-body">
+        <div class="cat-card-meta">
+          ${f.duree ? `<span class="cat-meta-chip">⏱ ${f.duree}h</span>` : ''}
+          ${f.tarif ? `<span class="cat-meta-chip">💶 ${f.tarif}€</span>` : ''}
+          ${f.categorie ? `<span class="cat-meta-chip">${f.categorie}</span>` : ''}
+          ${f.debut ? `<span class="cat-meta-chip">📅 ${f.debut}</span>` : ''}
+        </div>
+        ${finTags ? `<div class="cat-fins">${finTags}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   PLAQUETTE — FORMULAIRE & PUBLICATION
+══════════════════════════════════════ */
+let pfObjCount = 0;
+
+function pfAddObj() {
+  pfObjCount++;
+  const uid = 'pf-obj-' + pfObjCount;
+  const list = document.getElementById('pf-obj-list');
+  const row = document.createElement('div');
+  row.className = 'obj-row';
+  row.id = 'row-' + uid;
+  row.innerHTML = '<input type="text" id="' + uid + '" placeholder="Saisir un objectif…">'
+    + '<button class="obj-rm" onclick="pfRemObj(\'row-' + uid + '\')">×</button>';
+  list.appendChild(row);
+  document.getElementById(uid).addEventListener('input', pfLivePreview);
+}
+
+function pfRemObj(rowId) {
+  const r = document.getElementById(rowId);
+  if (r) r.remove();
+  pfLivePreview();
+}
+
+function pfVal(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function pfGetData() {
+  const objs = Array.from(document.querySelectorAll('#pf-obj-list input'))
+    .map(i => i.value.trim()).filter(Boolean);
+  const fins = [];
+  if (document.getElementById('pf-cpf')?.checked)  fins.push('CPF');
+  if (document.getElementById('pf-pe')?.checked)   fins.push('France Travail');
+  if (document.getElementById('pf-opco')?.checked) fins.push('OPCO');
+  return {
+    nom:       pfVal('pf-nom') || 'Nom de la formation',
+    rncp:      pfVal('pf-rncp'),
+    centre:    pfVal('pf-centre'),
+    niveau:    pfVal('pf-niveau'),
+    categorie: pfVal('pf-categorie'),
+    debut:     pfVal('pf-debut'),
+    fin:       pfVal('pf-fin'),
+    duree:     pfVal('pf-duree'),
+    tarif:     pfVal('pf-tarif'),
+    ccp1:      pfVal('pf-ccp1'),
+    ccp2:      pfVal('pf-ccp2'),
+    ccp3:      pfVal('pf-ccp3'),
+    objectifs: objs,
+    financement: fins,
+    avis: [],
+    publiee: true
+  };
+}
+
+function pfFmtDate(d) {
+  if (!d) return '—';
+  const [y,m,day] = d.split('-');
+  return parseInt(day) + '/' + m;
+}
+
+function pfCardHTML(f) {
+  const fins = (f.financement||[]).map(t => {
+    const cls = t==='CPF' ? 'fin-cpf' : t.includes('Travail') ? 'fin-pe' : 'fin-opco';
+    return '<span class="fin-tag ' + cls + '">' + t + '</span>';
+  }).join('');
+  const objs = (f.objectifs||[]).slice(0,3).map(o =>
+    '<div class="plaq-obj"><div class="plaq-obj-dot"><svg viewBox="0 0 12 12"><path d="M2 6l3 3 5-5"/></svg></div>' + esc(o) + '</div>'
+  ).join('');
+  return '<div class="plaq-card">'
+    + '<div class="plaq-card-header">'
+    + '<div class="plaq-card-badge">Qualiopi</div>'
+    + (f.rncp ? '<div class="plaq-card-rncp">' + esc(f.rncp) + '</div>' : '')
+    + '<div class="plaq-card-nom">' + esc(f.nom) + '</div>'
+    + '<div class="plaq-card-centre">' + esc(f.centre) + '</div>'
+    + '</div>'
+    + '<div class="plaq-card-infos">'
+    + '<div class="plaq-info"><div class="plaq-info-icon">📅</div><div class="plaq-info-val">' + pfFmtDate(f.debut) + '</div><div class="plaq-info-lbl">Début</div></div>'
+    + '<div class="plaq-info"><div class="plaq-info-icon">⏱</div><div class="plaq-info-val">' + (f.duree ? f.duree+'h' : '—') + '</div><div class="plaq-info-lbl">Durée</div></div>'
+    + '<div class="plaq-info"><div class="plaq-info-icon">💶</div><div class="plaq-info-val">' + (f.tarif ? parseInt(f.tarif).toLocaleString('fr-FR')+'€' : '—') + '</div><div class="plaq-info-lbl">Tarif</div></div>'
+    + '</div>'
+    + '<div class="plaq-card-body">'
+    + (objs ? '<div style="margin-bottom:10px"><div class="plaq-section-title">Objectifs</div>' + objs + '</div>' : '')
+    + (f.ccp1 ? '<div><div class="plaq-section-title">Programme</div>'
+        + (f.ccp1 ? '<div class="plaq-ccp"><span class="plaq-ccp-lbl">CCP 1</span>' + esc(f.ccp1) + '</div>' : '')
+        + (f.ccp2 ? '<div class="plaq-ccp"><span class="plaq-ccp-lbl">CCP 2</span>' + esc(f.ccp2) + '</div>' : '')
+        + (f.ccp3 ? '<div class="plaq-ccp"><span class="plaq-ccp-lbl">CCP 3</span>' + esc(f.ccp3) + '</div>' : '')
+        + '</div>' : '')
+    + '</div>'
+    + '<div class="plaq-card-footer"><div style="display:flex;gap:4px;flex-wrap:wrap">' + fins + '</div></div>'
+    + '</div>';
+}
+
+function pfLivePreview() {
+  const el = document.getElementById('pf-preview');
+  if (!el) return;
+  el.innerHTML = pfCardHTML(pfGetData());
+}
+
+function publierPlaquette() {
+  const f = pfGetData();
+  if (!f.nom || f.nom === 'Nom de la formation') {
+    showToast('Saisissez au moins le nom de la formation');
+    return;
+  }
+  const stored = JSON.parse(localStorage.getItem('rp_catalogue') || '[]');
+  stored.push({ ...f, id: Date.now(), source: 'formateur' });
+  localStorage.setItem('rp_catalogue', JSON.stringify(stored));
+  showToast('"' + f.nom + '" publiée dans le catalogue !');
+  pfRenderPubList();
+}
+
+function pfRenderPubList() {
+  const el = document.getElementById('pf-pub-list');
+  if (!el) return;
+  const list = JSON.parse(localStorage.getItem('rp_catalogue') || '[]')
+    .filter(f => f.source === 'formateur' || f.source === 'plaquette');
+  if (!list.length) { el.innerHTML = ''; return; }
+  el.innerHTML = '<div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);margin:18px 0 10px">Mes plaquettes publiées</div>'
+    + '<div class="pub-list">'
+    + list.map(f => '<div class="pub-item">'
+        + '<div><div class="pub-item-nom">' + esc(f.nom) + '</div>'
+        + '<div class="pub-item-meta">' + esc(f.centre||'') + (f.duree ? ' · ' + f.duree + 'h' : '') + (f.tarif ? ' · ' + parseInt(f.tarif).toLocaleString('fr-FR') + ' €' : '') + '</div></div>'
+        + '<div class="pub-item-actions">'
+        + '<button class="btn-secondary" style="font-size:10px;padding:4px 10px" onclick="pfRetirerDuCatalogue(' + f.id + ')">Retirer</button>'
+        + '</div></div>'
+      ).join('')
+    + '</div>';
+}
+
+function pfRetirerDuCatalogue(id) {
+  const list = JSON.parse(localStorage.getItem('rp_catalogue') || '[]');
+  const f = list.find(x => x.id === id);
+  if (!f) return;
+  if (!confirm('Retirer "' + f.nom + '" du catalogue ?')) return;
+  localStorage.setItem('rp_catalogue', JSON.stringify(list.filter(x => x.id !== id)));
+  pfRenderPubList();
+  showToast('"' + f.nom + '" retirée du catalogue');
+}
+
+/* init plaquette form listeners */
+function pfInitListeners() {
+  ['pf-nom','pf-rncp','pf-centre','pf-niveau','pf-categorie',
+   'pf-debut','pf-fin','pf-duree','pf-tarif',
+   'pf-ccp1','pf-ccp2','pf-ccp3','pf-cpf','pf-pe','pf-opco'
+  ].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.addEventListener('input', pfLivePreview); el.addEventListener('change', pfLivePreview); }
+  });
+  // 3 objectifs par défaut
+  pfAddObj(); pfAddObj(); pfAddObj();
+  pfLivePreview();
+}
+
+/* 
+   MODALS
+= */
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  if(id==='modal-upload') populateModuleSelect('up-module');
+  if(id==='modal-session') {
+    populateModuleSelect('s-module');
+    const today = new Date();
+    document.getElementById('s-date').value = today.toISOString().split('T')[0];
+  }
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+function closeModalOutside(e, id) { if(e.target.id===id) closeModal(id); }
+
+function populateModuleSelect(selectId) {
+  const sel = document.getElementById(selectId);
+  const opts = modules.map(m => `<option value="${m.id}">${m.nom}</option>`).join('');
+  sel.innerHTML = `<option value="">— Sélectionner —</option>` + opts;
+}
+
+/*
+   MODULES
+ */
+function renderModules(filter) {
+  const grid = document.getElementById('modules-grid');
+  const list = filter && filter !== 'tous'
+    ? modules.filter(m => m.formation.includes(filter))
+    : modules;
+  grid.innerHTML = list.map(m => moduleCard(m)).join('');
+}
+
+function moduleCard(m) {
+  return `
+  <div class="module-card" onclick="showModuleDetail(${m.id})">
+    <div class="module-card-header">
+      <div class="module-icon ${m.color}">${ICONS[m.color]}</div>
+      <div class="module-meta">
+        <div class="module-name">${esc(m.nom)}</div>
+        <div class="module-formation">${esc(m.formation)}</div>
+      </div>
+    </div>
+    <div class="module-body">
+      <div class="module-stats">
+        <div class="module-stat"><strong>${m.duree}h</strong> de formation</div>
+        <div class="module-stat"><strong>${m.docs}</strong> document${m.docs>1?'s':''}</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:8px;line-height:1.4">${esc(m.desc)}</div>
+      <div class="module-tags">
+        ${m.tags.map(t => `<span class="tag ${m.color}">${esc(t)}</span>`).join('')}
+      </div>
+    </div>
+    <div class="module-footer">
+      <span>${esc(m.formation)}</span>
+      <div class="module-actions">
+        <button class="btn-icon-sm" onclick="event.stopPropagation();editModule(${m.id})" title="Modifier">
+          <svg viewBox="0 0 16 16"><path d="M11 2l3 3-9 9H2v-3L11 2z"/></svg>
+        </button>
+        <button class="btn-icon-sm" onclick="event.stopPropagation();deleteModule(${m.id})" title="Supprimer">
+          <svg viewBox="0 0 16 16"><path d="M3 4h10M5 4V3h6v1M6 7v4M10 7v4M4 4l1 9h6l1-9"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function filterModules(filter, btn) {
+  document.querySelectorAll('.chips .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  renderModules(filter);
+}
+
+function addModule() {
+  const nom = document.getElementById('m-nom').value.trim();
+  if(!nom) { showToast('Saisir un nom de module'); return; }
+  const tags = document.getElementById('m-tags').value.split(',').map(t=>t.trim()).filter(t=>t);
+  const colors = ['bordeaux','navy','green','warn'];
+  modules.push({
+    id: Date.now(),
+    nom,
+    formation: document.getElementById('m-formation').value,
+    duree: parseInt(document.getElementById('m-duree').value)||0,
+    desc: document.getElementById('m-desc').value.trim(),
+    tags,
+    color: colors[modules.length % 4],
+    docs: 0
+  });
+  closeModal('modal-module');
+  renderModules();
+  renderDashboard();
+  document.getElementById('stat-modules').textContent = modules.length;
+  showToast('Module créé avec succès');
+}
+
+function editModule(id) { showToast('Modification à venir (backend PHP)'); }
+function deleteModule(id) {
+  if(confirm('Supprimer ce module ?')) {
+    modules = modules.filter(m => m.id !== id);
+    renderModules();
+    renderDashboard();
+    document.getElementById('stat-modules').textContent = modules.length;
+    showToast('Module supprimé');
+  }
+}
+function showModuleDetail(id) {
+  const m = modules.find(x => x.id === id);
+  if(!m) return;
+  showToast(`Module : ${m.nom} — ${m.docs} doc(s) · ${m.duree}h`);
+}
+
+/* 
+   DASHBOARD
+ */
+function renderDashboard() {
+  // Sessions
+  const today = new Date('2026-03-26');
+  const upcoming = sessions
+    .filter(s => new Date(s.date) >= today)
+    .sort((a,b) => new Date(a.date) - new Date(b.date))
+    .slice(0,4);
+  const dashSessions = document.getElementById('dash-sessions');
+  dashSessions.innerHTML = upcoming.length > 0
+    ? upcoming.map(s => `
+        <div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--cream-dark)">
+          <div style="width:8px;height:8px;border-radius:50%;background:var(--${s.color==='bordeaux'?'bordeaux':s.color==='navy'?'navy':s.color==='green'?'success':'warn'});flex-shrink:0"></div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.titre)}</div>
+            <div style="font-size:10px;color:var(--text-muted)">${fmtDateFR(s.date)} · ${esc(s.heure)}</div>
+          </div>
+        </div>`).join('')
+    : '<div style="font-size:11px;color:var(--text-muted);padding:8px 0">Aucune session planifiée</div>';
+
+  // Modules
+  const previewEl = document.getElementById('dash-modules-preview');
+  previewEl.innerHTML = modules.slice(0,3).map(m => moduleCard(m)).join('');
+}
+
+/* 
+   PLANNING / CALENDRIER
+ */
+const MONTHS_FR = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+const TYPE_LABELS = { cours:'Cours', reunion:'Réunion', visio:'Visio', note:'Note' };
+let currentType = 'cours';
+
+function renderCalendar() {
+  document.getElementById('cal-month-label').textContent = `${MONTHS_FR[currentMonth-1]} ${currentYear}`;
+  const firstDay = new Date(currentYear, currentMonth-1, 1);
+  const lastDay = new Date(currentYear, currentMonth, 0);
+  let startDow = firstDay.getDay();
+  startDow = startDow === 0 ? 6 : startDow - 1;
+
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+  let html = '';
+  // Jours mois précédent
+  const prevLast = new Date(currentYear, currentMonth-1, 0).getDate();
+  for(let i = startDow-1; i >= 0; i--) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${prevLast-i}</div></div>`;
+  }
+  // Jours du mois
+  for(let d = 1; d <= lastDay.getDate(); d++) {
+    const dateStr = `${currentYear}-${String(currentMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = dateStr === todayStr;
+    const isSel = selectedDate === dateStr;
+    const dayEvents = sessions.filter(s => s.date === dateStr);
+
+    const chipsHTML = dayEvents.slice(0,3).map(e =>
+      `<div class="cal-event-chip type-${e.type||'cours'}">${esc(e.titre)}</div>`
+    ).join('');
+    const more = dayEvents.length > 3 ? `<div class="cal-more">+${dayEvents.length-3}</div>` : '';
+
+    html += `<div class="cal-day ${isToday?'today':''} ${isSel?'selected':''}" onclick="selectDate('${dateStr}')">
+      <div class="cal-day-num">${d}</div>
+      <div class="cal-day-events">${chipsHTML}${more}</div>
+      <div class="cal-day-add">+</div>
+    </div>`;
+  }
+  // Jours mois suivant
+  const total = startDow + lastDay.getDate();
+  const rem = total % 7 === 0 ? 0 : 7 - (total % 7);
+  for(let d = 1; d <= rem; d++) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+
+  document.getElementById('cal-days').innerHTML = html;
+  renderSessions();
+}
+
+function changeMonth(dir) {
+  currentMonth += dir;
+  if(currentMonth > 12) { currentMonth = 1; currentYear++; }
+  if(currentMonth < 1) { currentMonth = 12; currentYear--; }
+  renderCalendar();
+}
+
+function selectDate(date) {
+  selectedDate = date;
+  renderCalendar();
+}
+
+function renderSessions() {
+  const list = document.getElementById('sessions-list');
+  const label = document.getElementById('sessions-date-label');
+  const hint = document.getElementById('sessions-side-hint');
+  const form = document.getElementById('quick-add-form');
+
+  if(!selectedDate) {
+    label.textContent = 'Sélectionnez un jour';
+    hint.textContent = 'Cliquez sur une date du calendrier';
+    form.style.display = 'none';
+    list.innerHTML = `<div class="event-empty">Sélectionnez un jour<br>pour voir et ajouter des événements</div>`;
+    return;
+  }
+
+  const [y,m,d] = selectedDate.split('-');
+  label.textContent = `${parseInt(d)} ${MONTHS_FR[parseInt(m)-1]} ${y}`;
+  hint.textContent = 'Cliquez + Ajouter pour créer un événement';
+  form.style.display = 'block';
+
+  const dayEvents = sessions.filter(s => s.date === selectedDate)
+    .sort((a,b) => (a.heure||'').localeCompare(b.heure||''));
+
+  if(dayEvents.length === 0) {
+    list.innerHTML = `<div class="event-empty">Aucun événement ce jour.<br>Utilisez le formulaire ci-dessus.</div>`;
+    return;
+  }
+
+  list.innerHTML = dayEvents.map(s => `
+    <div class="event-item">
+      <div class="event-type-dot type-${s.type||'cours'}"></div>
+      <div class="event-item-body">
+        <div class="event-item-title">${esc(s.titre)}${s.visibilite==='interne'?'<span style="display:inline-block;font-size:8px;font-weight:700;padding:1px 6px;border-radius:10px;background:#fff3e0;color:#b85c00;margin-left:5px;text-transform:uppercase">🔒 Interne</span>':''}</div>
+        <div class="event-item-meta">${TYPE_LABELS[s.type||'cours']}${s.heure?' · '+esc(s.heure):''}${s.auteur?' · '+esc(s.auteur):''}</div>
+      </div>
+      <button class="event-item-del" onclick="deleteEvent(${s.id})" title="Supprimer">×</button>
+    </div>`).join('');
+}
+
+function selectType(type) {
+  currentType = type;
+  document.querySelectorAll('.type-btn').forEach(b => {
+    b.className = 'type-btn';
+  });
+  const btn = document.getElementById('tbtn-' + type);
+  if(btn) btn.className = `type-btn active-${type}`;
+}
+
+function quickAddEvent() {
+  const titre = document.getElementById('quick-titre').value.trim();
+  if(!titre) { document.getElementById('quick-titre').focus(); return; }
+  const heure = document.getElementById('quick-heure').value.trim();
+  const visibilite = document.getElementById('quick-visibilite').value;
+  sessions = loadCalendar();
+  sessions.push({
+    id: Date.now(), titre, date: selectedDate, heure,
+    type: currentType, formation: '', notes: '',
+    color: currentType==='cours'?'bordeaux':currentType==='reunion'?'navy':currentType==='visio'?'green':'warn',
+    auteur: 'Formateur', visibilite
+  });
+  document.getElementById('quick-titre').value = '';
+  document.getElementById('quick-heure').value = '';
+  saveCalendar();
+  renderCalendar();
+  renderDashboard();
+  document.getElementById('stat-sessions').textContent = sessions.length;
+  showToast(`${TYPE_LABELS[currentType]} ajouté${currentType==='reunion'?'e':''}  ✓`);
+}
+
+function deleteEvent(id) {
+  sessions = loadCalendar().filter(s => s.id !== id);
+  saveCalendar();
+  renderCalendar();
+  renderDashboard();
+  document.getElementById('stat-sessions').textContent = sessions.length;
+}
+
+function addSession() {
+  const titre = document.getElementById('s-titre').value.trim();
+  const date = document.getElementById('s-date').value;
+  if(!titre || !date) { showToast('Titre et date obligatoires'); return; }
+  sessions = loadCalendar();
+  sessions.push({
+    id: Date.now(), titre, date,
+    heure: document.getElementById('s-heure').value || '—',
+    type: 'cours',
+    formation: document.getElementById('s-formation').value,
+    notes: document.getElementById('s-notes').value.trim(),
+    color: 'bordeaux', auteur: 'Formateur', visibilite: 'tous'
+  });
+  closeModal('modal-session');
+  selectedDate = date;
+  saveCalendar();
+  renderCalendar();
+  renderDashboard();
+  document.getElementById('stat-sessions').textContent = sessions.length;
+  showToast('Session planifiée');
+}
+
+/*
+   UPLOAD
+ */
+function handleFileSelect(input) {
+  const newFiles = Array.from(input.files);
+  uploadedFiles = [...uploadedFiles, ...newFiles];
+  renderUploadList();
+}
+
+function renderUploadList() {
+  const list = document.getElementById('upload-file-list');
+  list.innerHTML = uploadedFiles.map((f,i) => `
+    <div class="file-item">
+      <svg viewBox="0 0 16 16"><path d="M4 1h6l4 4v10H4V1zm6 0v4h4"/></svg>
+      <div class="file-name">${esc(f.name)}</div>
+      <div class="file-size">${(f.size/1024).toFixed(0)} Ko</div>
+      <button class="file-remove" onclick="removeFile(${i})">×</button>
+    </div>`).join('');
+}
+
+function removeFile(i) {
+  uploadedFiles.splice(i,1);
+  renderUploadList();
+}
+
+function confirmUpload() {
+  if(uploadedFiles.length === 0) { showToast('Aucun fichier sélectionné'); return; }
+  const modId = document.getElementById('up-module').value;
+  if(modId) {
+    const m = modules.find(x => x.id == modId);
+    if(m) m.docs += uploadedFiles.length;
+  }
+  document.getElementById('stat-docs').textContent =
+    parseInt(document.getElementById('stat-docs').textContent) + uploadedFiles.length;
+  showToast(`${uploadedFiles.length} fichier(s) ajouté(s)`);
+  uploadedFiles = [];
+  renderUploadList();
+  closeModal('modal-upload');
+  renderModules();
+}
+
+/* 
+   QCM IA
+ */
+function updateQCMTheme() {
+  const form = document.getElementById('qcm-formation').value;
+  const sel = document.getElementById('qcm-theme');
+  if(!form || !QCM_THEMES[form]) {
+    sel.innerHTML = '<option>— Choisir une formation d\'abord —</option>';
+    return;
+  }
+  sel.innerHTML = QCM_THEMES[form].map(t => `<option value="${t}">${t}</option>`).join('');
+}
+
+function selectChip(chip, fieldId, val) {
+  const container = chip.closest('.chips');
+  container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  document.getElementById(fieldId).value = val;
+}
+
+/* 
+   BANQUE DE QUESTIONS LOCALE
+ */
+const QUESTION_BANK = {
+  "Rédaction de CV": [
+    {q:"Quelle est la longueur recommandée pour un CV en France ?",choices:["Une demi-page","Une page","Deux pages","Trois pages ou plus"],correct:1,diff:"débutant"},
+    {q:"Quel ordre chronologique est conseillé pour les expériences professionnelles ?",choices:["Du plus ancien au plus récent","Du plus récent au plus ancien","Alphabétique","Par secteur d'activité"],correct:1,diff:"débutant"},
+    {q:"Doit-on mettre une photo sur un CV en France ?",choices:["Obligatoire","Recommandée mais optionnelle","Déconseillée","Interdite"],correct:1,diff:"débutant"},
+    {q:"Quelle section doit apparaître en premier sur un CV ?",choices:["Les loisirs","Les formations","Les coordonnées et l'identité","Les langues"],correct:2,diff:"débutant"},
+    {q:"Que signifie CV ?",choices:["Curriculum Vitae","Compte Virtuel","Carrière et Vocation","Carte de Visite"],correct:0,diff:"débutant"},
+    {q:"Quelle police est la plus adaptée pour un CV professionnel ?",choices:["Comic Sans","Times New Roman ou Arial","Papyrus","Impact"],correct:1,diff:"débutant"},
+    {q:"Faut-il mentionner ses prétentions salariales dans un CV ?",choices:["Toujours","Jamais","Seulement si demandé","Uniquement pour les cadres"],correct:2,diff:"intermédiaire"},
+    {q:"Quelle est la différence entre un CV chronologique et un CV fonctionnel ?",choices:["Le CV chronologique liste par date, le fonctionnel par compétences","Le CV fonctionnel est plus court","Le CV chronologique est réservé aux cadres","Aucune différence"],correct:0,diff:"intermédiaire"},
+    {q:"Que doit contenir l'accroche ou le titre de CV ?",choices:["Le salaire souhaité","Un résumé du profil en 2-3 lignes ciblant le poste","La liste des formations","Les références"],correct:1,diff:"intermédiaire"},
+    {q:"Quels mots-clés sont particulièrement importants dans un CV numérique (ATS) ?",choices:["Adjectifs qualificatifs génériques","Les termes exacts de l'offre d'emploi","Le nom de l'entreprise cible","La date de naissance"],correct:1,diff:"avancé"},
+    {q:"Comment valoriser une période de chômage sur un CV ?",choices:["La masquer","La mentionner avec les activités réalisées (formation, bénévolat, projet)","Indiquer 'sans activité'","Laisser un blanc"],correct:1,diff:"avancé"},
+    {q:"Le profil LinkedIn doit-il être identique au CV ?",choices:["Oui, exactement","Non, LinkedIn peut être plus détaillé et dynamique","Non, LinkedIn doit être plus court","Ils ne doivent pas se ressembler"],correct:1,diff:"avancé"},
+    {q:"Que signifie 'soft skills' dans le contexte d'un CV ?",choices:["Compétences techniques","Compétences comportementales et relationnelles","Compétences informatiques","Formations diplômantes"],correct:1,diff:"intermédiaire"},
+    {q:"À quelle fréquence faut-il mettre à jour son CV ?",choices:["Uniquement lors d'une recherche d'emploi","Tous les 5 ans","Régulièrement, après chaque expérience ou formation significative","Jamais, une fois rédigé"],correct:2,diff:"débutant"},
+    {q:"Quel format de fichier est recommandé pour envoyer un CV par email ?",choices:["Word (.docx)","PDF","Excel","PowerPoint"],correct:1,diff:"débutant"},
+  ],
+  "Lettre de motivation": [
+    {q:"Quelle est la structure classique d'une lettre de motivation ?",choices:["Introduction, développement, conclusion","Présentation, motivation, disponibilité","Pourquoi eux, pourquoi moi, pourquoi maintenant","Compétences, expériences, objectifs"],correct:0,diff:"débutant"},
+    {q:"Quelle longueur est recommandée pour une lettre de motivation ?",choices:["Une demi-page","Une page","Deux pages","Trois paragraphes minimum"],correct:1,diff:"débutant"},
+    {q:"Par quelle formule commence-t-on généralement une lettre de motivation professionnelle ?",choices:["Bonjour,","Chère/Cher [Prénom],","Madame, Monsieur,","À qui de droit,"],correct:2,diff:"débutant"},
+    {q:"Doit-on personnaliser chaque lettre de motivation ?",choices:["Non, un modèle générique suffit","Oui, elle doit être adaptée à chaque offre et entreprise","Seulement pour les grandes entreprises","Seulement si demandé"],correct:1,diff:"débutant"},
+    {q:"Quel est l'objectif principal du premier paragraphe d'une lettre ?",choices:["Lister ses diplômes","Expliquer sa situation familiale","Accrocher le recruteur et présenter la candidature","Donner ses prétentions salariales"],correct:2,diff:"intermédiaire"},
+    {q:"Comment montrer sa motivation pour une entreprise dans une lettre ?",choices:["Copier des informations du site web","Mentionner des éléments précis de l'actualité ou des valeurs de l'entreprise","Écrire 'Je suis très motivé(e)'","Indiquer que c'est l'unique entreprise contactée"],correct:1,diff:"intermédiaire"},
+    {q:"Quelle formule de politesse est appropriée en fin de lettre ?",choices:["Cordialement","Bisous","Veuillez agréer, Madame, Monsieur, l'expression de mes salutations distinguées","À bientôt"],correct:2,diff:"débutant"},
+    {q:"Que signifie l'acronyme CAR dans la rédaction professionnelle ?",choices:["Contexte, Action, Résultat","Compétence, Aptitude, Réseau","Candidature, Ambition, Réussite","Critère, Argument, Résumé"],correct:0,diff:"avancé"},
+  ],
+  "Techniques d'entretien": [
+    {q:"Combien de temps avant l'heure convenue doit-on arriver à un entretien ?",choices:["30 minutes avant","10 à 15 minutes avant","À l'heure pile","5 minutes en avance"],correct:1,diff:"débutant"},
+    {q:"Que signifie la règle des 4×20 dans un entretien ?",choices:["20 questions en 20 minutes","Les 20 premières secondes, 20 premiers mots, 20 premiers gestes, 20 premiers centimètres","20 secondes de pitch","Aucune signification réelle"],correct:1,diff:"intermédiaire"},
+    {q:"Comment répondre à la question 'Quels sont vos défauts ?' ?",choices:["Nier avoir des défauts","Citer des défauts graves","Mentionner des défauts en cours d'amélioration liés au poste","Éviter la question"],correct:2,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'un entretien STAR ?",choices:["Un entretien filmé","Une méthode pour structurer ses réponses : Situation, Tâche, Action, Résultat","Un entretien avec plusieurs recruteurs","Un entretien téléphonique"],correct:1,diff:"intermédiaire"},
+    {q:"Faut-il poser des questions à la fin d'un entretien ?",choices:["Non, cela montre de l'arrogance","Oui, cela démontre de l'intérêt et de la préparation","Seulement sur le salaire","Seulement si on n'a pas compris le poste"],correct:1,diff:"débutant"},
+    {q:"Comment se préparer à un entretien d'embauche ?",choices:["Relire son CV la veille","Se renseigner sur l'entreprise, le poste, et préparer des exemples concrets","Mémoriser des réponses types","Improviser pour paraître naturel"],correct:1,diff:"débutant"},
+    {q:"Quelle tenue vestimentaire adopter pour un entretien ?",choices:["Toujours un costume/tailleur","Adaptée à la culture de l'entreprise","Tenue décontractée systématiquement","La même que pour un entretien précédent"],correct:1,diff:"débutant"},
+    {q:"Comment gérer le silence lors d'un entretien ?",choices:["Le remplir immédiatement à tout prix","L'utiliser pour réfléchir, puis répondre de manière structurée","Quitter la pièce","Poser une question au recruteur"],correct:1,diff:"avancé"},
+  ],
+  "LinkedIn & e-réputation": [
+    {q:"Quel est le réseau social professionnel le plus utilisé en France ?",choices:["Twitter/X","Facebook","LinkedIn","Viadeo"],correct:2,diff:"débutant"},
+    {q:"Que signifie 'SSI' sur LinkedIn ?",choices:["Social Sharing Index","Social Selling Index","Super Search Intelligence","Standard Skills Indicator"],correct:1,diff:"avancé"},
+    {q:"Qu'est-ce qu'un résumé LinkedIn efficace doit contenir ?",choices:["Uniquement les diplômes","Le profil professionnel, les compétences clés et une accroche personnelle","La liste complète des employeurs","Les loisirs et passions"],correct:1,diff:"intermédiaire"},
+    {q:"Combien de compétences maximum peut-on lister sur LinkedIn ?",choices:["10","25","50","Illimité"],correct:2,diff:"intermédiaire"},
+    {q:"Qu'est-ce que l'e-réputation ?",choices:["La réputation d'une boutique en ligne","L'image que renvoie une personne sur internet","Le nombre d'abonnés sur les réseaux","Un classement Google"],correct:1,diff:"débutant"},
+    {q:"Pourquoi est-il important de personnaliser l'URL de son profil LinkedIn ?",choices:["Pour le référencement et faciliter le partage","Pour augmenter le nombre de connexions","Pour accéder aux offres premium","Aucune raison particulière"],correct:0,diff:"intermédiaire"},
+    {q:"Comment les recruteurs utilisent-ils LinkedIn ?",choices:["Uniquement pour publier des offres","Pour sourcer des candidats, vérifier les profils et évaluer les recommandations","Uniquement pour communiquer","Pour comparer les salaires"],correct:1,diff:"intermédiaire"},
+  ],
+  "Marché de l'emploi": [
+    {q:"Qu'est-ce que le marché caché de l'emploi ?",choices:["Les offres illégales","Les postes non publiés, pourvus par cooptation ou candidature spontanée","Les emplois à l'étranger","Les contrats intérimaires"],correct:1,diff:"intermédiaire"},
+    {q:"Quel est le délai moyen de recherche d'emploi en France ?",choices:["1 semaine","1 mois","3 à 6 mois","2 ans"],correct:2,diff:"débutant"},
+    {q:"Qu'est-ce que Pôle Emploi est devenu en 2024 ?",choices:["ANPE","France Travail","Missions Locales","Cap Emploi"],correct:1,diff:"débutant"},
+    {q:"Qu'est-ce qu'une candidature spontanée ?",choices:["Répondre à une annonce","Postuler sans offre publiée, directement auprès de l'entreprise","Candidater via un cabinet de recrutement","Envoyer son CV à Pôle Emploi"],correct:1,diff:"débutant"},
+    {q:"Quel dispositif finance les formations professionnelles des salariés et demandeurs d'emploi ?",choices:["CAF","CPF (Compte Personnel de Formation)","Pôle Emploi uniquement","OPCA exclusivement"],correct:1,diff:"intermédiaire"},
+  ],
+  "HTML / CSS fondamentaux": [
+    {q:"Que signifie HTML ?",choices:["HyperText Markup Language","High Tech Modern Language","HyperText Modeling Language","Hierarchical Text Markup Language"],correct:0,diff:"débutant"},
+    {q:"Quelle balise est utilisée pour créer un lien hypertexte ?",choices:["<link>","<href>","<a>","<url>"],correct:2,diff:"débutant"},
+    {q:"Comment centrer un élément horizontalement avec CSS Flexbox ?",choices:["text-align: center","justify-content: center","align-items: center","margin: auto"],correct:1,diff:"débutant"},
+    {q:"Quelle propriété CSS contrôle la couleur du texte ?",choices:["background-color","font-color","text-color","color"],correct:3,diff:"débutant"},
+    {q:"Qu'est-ce que le modèle de boîte CSS (box model) ?",choices:["Un framework CSS","Content, padding, border, margin","Un système de grille","Un outil de design"],correct:1,diff:"intermédiaire"},
+    {q:"Quelle est la différence entre `display: block` et `display: inline` ?",choices:["block prend toute la largeur, inline s'adapte au contenu","inline prend toute la largeur, block s'adapte","Aucune différence","block est plus rapide"],correct:0,diff:"intermédiaire"},
+    {q:"Que fait la propriété CSS `position: absolute` ?",choices:["Centre l'élément","Positionne l'élément par rapport à son ancêtre positionné","Fixe l'élément dans le viewport","Supprime l'élément du flux"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'une media query en CSS ?",choices:["Une requête vers un serveur","Une règle CSS conditionnelle selon les caractéristiques de l'appareil","Un sélecteur d'images","Un type de commentaire"],correct:1,diff:"intermédiaire"},
+    {q:"Quel sélecteur CSS cible les éléments avec la classe 'actif' ?",choices:["#actif","actif",".actif","*actif"],correct:2,diff:"débutant"},
+    {q:"Quelle est la spécificité d'un sélecteur ID comparé à une classe ?",choices:["Égale","Inférieure","Supérieure","Ça dépend du navigateur"],correct:2,diff:"avancé"},
+    {q:"À quoi sert la propriété CSS `z-index` ?",choices:["Définir le zoom","Contrôler l'ordre d'empilement des éléments","Définir la taille","Contrôler la transparence"],correct:1,diff:"intermédiaire"},
+    {q:"Que signifie 'responsive design' ?",choices:["Un design très réactif visuellement","Un design qui s'adapte à toutes les tailles d'écran","Un design avec des animations","Un design minimaliste"],correct:1,diff:"débutant"},
+  ],
+  "JavaScript ES6+": [
+    {q:"Quelle est la différence entre `let` et `const` en JavaScript ?",choices:["Aucune différence","let peut être réassigné, const ne peut pas","const peut être réassigné, let ne peut pas","let est global, const est local"],correct:1,diff:"débutant"},
+    {q:"Que retourne `typeof null` en JavaScript ?",choices:["'null'","'undefined'","'object'","'boolean'"],correct:2,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'une arrow function ?",choices:["Une fonction avec une flèche graphique","Une syntaxe raccourcie pour les fonctions qui hérite du `this` du contexte parent","Une fonction asynchrone","Une fonction récursive"],correct:1,diff:"débutant"},
+    {q:"Que fait l'opérateur spread `...` ?",choices:["Crée une copie profonde","Déploie les éléments d'un itérable","Supprime des éléments","Concatène des strings"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'une Promise en JavaScript ?",choices:["Une variable globale","Un objet représentant l'état futur d'une opération asynchrone","Une boucle spéciale","Un type de tableau"],correct:1,diff:"intermédiaire"},
+    {q:"Que fait `Array.map()` ?",choices:["Filtre un tableau","Crée un nouveau tableau avec les résultats d'une fonction appliquée à chaque élément","Trie un tableau","Réduit un tableau à une valeur"],correct:1,diff:"débutant"},
+    {q:"Quelle est la différence entre `==` et `===` ?",choices:["Aucune","=== vérifie aussi le type","== est plus strict","=== est plus lent"],correct:1,diff:"débutant"},
+    {q:"Qu'est-ce que la déstructuration en ES6 ?",choices:["La suppression d'objets","Extraire des valeurs d'un objet ou tableau dans des variables distinctes","Un pattern de design","La fusion de deux objets"],correct:1,diff:"intermédiaire"},
+    {q:"Que fait `async/await` ?",choices:["Accélère le code","Simplifie la gestion des Promises de manière synchrone en apparence","Crée des threads","Gère les erreurs automatiquement"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'une closure (fermeture) en JavaScript ?",choices:["Une boucle infinie","Une fonction qui se souvient des variables de son contexte de création","Une erreur de syntaxe","Un module ES6"],correct:1,diff:"avancé"},
+    {q:"Que retourne `[1,2,3].reduce((acc, val) => acc + val, 0)` ?",choices:["[1,2,3]","0","6","3"],correct:2,diff:"intermédiaire"},
+    {q:"Qu'est-ce que le hoisting en JavaScript ?",choices:["Un système de cache","Le déplacement des déclarations au sommet de leur portée lors de la compilation","Une méthode de tri","Un pattern d'événements"],correct:1,diff:"avancé"},
+    {q:"Que fait `Object.assign({}, obj1, obj2)` ?",choices:["Compare deux objets","Fusionne obj1 et obj2 dans un nouvel objet","Supprime les propriétés communes","Clone profondément un objet"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'un module ES6 ?",choices:["Un fichier PHP","Un système d'import/export pour organiser le code JS en fichiers réutilisables","Un framework","Un type de commentaire"],correct:1,diff:"intermédiaire"},
+    {q:"Que fait la méthode `Array.filter()` ?",choices:["Modifie le tableau original","Retourne un nouveau tableau avec les éléments qui passent un test","Trie le tableau","Aplatit le tableau"],correct:1,diff:"débutant"},
+  ],
+  "PHP & MySQL": [
+    {q:"Que signifie PHP ?",choices:["Personal Home Page (origine) / PHP Hypertext Preprocessor","Programming Hypertext Protocol","Page Hosting Platform","Public HTML Page"],correct:0,diff:"débutant"},
+    {q:"Comment afficher du texte en PHP ?",choices:["console.log()","print() ou echo","printf uniquement","document.write()"],correct:1,diff:"débutant"},
+    {q:"Quelle est la bonne syntaxe pour une variable en PHP ?",choices:["var nom","$nom","let nom","nom$"],correct:1,diff:"débutant"},
+    {q:"Qu'est-ce que PDO en PHP ?",choices:["Un framework PHP","PHP Data Objects, une interface d'accès aux bases de données","Un débogueur","Un système de templates"],correct:1,diff:"intermédiaire"},
+    {q:"Quelle requête SQL sélectionne tous les enregistrements d'une table ?",choices:["GET * FROM table","SELECT ALL table","SELECT * FROM table","FETCH * FROM table"],correct:2,diff:"débutant"},
+    {q:"Que fait `mysqli_real_escape_string()` ?",choices:["Encode une string en base64","Échappe les caractères spéciaux pour prévenir les injections SQL","Crypte un mot de passe","Convertit en UTF-8"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'une injection SQL ?",choices:["Une technique d'optimisation","Une faille de sécurité permettant d'exécuter du SQL malveillant via les entrées","Une méthode de sauvegarde","Un type de jointure"],correct:1,diff:"intermédiaire"},
+    {q:"Quelle fonction PHP permet de hasher un mot de passe de façon sécurisée ?",choices:["md5()","sha1()","password_hash()","crypt()"],correct:2,diff:"intermédiaire"},
+    {q:"Que fait `JOIN` dans une requête SQL ?",choices:["Duplique une table","Combine des lignes de deux tables selon une condition","Trie les résultats","Supprime des doublons"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'une session PHP ?",choices:["Un cookie permanent","Un mécanisme de stockage serveur pour conserver des données entre les requêtes d'un utilisateur","Un type de formulaire","Un fichier de log"],correct:1,diff:"intermédiaire"},
+    {q:"Que signifie CRUD ?",choices:["Create, Read, Update, Delete","Copy, Rename, Upload, Download","Connect, Request, Update, Disconnect","Aucune de ces réponses"],correct:0,diff:"débutant"},
+    {q:"Quelle clause SQL filtre les résultats ?",choices:["ORDER BY","GROUP BY","WHERE","HAVING"],correct:2,diff:"débutant"},
+  ],
+  "React et composants": [
+    {q:"Qu'est-ce que JSX ?",choices:["Un langage de programmation","Une extension de syntaxe permettant d'écrire du HTML dans du JavaScript","Un framework CSS","Un outil de build"],correct:1,diff:"débutant"},
+    {q:"Comment passe-t-on des données à un composant enfant en React ?",choices:["Via les states","Via les props","Via les contextes uniquement","Via les refs"],correct:1,diff:"débutant"},
+    {q:"Que fait le hook `useState` ?",choices:["Gère les effets de bord","Déclare une variable d'état réactive dans un composant fonctionnel","Crée un contexte","Optimise les performances"],correct:1,diff:"débutant"},
+    {q:"Que fait le hook `useEffect` ?",choices:["Gère l'état local","Exécute des effets de bord après le rendu (fetch, abonnements, DOM)","Mémoïse une valeur","Crée une référence"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce que le virtual DOM en React ?",choices:["Un DOM plus rapide","Une représentation en mémoire du DOM réel permettant de minimiser les mises à jour","Un outil de débogage","Un composant spécial"],correct:1,diff:"intermédiaire"},
+    {q:"Comment éviter de recréer une fonction à chaque rendu ?",choices:["useMemo","useCallback","useRef","useState"],correct:1,diff:"avancé"},
+    {q:"Qu'est-ce que le Context API ?",choices:["Une API REST","Un moyen de partager des données dans l'arbre de composants sans prop drilling","Un outil de routing","Un système de cache"],correct:1,diff:"intermédiaire"},
+    {q:"Que signifie 'lifting state up' en React ?",choices:["Remonter l'état dans un composant parent pour le partager entre enfants","Supprimer un state","Optimiser un state","Persister un state"],correct:0,diff:"intermédiaire"},
+    {q:"Quel outil est recommandé pour créer une application React rapidement ?",choices:["Create React App ou Vite","Django","Laravel","WordPress"],correct:0,diff:"débutant"},
+    {q:"Qu'est-ce que la réconciliation (reconciliation) en React ?",choices:["La gestion des erreurs","Le processus de comparaison entre l'ancien et le nouveau virtual DOM","La gestion des formulaires","Le routing"],correct:1,diff:"avancé"},
+  ],
+  "Git & versionning": [
+    {q:"Que fait la commande `git init` ?",choices:["Clone un dépôt","Initialise un nouveau dépôt Git local","Envoie les modifications","Met à jour Git"],correct:1,diff:"débutant"},
+    {q:"Quelle commande envoie les commits locaux vers un dépôt distant ?",choices:["git pull","git fetch","git push","git send"],correct:2,diff:"débutant"},
+    {q:"Que signifie 'merge' en Git ?",choices:["Supprimer une branche","Fusionner deux branches","Créer une branche","Annuler un commit"],correct:1,diff:"débutant"},
+    {q:"Quelle est la différence entre `git merge` et `git rebase` ?",choices:["Aucune","merge conserve l'historique des branches, rebase réécrit l'historique linéairement","rebase est plus lent","merge est réservé aux branches principales"],correct:1,diff:"avancé"},
+    {q:"Que fait `git stash` ?",choices:["Supprime les modifications","Sauvegarde temporairement les modifications non commitées","Crée un tag","Fusionne les branches"],correct:1,diff:"intermédiaire"},
+    {q:"Que contient un fichier `.gitignore` ?",choices:["Les commandes Git","La liste des fichiers et dossiers à exclure du suivi","Les informations de l'auteur","Les branches distantes"],correct:1,diff:"débutant"},
+    {q:"Qu'est-ce qu'un 'pull request' ?",choices:["Une demande de téléchargement","Une demande de fusion d'une branche vers une autre, avec revue de code","Une commande Git","Un type de commit"],correct:1,diff:"intermédiaire"},
+    {q:"Quelle commande annule le dernier commit en conservant les modifications ?",choices:["git revert HEAD","git reset HEAD~1 --soft","git checkout HEAD~1","git undo"],correct:1,diff:"avancé"},
+  ],
+  "API REST": [
+    {q:"Que signifie REST ?",choices:["Representational State Transfer","Remote Execution Service Transfer","Real-time Event Streaming Technology","Aucune de ces réponses"],correct:0,diff:"débutant"},
+    {q:"Quel code HTTP indique une ressource créée avec succès ?",choices:["200","301","201","404"],correct:2,diff:"débutant"},
+    {q:"Quelle méthode HTTP est utilisée pour mettre à jour partiellement une ressource ?",choices:["PUT","POST","DELETE","PATCH"],correct:3,diff:"intermédiaire"},
+    {q:"Qu'est-ce que JSON ?",choices:["Un langage de programmation","Un format léger d'échange de données textuelles","Un protocole réseau","Un framework"],correct:1,diff:"débutant"},
+    {q:"Qu'est-ce qu'un endpoint d'API ?",choices:["Un serveur","L'URL spécifique à laquelle une ressource API est accessible","Un protocole d'authentification","Un format de réponse"],correct:1,diff:"débutant"},
+    {q:"Que signifie CORS ?",choices:["Cross-Origin Resource Sharing","Copy Of Remote Source","Central Object Routing System","Aucune de ces réponses"],correct:0,diff:"intermédiaire"},
+    {q:"Qu'est-ce que JWT ?",choices:["Java Web Technology","JSON Web Token, un format compact pour l'authentification","JavaScript Worker Thread","Joint Verification Token"],correct:1,diff:"intermédiaire"},
+    {q:"Quelle méthode HTTP supprime une ressource ?",choices:["REMOVE","POST","DELETE","CLEAR"],correct:2,diff:"débutant"},
+    {q:"Qu'est-ce que l'idempotence dans une API REST ?",choices:["La capacité à répondre rapidement","Une opération qui produit le même résultat peu importe combien de fois elle est appelée","La gestion du cache","L'authentification par token"],correct:1,diff:"avancé"},
+  ],
+  "Architecture logicielle": [
+    {q:"Que signifie MVC ?",choices:["Module View Controller","Model View Controller","Model Validation Component","Multi-Value Component"],correct:1,diff:"débutant"},
+    {q:"Qu'est-ce que le principe SOLID ?",choices:["Un framework","Un ensemble de 5 principes de conception orientée objet","Un langage de programmation","Un pattern architectural"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'une architecture microservices ?",choices:["Une application monolithique","Une application composée de petits services indépendants et déployables séparément","Un framework front-end","Un protocole réseau"],correct:1,diff:"intermédiaire"},
+    {q:"Que représente le 'S' dans SOLID ?",choices:["Single Responsibility Principle","Source Code Principle","Synchronization Rule","Strict Object Design"],correct:0,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'un pattern de conception (design pattern) ?",choices:["Un thème visuel","Une solution réutilisable à un problème récurrent de conception logicielle","Un framework CSS","Un protocole réseau"],correct:1,diff:"intermédiaire"},
+  ],
+  "Design patterns": [
+    {q:"Quel pattern garantit qu'une classe n'a qu'une seule instance ?",choices:["Factory","Observer","Singleton","Decorator"],correct:2,diff:"intermédiaire"},
+    {q:"Que fait le pattern Observer ?",choices:["Crée des objets","Définit une dépendance entre objets : quand l'un change, les autres sont notifiés","Simplifie une interface","Ajoute des responsabilités dynamiquement"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce que le pattern Factory ?",choices:["Détruit des objets","Délègue la création d'objets à des sous-classes ou méthodes dédiées","Fusionne des classes","Trie des collections"],correct:1,diff:"intermédiaire"},
+    {q:"Le pattern MVC appartient à quelle catégorie ?",choices:["Créationnel","Structural","Comportemental","Architectural"],correct:3,diff:"avancé"},
+  ],
+  "Tests unitaires": [
+    {q:"Qu'est-ce qu'un test unitaire ?",choices:["Un test d'interface utilisateur","Un test qui vérifie le comportement d'une unité de code isolée","Un test de performance","Un test de sécurité"],correct:1,diff:"débutant"},
+    {q:"Que signifie TDD ?",choices:["Test-Driven Development","Technical Design Document","Type Definition Directive","Aucune de ces réponses"],correct:0,diff:"intermédiaire"},
+    {q:"Dans TDD, quel est l'ordre des étapes ?",choices:["Code → Test → Refacto","Test (échoue) → Code → Refacto","Refacto → Test → Code","Code → Refacto → Test"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'un mock en tests unitaires ?",choices:["Un vrai composant","Un objet simulé remplaçant une dépendance pour isoler le test","Un rapport de test","Un type d'assertion"],correct:1,diff:"intermédiaire"},
+    {q:"Quel outil JavaScript est couramment utilisé pour les tests unitaires ?",choices:["Webpack","Jest ou Vitest","Babel","ESLint"],correct:1,diff:"débutant"},
+  ],
+  "CI/CD & DevOps": [
+    {q:"Que signifie CI/CD ?",choices:["Code Integration / Code Deployment","Continuous Integration / Continuous Deployment","Central Interface / Central Design","Aucune de ces réponses"],correct:1,diff:"débutant"},
+    {q:"Qu'est-ce que Docker ?",choices:["Un langage de programmation","Un outil de conteneurisation permettant d'isoler des applications","Un système d'exploitation","Un serveur web"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'un pipeline CI/CD ?",choices:["Un réseau de serveurs","Une suite automatisée d'étapes : build, test, déploiement","Un protocole réseau","Un type de base de données"],correct:1,diff:"intermédiaire"},
+    {q:"Que fait `docker-compose` ?",choices:["Compile du code","Orchestre plusieurs conteneurs Docker depuis un fichier YAML","Déploie sur AWS","Gère les branches Git"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce que Kubernetes ?",choices:["Un langage de script","Un système d'orchestration de conteneurs à grande échelle","Un outil de monitoring","Un framework JavaScript"],correct:1,diff:"avancé"},
+  ],
+  "Base de données avancées": [
+    {q:"Quelle est la différence entre une base SQL et NoSQL ?",choices:["Aucune","SQL est relationnel avec schéma fixe, NoSQL est non-relationnel et flexible","NoSQL est plus rapide dans tous les cas","SQL est obsolète"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce qu'un index en base de données ?",choices:["Un numéro de ligne","Une structure qui accélère les recherches sur une ou plusieurs colonnes","Une clé primaire","Un type de jointure"],correct:1,diff:"intermédiaire"},
+    {q:"Que signifie ACID en base de données ?",choices:["Advanced Content Integration Data","Atomicity, Consistency, Isolation, Durability","Automated Content Insertion Design","Aucune de ces réponses"],correct:1,diff:"avancé"},
+    {q:"Qu'est-ce qu'une clé étrangère (FOREIGN KEY) ?",choices:["Un mot de passe de base de données","Une colonne référençant la clé primaire d'une autre table","Un index unique","Un type de données"],correct:1,diff:"intermédiaire"},
+    {q:"Qu'est-ce que MongoDB ?",choices:["Une base SQL","Une base NoSQL orientée documents JSON","Un ORM","Un serveur web"],correct:1,diff:"débutant"},
+  ]
+};
+
+function generateQCM() {
+  const formation = document.getElementById('qcm-formation').value;
+  const theme = document.getElementById('qcm-theme').value;
+  const nb = parseInt(document.getElementById('qcm-nb').value) || 5;
+  const diff = document.getElementById('qcm-diff').value;
+  const type = document.getElementById('qcm-type').value;
+
+  if(!formation || !theme) { showToast('Choisir une formation et un thème'); return; }
+
+  const body = document.getElementById('qcm-body');
+  const titleEl = document.getElementById('qcm-result-title');
+  const subEl = document.getElementById('qcm-result-subtitle');
+
+  titleEl.textContent = `QCM — ${theme}`;
+  subEl.textContent = `${nb} questions · Niveau ${diff}`;
+
+  body.innerHTML = `
+    <div class="ai-loader">
+      <div class="loader-dots">
+        <div class="loader-dot"></div><div class="loader-dot"></div><div class="loader-dot"></div>
+      </div>
+      <div class="ai-loader-text">Sélection des questions…</div>
+      <div class="ai-loader-sub">Adapté au niveau ${diff}</div>
+    </div>`;
+
+  setTimeout(() => {
+    const pool = QUESTION_BANK[theme] || [];
+    if(pool.length === 0) {
+      body.innerHTML = `<div class="ai-empty"><svg viewBox="0 0 16 16"><path d="M8 2v8M8 12v1"/><circle cx="8" cy="8" r="6" fill="none" stroke="currentColor"/></svg><p>Thème non disponible dans la banque de questions.</p></div>`;
+      return;
+    }
+
+    // Filtrer par difficulté si possible, sinon prendre tout
+    let filtered = pool.filter(q => !q.diff || q.diff === diff);
+    if(filtered.length < Math.min(nb, 3)) filtered = pool; // fallback si pas assez
+
+    // Pour vrai/faux : ne garder que 2 choix
+    let questions = filtered
+      .sort(() => Math.random() - 0.5)
+      .slice(0, nb)
+      .map(q => {
+        if(type === 'vrai/faux') {
+          return { q: q.q, choices: ['Vrai', 'Faux'], correct: q.correct === 0 ? 0 : 1 };
+        }
+        return { q: q.q, choices: q.choices, correct: q.correct };
+      });
+
+    lastQCM = { theme, nb, diff, questions };
+    renderQCM(questions);
+    document.getElementById('btn-export-qcm').style.display = 'flex';
+    document.getElementById('stat-qcm').textContent =
+      parseInt(document.getElementById('stat-qcm').textContent) + 1;
+  }, 600);
+}
+
+function renderQCM(questions) {
+  const body = document.getElementById('qcm-body');
+  // Stocker les réponses de l'apprenant
+  window._qcmAnswers = new Array(questions.length).fill(null);
+
+  body.innerHTML = `
+    <div id="qcm-score-block"></div>
+    ` + questions.map((q, qi) => `
+    <div class="question-block" id="qblock-${qi}">
+      <div class="question-header">
+        <div class="q-num">${qi+1}</div>
+        <div class="q-text">${esc(q.q)}</div>
+      </div>
+      <div class="question-choices" id="qchoices-${qi}">
+        ${q.choices.map((c, ci) => `
+          <div class="choice" id="qc-${qi}-${ci}" onclick="answerQCM(${qi},${ci},${q.correct})">
+            <div class="choice-letter">${String.fromCharCode(65+ci)}</div>
+            <span>${esc(c.replace(/^[A-D\.\s]*/,'').trim() || c)}</span>
+            <span class="choice-feedback"></span>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function answerQCM(qi, ci, correct) {
+  // Si déjà répondu à cette question, ignorer
+  if(window._qcmAnswers[qi] !== null) return;
+  window._qcmAnswers[qi] = ci;
+
+  const allChoices = document.querySelectorAll(`#qchoices-${qi} .choice`);
+
+  allChoices.forEach((el, idx) => {
+    el.classList.add('answered');
+    if(idx === ci && ci === correct) {
+      // Bonne réponse choisie
+      el.classList.add('chosen-correct');
+      el.querySelector('.choice-feedback').textContent = '✓';
+    } else if(idx === ci && ci !== correct) {
+      // Mauvaise réponse choisie
+      el.classList.add('chosen-wrong');
+      el.querySelector('.choice-feedback').textContent = '✗';
+    } else if(idx === correct) {
+      // Révéler la bonne réponse
+      el.classList.add('reveal-correct');
+      el.querySelector('.choice-feedback').textContent = '✓';
+    }
+  });
+
+  // Mise à jour du score en temps réel
+  updateQCMScore();
+}
+
+function updateQCMScore() {
+  if(!lastQCM) return;
+  const answered = window._qcmAnswers.filter(a => a !== null).length;
+  const correct = window._qcmAnswers.filter((a, i) => a === lastQCM.questions[i]?.correct).length;
+  const total = lastQCM.questions.length;
+  const pct = Math.round(correct / total * 100);
+
+  const block = document.getElementById('qcm-score-block');
+  if(!block || answered === 0) return;
+
+  const cls = pct === 100 ? 'perfect' : pct >= 60 ? 'good' : 'low';
+  const fillColor = pct === 100 ? 'var(--success)' : pct >= 60 ? '#f59e0b' : '#c0392b';
+  const msg = answered < total
+    ? `${answered}/${total} réponses · ${correct} correcte${correct>1?'s':''}`
+    : pct === 100
+      ? `Parfait ! ${correct}/${total} — 100%`
+      : pct >= 60
+        ? `${correct}/${total} correctes — ${pct}% — Bien joué !`
+        : `${correct}/${total} correctes — ${pct}% — Révisez ce thème`;
+
+  block.innerHTML = `
+    <div class="qcm-score-bar ${cls}">
+      <span>${msg}</span>
+      <div class="score-progress">
+        <div class="score-progress-fill" style="width:${answered<total?Math.round(answered/total*100):pct}%;background:${fillColor}"></div>
+      </div>
+    </div>`;
+}
+
+function exportQCM() {
+  if(!lastQCM) return;
+  let txt = `QCM — ${lastQCM.theme}\nNiveau : ${lastQCM.diff} — ${lastQCM.nb} questions\nGénéré par Real Portage / Espace Formateur\n\n`;
+  lastQCM.questions.forEach((q,i) => {
+    txt += `${i+1}. ${q.q}\n`;
+    q.choices.forEach((c,ci) => txt += `   ${ci===q.correct?'[✓]':'   '} ${c}\n`);
+    txt += '\n';
+  });
+  const blob = new Blob([txt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `QCM_${lastQCM.theme.replace(/\s+/g,'_')}.txt`;
+  a.click();
+  showToast('QCM exporté en .txt');
+}
+
+/* 
+   UTILS
+ */
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function fmtDateFR(d) {
+  if(!d) return '';
+  const [y,m,day] = d.split('-');
+  return `${day}/${m}/${y}`;
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* 
+   INIT
+*/
+function pfSeedCatalogue() {
+  const defaults = [
+    { id:1, nom:"CV et Recherche d'emploi", rncp:'RNCP Niveau 4', centre:'Real Conseil Amiens', niveau:'Bac (Niveau 4)', debut:'2026-03-12', fin:'2026-05-20', duree:485, tarif:1800, categorie:'emploi', financement:['CPF','France Travail'], publiee:true },
+    { id:2, nom:'Développeur Web et Web Mobile (DWWM)', rncp:'RNCP Niveau 5', centre:'Real Conseil Amiens', niveau:'Bac+2 (Niveau 5)', debut:'2026-01-05', fin:'2026-07-18', duree:840, tarif:7500, categorie:'dev', financement:['CPF','France Travail','OPCO'], publiee:true },
+    { id:3, nom:"Concepteur Développeur d'Applications (CDA)", rncp:'RNCP Niveau 6', centre:'Real Conseil Lille', niveau:'Bac+3 (Niveau 6)', debut:'2026-02-10', fin:'2026-09-30', duree:1200, tarif:9200, categorie:'dev', financement:['CPF','OPCO'], publiee:true },
+    { id:4, nom:'React & TypeScript — Développeur Front-end', rncp:'', centre:'Real Portage Paris', niveau:'Bac+2 (Niveau 5)', debut:'2026-03-01', fin:'2026-06-30', duree:420, tarif:5800, categorie:'dev', financement:['CPF','France Travail'], publiee:true },
+    { id:5, nom:'Data Analyst Python & SQL', rncp:'RNCP Niveau 5', centre:'Real Portage Paris', niveau:'Bac+2 (Niveau 5)', debut:'2026-04-15', fin:'2026-10-15', duree:600, tarif:6500, categorie:'data', financement:['CPF','OPCO'], publiee:true }
+  ];
+  localStorage.setItem('rp_catalogue', JSON.stringify(defaults));
+}
+
+window.onload = () => {
+  sessions = loadCalendar();
+  renderDashboard();
+  renderModules();
+  renderCalendar();
+  pfInitListeners();
+};
+
+/* ── Sync calendrier partagé ── */
+function _fmtSyncCalendar() {
+  const raw = localStorage.getItem(RP_CAL_KEY) || '[]';
+  if (raw !== _fmtCalSnap) {
+    _fmtCalSnap = raw;
+    sessions = loadCalendar();
+    const page = document.getElementById('page-planning');
+    if (page && page.classList.contains('active')) renderCalendar();
+    renderDashboard();
+    const stat = document.getElementById('stat-sessions');
+    if (stat) stat.textContent = sessions.length;
+  }
+}
+let _fmtCalSnap = null;
+
+/* 1) Polling toutes les 1s */
+setInterval(_fmtSyncCalendar, 1000);
+
+/* 2) Dès que l'onglet redevient visible (switch depuis admin/apprenant) */
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) _fmtSyncCalendar();
+});
+</script>
+</body>
+</html>
