@@ -1374,8 +1374,10 @@ function loadCalendar() {
   localStorage.setItem(RP_CAL_KEY, JSON.stringify(RP_CAL_DEFAULTS));
   return RP_CAL_DEFAULTS.map(s => ({...s}));
 }
+const _rpBC = ('BroadcastChannel' in window) ? new BroadcastChannel('rp_calendar_sync') : null;
 function saveCalendar() {
   localStorage.setItem(RP_CAL_KEY, JSON.stringify(sessions));
+  if (_rpBC) _rpBC.postMessage('upd');
 }
 let sessions = loadCalendar();
 let uploadedFiles = [];
@@ -2506,13 +2508,17 @@ function _fmtSyncCalendar() {
 }
 let _fmtCalSnap = null;
 
-/* 1) Polling toutes les 1s */
+/* 1) BroadcastChannel — instantané entre onglets (même navigateur) */
+if (_rpBC) _rpBC.onmessage = () => _fmtSyncCalendar();
+
+/* 2) storage event — fonctionne sur HTTPS (GitHub Pages) */
+window.addEventListener('storage', e => { if (e.key === RP_CAL_KEY) _fmtSyncCalendar(); });
+
+/* 3) Polling 1s — filet de sécurité */
 setInterval(_fmtSyncCalendar, 1000);
 
-/* 2) Dès que l'onglet redevient visible (switch depuis admin/apprenant) */
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) _fmtSyncCalendar();
-});
+/* 4) Dès que l'onglet redevient visible */
+document.addEventListener('visibilitychange', () => { if (!document.hidden) _fmtSyncCalendar(); });
 </script>
 </body>
 </html>

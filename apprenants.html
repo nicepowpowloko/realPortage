@@ -1638,13 +1638,19 @@ function _appSyncCalendar() {
 }
 let _appCalSnap = null;
 
-/* 1) Polling toutes les 1s */
+const _rpBC = ('BroadcastChannel' in window) ? new BroadcastChannel('rp_calendar_sync') : null;
+
+/* 1) BroadcastChannel — instantané entre onglets (même navigateur) */
+if (_rpBC) _rpBC.onmessage = () => _appSyncCalendar();
+
+/* 2) storage event — fonctionne sur HTTPS (GitHub Pages) */
+window.addEventListener('storage', e => { if (e.key === 'rp_calendar') _appSyncCalendar(); });
+
+/* 3) Polling 1s — filet de sécurité */
 setInterval(_appSyncCalendar, 1000);
 
-/* 2) Dès que l'onglet redevient visible (switch depuis formateur/admin) */
-document.addEventListener('visibilitychange', () => {
-  if (!document.hidden) _appSyncCalendar();
-});
+/* 4) Dès que l'onglet redevient visible */
+document.addEventListener('visibilitychange', () => { if (!document.hidden) _appSyncCalendar(); });
 </script>
 </body>
 </html>
