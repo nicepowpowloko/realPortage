@@ -870,65 +870,124 @@ function exportPDF() {
     const plaq = document.getElementById('plaquette');
     const clone = plaq.cloneNode(true);
 
-    // Forcer les couleurs inline sur les éléments critiques
+    // Forcer les couleurs et tailles inline sur les éléments critiques
     const force = (sel, css) => clone.querySelectorAll(sel).forEach(e => {
       Object.assign(e.style, css);
     });
-    force('.ph', {background:'#1a2744', backgroundImage:'linear-gradient(135deg,#1a2744 0%,#243460 50%,#5a1529 100%)'});
-    force('.pprofil',  {background:'#7B1E3A', backgroundColor:'#7B1E3A'});
-    force('.pdeb',     {background:'#1a2744', backgroundColor:'#1a2744'});
-    force('.pfooter',  {background:'#1a2744', backgroundColor:'#1a2744'});
-    force('.pside',    {background:'#f5f0e8', backgroundColor:'#f5f0e8'});
-    force('.pavis',    {background:'#f5f0e8', backgroundColor:'#f5f0e8'});
-    force('.phand',    {background:'#1a2744', backgroundColor:'#1a2744'});
-    force('.psec-title',{background:'#7B1E3A', backgroundColor:'#7B1E3A', color:'#fff'});
-    force('.psi',      {background:'#ffffff', backgroundColor:'#ffffff'});
-    force('.pavis-card',{background:'#ffffff', backgroundColor:'#ffffff'});
+    force('.ph',        {background:'linear-gradient(135deg,#1a2744 0%,#243460 50%,#5a1529 100%)'});
+    force('.pprofil',   {background:'#7B1E3A'});
+    force('.pdeb',      {background:'#1a2744'});
+    force('.pfooter',   {background:'#1a2744'});
+    force('.pside',     {background:'#f5f0e8'});
+    force('.pavis',     {background:'#f5f0e8'});
+    force('.phand',     {background:'#1a2744'});
+    force('.psec-title',{background:'#7B1E3A', color:'#fff'});
+    force('.psi',       {background:'#ffffff'});
+    force('.pavis-card',{background:'#ffffff'});
     force('.ph-logo-txt',{color:'#ffffff'});
-    force('.ph-nom',   {color:'#ffffff'});
-    force('.ph-rncp',  {color:'#e8a0b0'});
-    force('.ph-adr',   {color:'rgba(255,255,255,0.5)'});
-    force('.ph-badge', {background:'#ffffff', backgroundColor:'#ffffff', color:'#7B1E3A'});
+    force('.ph-nom',    {color:'#ffffff'});
+    force('.ph-rncp',   {color:'#e8a0b0'});
+    force('.ph-logo-sub',{color:'rgba(255,255,255,0.5)'});
+    force('.ph-adr',    {color:'rgba(255,255,255,0.5)'});
+    force('.ph-badge',  {background:'#ffffff', color:'#7B1E3A', border:'2px solid #7B1E3A'});
+    force('.pprofil-title',{color:'rgba(255,255,255,0.7)'});
+    force('.pprofil-item', {color:'#ffffff'});
+    force('.pdeb-title',   {color:'rgba(255,255,255,0.7)'});
+    force('.pdeb-item',    {color:'#ffffff'});
+    force('.pavis-title',  {color:'#1a2744'});
+    force('.pavis-stars',  {color:'#f59e0b'});
+    force('.pccp-lbl',     {color:'#7B1E3A'});
+    force('.psi-val strong',{color:'#7B1E3A'});
+    // Contraindre les SVGs inline pour éviter les grands carrés noirs
+    force('.pcheck svg',   {width:'8px', height:'8px', stroke:'#7B1E3A', fill:'none', strokeWidth:'2.5', display:'block', flexShrink:'0'});
+    force('.psi-lbl svg',  {width:'9px', height:'9px', fill:'#1a2744', opacity:'0.6', display:'block', flexShrink:'0'});
+    force('.pfi svg',      {width:'11px', height:'11px', fill:'rgba(255,255,255,0.5)', display:'block', flexShrink:'0'});
     const span = clone.querySelector('.ph-logo-txt span');
     if (span) span.style.color = '#e8a0b0';
 
     const nom = val('F_nom') || 'plaquette';
-    const filename = nom.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
 
     const win = window.open('','_blank','width=870,height=720');
     if (!win) { ov.classList.remove('on'); alert('Popup bloquée — autorisez les popups.'); return; }
 
     win.document.write(`<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
 <title>${x(nom)}</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
-html,body{background:#fff;font-family:'DM Sans',sans-serif}
+html,body{background:#fff;font-family:'DM Sans',sans-serif;font-size:14px}
+/* ─ Plaquette container ─ */
+#plaquette{width:794px;max-width:100%;background:#fff;font-family:'DM Sans',sans-serif;overflow:hidden}
+/* ─ Header ─ */
+.ph{background:linear-gradient(135deg,#1a2744 0%,#243460 50%,#5a1529 100%)!important;padding:20px 22px 16px;display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center;position:relative;overflow:hidden}
+.ph-logo{display:flex;flex-direction:column;gap:2px}
+.ph-logo-txt{font-family:'DM Serif Display',serif;font-size:22px;color:#fff;line-height:1}
+.ph-logo-txt span{color:#e8a0b0}
+.ph-logo-sub{font-size:8px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.ph-right{text-align:right}
+.ph-rncp{font-size:8px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#e8a0b0;margin-bottom:3px}
+.ph-nom{font-family:'DM Serif Display',serif;font-size:20px;color:#fff;line-height:1.15;font-style:italic}
+.ph-adr{font-size:8px;color:rgba(255,255,255,.5);margin-top:5px;letter-spacing:.5px}
+.ph-badge{position:absolute;top:9px;right:9px;background:#fff;border:2px solid #7B1E3A;border-radius:5px;padding:3px 7px;font-size:7px;font-weight:700;color:#7B1E3A;letter-spacing:.5px;text-transform:uppercase}
+/* ─ Body ─ */
 .pbody{display:grid;grid-template-columns:1fr 195px}
+.pmain{padding:16px 18px}
+.pside{background:#f5f0e8!important;padding:14px 12px;border-left:1px solid #e8e0d0;display:flex;flex-direction:column;gap:9px}
+/* ─ Sections ─ */
+.psec{margin-bottom:14px}
+.psec-title{background:#7B1E3A!important;color:#fff!important;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 9px;border-radius:3px;display:inline-block;margin-bottom:8px}
+/* ─ Objectifs ─ */
+.pobjs{display:flex;flex-direction:column;gap:5px}
+.pobj{display:flex;align-items:flex-start;gap:7px;font-size:10px;color:#1a1a1a}
+.pcheck{width:16px;height:16px;min-width:16px;flex-shrink:0;border:2px solid #7B1E3A;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.pcheck svg{width:8px!important;height:8px!important;min-width:8px;min-height:8px;max-width:8px;max-height:8px;stroke:#7B1E3A;fill:none;stroke-width:2.5;display:block}
+/* ─ Listes ─ */
+.plist{display:flex;flex-direction:column;gap:3px;list-style:none;padding-left:0}
+.plist li{display:flex;align-items:flex-start;gap:6px;font-size:10px;line-height:1.4;color:#1a1a1a}
+.plist li::before{content:'';width:5px;height:5px;min-width:5px;background:#7B1E3A!important;border-radius:50%;flex-shrink:0;margin-top:4px;display:inline-block}
+/* ─ CCP ─ */
+.pccp{display:flex;align-items:baseline;gap:5px;font-size:10px;line-height:1.5}
+.pccp-lbl{font-weight:700;color:#7B1E3A;font-size:9px;min-width:34px;flex-shrink:0;text-transform:uppercase;letter-spacing:.3px}
+/* ─ Sidebar cards ─ */
+.psi{background:#ffffff!important;border-radius:7px;padding:7px 9px;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.psi-lbl{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#1a2744;margin-bottom:2px;display:flex;align-items:center;gap:3px}
+.psi-lbl svg{width:9px!important;height:9px!important;min-width:9px;min-height:9px;max-width:9px;max-height:9px;fill:#1a2744;opacity:.6;flex-shrink:0;display:block}
+.psi-val{font-size:10px;color:#1a1a1a;line-height:1.4}
+.psi-val strong{font-weight:600;color:#7B1E3A}
+.phand{background:#1a2744!important;border-radius:7px;padding:8px 9px;font-size:8px;color:rgba(255,255,255,.8);line-height:1.4;text-align:center}
+.phand strong{display:block;color:#fff;font-size:8px;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+/* ─ Bottom ─ */
 .pbottom{display:grid;grid-template-columns:1fr 1fr;border-top:2px solid #e8e0d0}
-.plist li{display:flex;align-items:flex-start;gap:6px;font-size:10px;line-height:1.4}
-.plist li::before{content:'';width:5px;height:5px;background:#7B1E3A!important;border-radius:50%;flex-shrink:0;margin-top:4px;display:inline-block}
-.pprofil-item::before{content:'';width:4px;height:4px;background:rgba(255,255,255,.5)!important;border-radius:50%;flex-shrink:0;display:inline-block}
+.pprofil{background:#7B1E3A!important;padding:11px 14px}
+.pprofil-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:7px}
+.pprofil-item{display:flex;align-items:center;gap:5px;font-size:9px;color:#fff;font-weight:500;margin-bottom:3px}
+.pprofil-item::before{content:'';width:4px;height:4px;min-width:4px;background:rgba(255,255,255,.5)!important;border-radius:50%;flex-shrink:0;display:inline-block}
+.pdeb{background:#1a2744!important;padding:11px 14px}
+.pdeb-title{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:7px}
+.pdeb-item{display:flex;align-items:center;gap:5px;font-size:9px;color:#fff;margin-bottom:3px}
 .pdeb-item::before{content:'→';color:#9cc5f0;flex-shrink:0;font-size:9px}
-.pcheck svg{stroke:#7B1E3A;fill:none;stroke-width:2.5}
+/* ─ Avis ─ */
+.pavis{background:#f5f0e8!important;border-top:1px solid #e8e0d0;padding:11px 14px}
+.pavis-title{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#1a2744;margin-bottom:7px}
 .pavis-grid{display:flex;gap:7px}
-.pside{display:flex;flex-direction:column;gap:9px}
-.pobjs,.pccp,.pfi{display:flex;align-items:flex-start;gap:7px}
-.pfi{align-items:center;gap:5px}
-.ph{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:center}
-.pfooter{display:flex;align-items:center;justify-content:space-between}
+.pavis-card{background:#ffffff!important;border-radius:7px;padding:7px 9px;flex:1;border-left:3px solid #7B1E3A;box-shadow:0 1px 4px rgba(0,0,0,.05)}
+.pavis-stars{color:#f59e0b;font-size:11px;margin-bottom:2px}
+.pavis-text{font-size:9px;color:#1a1a1a;font-style:italic;line-height:1.4;margin-bottom:2px}
+.pavis-author{font-size:8px;color:#6b6b6b;font-weight:500}
+/* ─ Footer ─ */
+.pfooter{background:#1a2744!important;padding:9px 18px;display:flex;align-items:center;justify-content:space-between}
+.pfi{display:flex;align-items:center;gap:5px;font-size:9px;color:rgba(255,255,255,.75)}
+.pfi svg{width:11px!important;height:11px!important;min-width:11px;min-height:11px;max-width:11px;max-height:11px;fill:rgba(255,255,255,.5)!important;flex-shrink:0;display:block}
+/* ─ Sécurité globale SVG ─ */
+#plaquette svg{overflow:visible}
 @page{size:A4 portrait;margin:6mm}
 </style>
 </head><body>${clone.outerHTML}
 <script>
   (function(){
-    var lnk = document.createElement('link');
-    lnk.rel='stylesheet';
-    lnk.href='https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display:ital@0;1&display=swap';
-    document.head.appendChild(lnk);
     if(document.fonts && document.fonts.ready){
-      document.fonts.ready.then(function(){setTimeout(function(){window.focus();window.print();},500)});
-    } else { setTimeout(function(){window.focus();window.print();},1200); }
+      document.fonts.ready.then(function(){setTimeout(function(){window.focus();window.print();},600)});
+    } else { setTimeout(function(){window.focus();window.print();},1400); }
   })();
 <\/script></body></html>`);
     win.document.close();
