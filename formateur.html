@@ -2154,6 +2154,144 @@ const QUESTION_BANK = {
   ]
 };
 
+/* ── Banque de questions Vrai / Faux ── */
+const VF_BANK = {
+  "HTML / CSS fondamentaux": [
+    {q:"La balise `&lt;a&gt;` est utilisée pour créer un lien hypertexte.",correct:0},
+    {q:"CSS signifie 'Cascading Style Sheets'.",correct:0},
+    {q:"HTML signifie 'HyperText Markup Language'.",correct:0},
+    {q:"Le 'responsive design' permet à un site de s'adapter à toutes les tailles d'écran.",correct:0},
+    {q:"En Flexbox, `justify-content: center` centre les éléments horizontalement.",correct:0},
+    {q:"La propriété CSS `margin` contrôle l'espace intérieur d'un élément.",correct:1},
+    {q:"La balise `&lt;div&gt;` est un élément en ligne (inline).",correct:1},
+    {q:"La propriété `z-index` fonctionne sur tous les éléments sans condition de positionnement.",correct:1},
+    {q:"En HTML, la balise `&lt;p&gt;` est utilisée pour les paragraphes.",correct:0},
+    {q:"Le sélecteur CSS `#id` cible plusieurs éléments à la fois.",correct:1},
+  ],
+  "JavaScript ES6+": [
+    {q:"`let` et `const` sont des déclarations introduites avec ES6.",correct:0},
+    {q:"Une arrow function possède son propre `this`.",correct:1},
+    {q:"`typeof null` retourne 'null' en JavaScript.",correct:1},
+    {q:"`===` vérifie à la fois la valeur ET le type en JavaScript.",correct:0},
+    {q:"Le spread operator `...` ne peut s'utiliser qu'avec les tableaux.",correct:1},
+    {q:"`Promise` permet de gérer le code asynchrone en JavaScript.",correct:0},
+    {q:"`async/await` est une syntaxe pour simplifier les Promises.",correct:0},
+    {q:"`const` permet de réassigner une variable.",correct:1},
+    {q:"En JavaScript, `0 == false` retourne `true`.",correct:0},
+    {q:"Une closure est une fonction qui n'a pas accès aux variables extérieures.",correct:1},
+  ],
+  "PHP & MySQL": [
+    {q:"PHP est un langage exécuté côté serveur.",correct:0},
+    {q:"MySQL est une base de données relationnelle SQL.",correct:0},
+    {q:"En PHP, `echo` retourne une valeur comme `print`.",correct:1},
+    {q:"PDO permet de se connecter à plusieurs types de bases de données.",correct:0},
+    {q:"La fonction `mysqli_query()` protège automatiquement contre les injections SQL.",correct:1},
+    {q:"En PHP, les tableaux associatifs utilisent des clés nommées.",correct:0},
+    {q:"La superglobale `$_POST` récupère les données d'un formulaire en méthode GET.",correct:1},
+    {q:"Une requête SQL préparée protège contre les injections SQL.",correct:0},
+  ],
+  "React et composants": [
+    {q:"Un composant React commence toujours par une lettre majuscule.",correct:0},
+    {q:"`useState` est un hook React pour gérer l'état local d'un composant.",correct:0},
+    {q:"Les props en React peuvent être modifiées directement par le composant enfant.",correct:1},
+    {q:"Le virtual DOM est une copie exacte du DOM réel du navigateur.",correct:1},
+    {q:"`useEffect` s'exécute après chaque rendu du composant par défaut.",correct:0},
+    {q:"JSX est obligatoire pour créer des composants React.",correct:1},
+    {q:"Le Context API permet d'éviter le 'prop drilling'.",correct:0},
+    {q:"Un composant fonctionnel React ne peut pas avoir de state.",correct:1},
+  ],
+  "Git & versionning": [
+    {q:"`git commit` envoie les modifications vers le dépôt distant.",correct:1},
+    {q:"`git clone` copie un dépôt distant en local.",correct:0},
+    {q:"Un fichier `.gitignore` liste les fichiers à ne pas suivre par Git.",correct:0},
+    {q:"`git pull` est équivalent à `git fetch` + `git merge`.",correct:0},
+    {q:"`git stash` supprime définitivement les modifications non commitées.",correct:1},
+    {q:"`git rebase` réécrit l'historique de manière linéaire.",correct:0},
+    {q:"Un 'pull request' permet de fusionner une branche après revue de code.",correct:0},
+    {q:`\`git reset HEAD~1 --soft\` supprime les modifications définitivement.`,correct:1},
+  ],
+  "API REST": [
+    {q:"REST signifie 'Representational State Transfer'.",correct:0},
+    {q:"Le code HTTP 404 signifie 'Not Found'.",correct:0},
+    {q:"Le code HTTP 200 indique une ressource créée avec succès.",correct:1},
+    {q:"JSON signifie 'JavaScript Object Notation'.",correct:0},
+    {q:"CORS signifie 'Cross-Origin Resource Sharing'.",correct:0},
+    {q:"La méthode HTTP POST est idempotente.",correct:1},
+    {q:"JWT est utilisé pour l'authentification dans les API REST.",correct:0},
+    {q:"La méthode HTTP GET modifie des données sur le serveur.",correct:1},
+  ],
+  "Architecture logicielle": [
+    {q:"MVC signifie 'Model View Controller'.",correct:0},
+    {q:"SOLID est un ensemble de 5 principes de conception orientée objet.",correct:0},
+    {q:"Une architecture microservices regroupe toute l'application dans un seul service.",correct:1},
+    {q:"Le 'S' de SOLID représente le 'Single Responsibility Principle'.",correct:0},
+    {q:"Un design pattern est une solution réutilisable à un problème récurrent.",correct:0},
+  ],
+  "Design patterns": [
+    {q:"Le pattern Singleton garantit qu'une classe n'a qu'une seule instance.",correct:0},
+    {q:"Le pattern Observer notifie plusieurs objets lors d'un changement d'état.",correct:0},
+    {q:"Le pattern Factory délègue la création d'objets à des sous-classes.",correct:0},
+    {q:"Le pattern MVC est un pattern créationnel.",correct:1},
+  ],
+  "Tests unitaires": [
+    {q:"TDD signifie 'Test-Driven Development'.",correct:0},
+    {q:"Dans TDD, on écrit le code avant d'écrire le test.",correct:1},
+    {q:"Un mock est un objet simulé utilisé pour isoler un composant dans un test.",correct:0},
+    {q:"Jest est un framework de tests unitaires pour JavaScript.",correct:0},
+    {q:"Un test unitaire vérifie le comportement d'une unité de code isolée.",correct:0},
+  ],
+  "CI/CD & DevOps": [
+    {q:"CI/CD signifie 'Continuous Integration / Continuous Deployment'.",correct:0},
+    {q:"Docker est un outil de conteneurisation d'applications.",correct:0},
+    {q:"Kubernetes orchestre des conteneurs à grande échelle.",correct:0},
+    {q:"Un pipeline CI/CD déploie le code sans jamais exécuter de tests.",correct:1},
+    {q:"`docker-compose` permet d'orchestrer plusieurs conteneurs depuis un fichier YAML.",correct:0},
+  ],
+  "Base de données avancées": [
+    {q:"Une base SQL est relationnelle avec un schéma fixe.",correct:0},
+    {q:"Un index en base de données ralentit les requêtes de recherche.",correct:1},
+    {q:"ACID signifie 'Atomicity, Consistency, Isolation, Durability'.",correct:0},
+    {q:"Une clé étrangère référence la clé primaire d'une autre table.",correct:0},
+    {q:"MongoDB est une base de données SQL.",correct:1},
+  ],
+  "Rédaction de CV": [
+    {q:"Un CV en France fait généralement une seule page.",correct:0},
+    {q:"Les expériences sur un CV se listent du plus récent au plus ancien.",correct:0},
+    {q:"La photo est obligatoire sur un CV en France.",correct:1},
+    {q:"Le format PDF est recommandé pour envoyer un CV par email.",correct:0},
+    {q:"Le CV doit être mis à jour uniquement lors d'une recherche d'emploi.",correct:1},
+    {q:"Les compétences clés doivent figurer sur un CV.",correct:0},
+    {q:"Un CV de 4 pages est recommandé pour un premier emploi.",correct:1},
+  ],
+  "Techniques d'entretien": [
+    {q:"Il est conseillé d'arriver 10 à 15 minutes avant un entretien.",correct:0},
+    {q:"La méthode STAR signifie Situation, Tâche, Action, Résultat.",correct:0},
+    {q:"Il est déconseillé de poser des questions à la fin d'un entretien.",correct:1},
+    {q:"La règle des 4×20 concerne les 20 premières secondes d'un entretien.",correct:0},
+    {q:"Se renseigner sur l'entreprise avant un entretien est inutile.",correct:1},
+  ],
+  "Lettre de motivation": [
+    {q:"Une lettre de motivation fait généralement une page.",correct:0},
+    {q:"Chaque lettre de motivation doit être personnalisée pour chaque offre.",correct:0},
+    {q:"La formule 'Bonjour,' est recommandée pour débuter une lettre de motivation.",correct:1},
+    {q:"Le premier paragraphe doit accrocher le recruteur.",correct:0},
+    {q:"Il faut mentionner ses prétentions salariales dans la lettre de motivation.",correct:1},
+  ],
+  "LinkedIn & e-réputation": [
+    {q:"LinkedIn est le principal réseau professionnel en France.",correct:0},
+    {q:"SSI signifie 'Social Selling Index' sur LinkedIn.",correct:0},
+    {q:"L'e-réputation désigne l'image d'une personne sur internet.",correct:0},
+    {q:"Il est impossible de personnaliser l'URL de son profil LinkedIn.",correct:1},
+    {q:"Les recruteurs utilisent LinkedIn pour sourcer des candidats.",correct:0},
+  ],
+  "Marché de l'emploi": [
+    {q:"Le marché caché de l'emploi représente les offres non publiées.",correct:0},
+    {q:"La candidature spontanée est inefficace pour trouver un emploi.",correct:1},
+    {q:"Le réseau professionnel est un canal important pour trouver un emploi.",correct:0},
+    {q:"France Travail peut accompagner les demandeurs d'emploi.",correct:0},
+  ],
+};
+
 function generateQCM() {
   const formation = document.getElementById('qcm-formation').value;
   const theme = document.getElementById('qcm-theme').value;
@@ -2190,16 +2328,29 @@ function generateQCM() {
     let filtered = pool.filter(q => !q.diff || q.diff === diff);
     if(filtered.length < Math.min(nb, 3)) filtered = pool; // fallback si pas assez
 
-    // Pour vrai/faux : ne garder que 2 choix
-    let questions = filtered
-      .sort(() => Math.random() - 0.5)
-      .slice(0, nb)
-      .map(q => {
-        if(type === 'vrai/faux') {
-          return { q: q.q, choices: ['Vrai', 'Faux'], correct: q.correct === 0 ? 0 : 1 };
-        }
-        return { q: q.q, choices: q.choices, correct: q.correct };
-      });
+    let questions;
+    if(type === 'vrai/faux') {
+      // Utiliser la banque Vrai/Faux dédiée
+      const vfPool = VF_BANK[theme] || [];
+      const source = vfPool.length >= nb ? vfPool : [...vfPool, ...vfPool]; // dupliquer si pas assez
+      questions = source
+        .sort(() => Math.random() - 0.5)
+        .slice(0, nb)
+        .map(q => ({ q: q.q, choices: ['Vrai', 'Faux'], correct: q.correct }));
+    } else if(type === 'mixte') {
+      // Mélanger QCM et Vrai/Faux
+      const vfPool = (VF_BANK[theme] || []).map(q => ({ q: q.q, choices: ['Vrai', 'Faux'], correct: q.correct }));
+      const qcmPool = filtered.map(q => ({ q: q.q, choices: q.choices, correct: q.correct }));
+      questions = [...qcmPool, ...vfPool]
+        .sort(() => Math.random() - 0.5)
+        .slice(0, nb);
+    } else {
+      // QCM classique
+      questions = filtered
+        .sort(() => Math.random() - 0.5)
+        .slice(0, nb)
+        .map(q => ({ q: q.q, choices: q.choices, correct: q.correct }));
+    }
 
     lastQCM = { theme, nb, diff, questions };
     renderQCM(questions);
