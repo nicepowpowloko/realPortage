@@ -100,12 +100,7 @@ body{font-family:'DM Sans',sans-serif;background:#eae4d8;color:var(--text);min-h
   font-family:'DM Serif Display',serif;font-size:17px;
   display:flex;align-items:center;gap:8px;
 }
-.topbar-logo .rp{
-  width:26px;height:26px;border-radius:50%;background:var(--bx-l);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
-}
-.topbar-logo span{color:#e8a0b0}
+.topbar-logo .logo-img{height:32px;border-radius:7px;object-fit:contain;display:block;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 .topbar-nav{display:flex;gap:2px;flex:1;overflow-x:auto}
 .topbar-nav::-webkit-scrollbar{display:none}
 .tnav{
@@ -520,7 +515,7 @@ body{font-family:'DM Sans',sans-serif;background:#eae4d8;color:var(--text);min-h
   .login-logo{font-size:22px}
   .topbar{height:46px;padding:0 8px}
   .topbar-logo{font-size:13px}
-  .topbar-logo .rp{width:22px;height:22px;font-size:10px}
+  .topbar-logo .logo-img{height:26px}
   .tnav{padding:0 9px;font-size:10px;height:46px}
   .tnav svg{display:none}
   .btn-logout{display:none}
@@ -638,8 +633,7 @@ body{font-family:'DM Sans',sans-serif;background:#eae4d8;color:var(--text);min-h
   <!-- Topbar -->
   <nav class="topbar">
     <div class="topbar-logo" onclick="window.location.href='accueil.html'" style="cursor:pointer">
-      <div class="rp">rp</div>
-      real<span>portage</span>
+      <img src="logo.jpg" class="logo-img" alt="Real Portage">
     </div>
     <div class="topbar-nav">
       <button class="tnav active" onclick="showPage('accueil',this)">

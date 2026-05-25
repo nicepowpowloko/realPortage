@@ -40,12 +40,7 @@ body{font-family:'DM Sans',sans-serif;background:#f0ebe0;color:var(--text);min-h
   display:flex;align-items:center;gap:10px;
   font-family:'DM Serif Display',serif;font-size:20px;color:#fff;
 }
-.nav-logo .dot{
-  width:30px;height:30px;border-radius:50%;background:var(--bx-l);
-  display:flex;align-items:center;justify-content:center;
-  font-family:'DM Sans',sans-serif;font-size:12px;font-weight:700;color:#fff;
-}
-.nav-logo span{color:#e8a0b0}
+.nav-logo .logo-img{height:36px;border-radius:8px;object-fit:contain;display:block;box-shadow:0 2px 10px rgba(0,0,0,.25)}
 .nav-links{display:flex;align-items:center;gap:6px}
 .nav-link{
   padding:6px 14px;border-radius:20px;font-size:12px;font-weight:500;
@@ -455,7 +450,7 @@ body{font-family:'DM Sans',sans-serif;background:#f0ebe0;color:var(--text);min-h
 @media(max-width:480px){
   .nav-inner{height:50px;padding:0 10px}
   .nav-logo{font-size:16px}
-  .nav-logo .dot{width:24px;height:24px;font-size:10px}
+  .nav-logo .logo-img{height:28px}
   .nav-links{gap:0}
   .nav-link{font-size:10px;padding:4px 8px}
   .btn-formateur span{display:none}
@@ -492,8 +487,7 @@ body{font-family:'DM Sans',sans-serif;background:#f0ebe0;color:var(--text);min-h
   <nav class="nav">
     <div class="nav-inner">
       <div class="nav-logo" onclick="window.location.href='accueil.html'" style="cursor:pointer">
-        <div class="dot">rp</div>
-        real<span>portage</span>
+        <img src="logo.jpg" class="logo-img" alt="Real Portage">
       </div>
       <div class="nav-links">
         <button class="nav-link active" onclick="scrollToCatalogue()">Formations</button>
